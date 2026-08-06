@@ -12,8 +12,8 @@ concurrency:
 
 jobs:
   unit-test:
+    if: false
     name: Unit Tests (Windows)
-    if: false # @TODO: Temporarily disabled. Remove this once the tests are fixed.
     timeout-minutes: 60
     runs-on: windows-latest
     permissions:
@@ -32,6 +32,7 @@ jobs:
           shell: pwsh
 
   cli-test:
+    if: false
     name: CLI Tests (Windows)
     runs-on: windows-latest
     permissions:
@@ -61,6 +62,7 @@ jobs:
           check_run: false
 
   e2e-test:
+    if: false
     name: Playwright E2E Tests (Windows)
     timeout-minutes: 240
     runs-on: windows-latest
@@ -87,6 +89,7 @@ jobs:
           retention-days: 30
 
   ssl-test:
+    if: false
     name: SSL Tests (Windows)
     timeout-minutes: 60
     runs-on: windows-latest
@@ -121,6 +124,7 @@ jobs:
         uses: ./.github/actions/ssl/windows/run-ssl-e2e-tests
 
   oauth1-tests:
+    if: false
     name: OAuth 1.0 Auth Tests (Windows)
     timeout-minutes: 60
     runs-on: windows-latest

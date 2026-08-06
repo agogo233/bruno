@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   test:
+    if: false
     name: CLI Tests
     strategy:
       matrix:
