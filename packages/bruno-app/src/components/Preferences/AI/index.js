@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import debounce from 'lodash/debounce';
 import { v4 as uuid } from 'uuid';
@@ -58,6 +59,7 @@ const aiPreferencesSchema = Yup.object().shape({
 let lastActiveSubTab = 'config';
 
 const AI = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const preferences = useSelector((state) => state.app.preferences);
   const [status, setStatus] = useState(null);
@@ -74,7 +76,7 @@ const AI = () => {
       setStatus(next);
       setStatusError(null);
     } catch (err) {
-      setStatusError(err.message || 'Failed to load AI status');
+      setStatusError(err.message || t('AI.FAILED_LOAD_STATUS'));
     }
   }, []);
 
@@ -153,7 +155,7 @@ const AI = () => {
         .then(() => refreshStatus())
         .catch((err) => {
           console.error('Failed to save AI preferences:', err);
-          toast.error('Failed to save AI preferences');
+          toast.error(t('AI.FAILED_SAVE'));
           throw err;
         }),
     [dispatch, preferences, refreshStatus]
@@ -212,7 +214,7 @@ const AI = () => {
   const handleAddEndpoint = async () => {
     const newEndpoint = {
       id: uuid(),
-      name: `Endpoint ${endpoints.length + 1}`,
+      name: `${t('AI.DEFAULT_ENDPOINT_NAME')} ${endpoints.length + 1}`,
       baseURL: '',
       models: []
     };
@@ -301,9 +303,9 @@ const AI = () => {
   return (
     <StyledWrapper className="w-full flex flex-col text-xs self-stretch min-h-0">
       <div className="flex items-center gap-2">
-        <div className="section-header">AI</div>
+        <div className="section-header">{t('AI.HEADER')}</div>
         <StatusBadge status="info" size="xs">
-          Beta
+          {t('AI.BETA')}
         </StatusBadge>
       </div>
 
@@ -317,7 +319,7 @@ const AI = () => {
           data-testid="ai-tab-config"
         >
           <IconSettings size={14} strokeWidth={1.5} />
-          Configuration
+          {t('AI.TAB_CONFIG')}
         </button>
         <button
           type="button"
@@ -328,7 +330,7 @@ const AI = () => {
           data-testid="ai-tab-autocomplete"
         >
           <IconTerminal2 size={14} strokeWidth={1.5} />
-          Autocomplete
+          {t('AI.TAB_AUTOCOMPLETE')}
         </button>
         <button
           type="button"
@@ -339,7 +341,7 @@ const AI = () => {
           data-testid="ai-tab-security"
         >
           <IconShieldLock size={14} strokeWidth={1.5} />
-          Security
+          {t('AI.TAB_SECURITY')}
         </button>
       </div>
 
@@ -355,9 +357,9 @@ const AI = () => {
             <div className="flex flex-col gap-0.5 min-w-0">
               <div className="flex items-center gap-2 text-[13px] font-semibold">
                 <IconSparkles size={15} strokeWidth={1.75} className="ai-master-icon" />
-                <span className="text-[13px] font-semibold">AI Features</span>
+                <span className="text-[13px] font-semibold">{t('AI.FEATURES')}</span>
                 <span className="ai-master-summary text-[11px]">
-                  Turn on to configure providers and models. Your keys stay local.
+                  {t('AI.FEATURES_SUMMARY')}
                 </span>
               </div>
             </div>
@@ -370,14 +372,14 @@ const AI = () => {
 
           {!formik.values.enabled && !statusError && (
             <div className="ai-empty-notice px-3.5 py-3 text-xs">
-              Bring your own API key. Bruno talks to providers directly, your keys never leave your machine.
+              {t('AI.EMPTY_CONFIG')}
             </div>
           )}
 
           {formik.values.enabled && status && (
             <>
               <div className="ai-section-header text-[11px] font-medium uppercase tracking-wider mb-2">
-                Providers
+                {t('AI.PROVIDERS')}
               </div>
               <div className="flex flex-col gap-1.5">
                 {providerIds
@@ -411,7 +413,7 @@ const AI = () => {
               </div>
 
               <div className="ai-section-header flex items-center justify-between text-[11px] font-medium uppercase tracking-wider mt-5 mb-2">
-                <span>OpenAI-Compatible Endpoints</span>
+                <span>{t('AI.COMPAT_ENDPOINTS')}</span>
                 <button
                   type="button"
                   className="compat-add-btn inline-flex items-center gap-1 text-[11px] font-medium cursor-pointer normal-case tracking-normal"
@@ -419,13 +421,13 @@ const AI = () => {
                   data-testid="ai-compat-add-endpoint"
                 >
                   <IconPlus size={13} strokeWidth={1.75} />
-                  Add endpoint
+                  {t('AI.ADD_ENDPOINT')}
                 </button>
               </div>
 
               {endpoints.length === 0 && (
                 <div className="ai-empty-notice px-3.5 py-3 text-xs">
-                  Point Bruno at any OpenAI-compatible API — Ollama, LM Studio, Together, Groq, OpenRouter, vLLM, and more.
+                  {t('AI.COMPAT_EMPTY')}
                 </div>
               )}
 

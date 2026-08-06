@@ -9,9 +9,11 @@ import { sanitizeName, validateName, validateNameError } from 'utils/common/rege
 import { DEFAULT_COLLECTION_FORMAT } from 'utils/common/constants';
 import { multiLineMsg } from 'utils/common';
 import { formatIpcError } from 'utils/common/error';
+import { useTranslation } from 'react-i18next';
 import StyledWrapper from './StyledWrapper';
 
 const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
+  const { t } = useTranslation();
   const inputRef = useRef(null);
   const containerRef = useRef(null);
   const dispatch = useDispatch();
@@ -42,7 +44,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
     };
 
     if (defaultLocation) {
-      window.ipcRenderer?.invoke('renderer:find-unique-folder-name', 'Untitled Collection', defaultLocation)
+      window.ipcRenderer?.invoke('renderer:find-unique-folder-name', t('SIDEBAR.INLINE_COLLECTION.UNTITLED'), defaultLocation)
         ?.then((name) => focusAndSelect(name))
         ?.catch(() => focusAndSelect());
     } else {
@@ -66,7 +68,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
       if (fromOutside) {
         onCancel();
       } else {
-        toast.error('Collection name is required');
+        toast.error(t('SIDEBAR.INLINE_COLLECTION.NAME_REQUIRED'));
       }
       return;
     }
@@ -80,7 +82,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
     }
 
     if (!defaultLocation) {
-      toast.error('Please set a default location in Preferences > General');
+      toast.error(t('SIDEBAR.INLINE_COLLECTION.NO_DEFAULT_LOCATION'));
       onCancel();
       return;
     }
@@ -89,10 +91,10 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
     try {
       const folderName = sanitizeName(name);
       await dispatch(createCollection(name, folderName, defaultLocation, { format: DEFAULT_COLLECTION_FORMAT }));
-      toast.success('Collection created!');
+      toast.success(t('SIDEBAR.INLINE_COLLECTION.CREATED'));
       onComplete();
     } catch (e) {
-      toast.error(multiLineMsg('An error occurred while creating the collection', formatIpcError(e)));
+      toast.error(multiLineMsg(t('SIDEBAR.COMMON.ERROR_OCCURRED'), formatIpcError(e)));
       setIsCreating(false);
     }
   }, [isCreating, defaultLocation, dispatch, onCancel, onComplete]);
@@ -127,7 +129,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
             ref={inputRef}
             type="text"
             className="inline-collection-input"
-            defaultValue="Untitled Collection"
+            defaultValue={t('SIDEBAR.INLINE_COLLECTION.UNTITLED')}
             onKeyDown={handleKeyDown}
             autoComplete="off"
             autoCorrect="off"
@@ -142,7 +144,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
               openingAdvancedRef.current = true;
               onOpenAdvanced(inputRef.current?.value?.trim());
             }}
-            title="Advanced options"
+            title={t('SIDEBAR.INLINE_COLLECTION.ADVANCED')}
             disabled={isCreating}
           >
             <IconSettings size={13} strokeWidth={1.5} />
@@ -153,7 +155,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
             className="inline-action-btn save"
             onClick={handleCreate}
             onMouseDown={(e) => e.preventDefault()}
-            title="Create"
+            title={t('SIDEBAR.INLINE_COLLECTION.CREATE')}
             disabled={isCreating}
           >
             <IconCheck size={14} strokeWidth={2} />
@@ -162,7 +164,7 @@ const InlineCollectionCreator = ({ onComplete, onCancel, onOpenAdvanced }) => {
             className="inline-action-btn cancel"
             onClick={handleCancel}
             onMouseDown={(e) => e.preventDefault()}
-            title="Cancel"
+            title={t('SIDEBAR.INLINE_COLLECTION.CANCEL')}
             disabled={isCreating}
           >
             <IconX size={14} strokeWidth={2} />

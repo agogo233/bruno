@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import { isItemAFolder } from 'utils/tabs';
 import { useDispatch } from 'react-redux';
@@ -9,6 +10,7 @@ import toast from 'react-hot-toast';
 
 const DeleteCollectionItem = ({ onClose, item, collectionUid }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const isFolder = isItemAFolder(item);
   const onConfirm = () => {
     dispatch(deleteItem(item.uid, collectionUid)).then(() => {
@@ -31,7 +33,7 @@ const DeleteCollectionItem = ({ onClose, item, collectionUid }) => {
       }
     }).catch((error) => {
       console.error('Error deleting item', error);
-      toast.error(error?.message || 'Error deleting item');
+      toast.error(error?.message || t('SIDEBAR.DELETE_COLLECTION_ITEM.ERROR'));
     });
     onClose();
   };
@@ -40,14 +42,14 @@ const DeleteCollectionItem = ({ onClose, item, collectionUid }) => {
     <StyledWrapper>
       <Modal
         size="md"
-        title={`Delete ${isFolder ? 'Folder' : 'Request'}`}
-        confirmText="Delete"
+        title={isFolder ? t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE_FOLDER') : t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE_REQUEST')}
+        confirmText={t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE')}
         confirmButtonColor="danger"
         handleConfirm={onConfirm}
         handleCancel={onClose}
         dataTestId="delete-collection-item-modal"
       >
-        Are you sure you want to delete <span className="font-medium">{item.name}</span> ?
+        {t('SIDEBAR.DELETE_COLLECTION_ITEM.CONFIRM')} <span className="font-medium">{item.name}</span> ?
       </Modal>
     </StyledWrapper>
   );

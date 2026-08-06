@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,6 +42,7 @@ import { openDevtoolsAndSwitchToTerminal } from 'utils/terminal';
 import useKeybinding from 'hooks/useKeybinding';
 
 const CollectionsSection = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const showSearch = useSelector((state) => state.app.showSidebarSearch);
 
@@ -84,7 +86,7 @@ const CollectionsSection = () => {
       }
     };
     dispatch(savePreferences(updatedPreferences)).catch(() => {
-      toast.error('Failed to save preferences');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
     });
   };
 
@@ -167,11 +169,11 @@ const CollectionsSection = () => {
   const getSortLabel = () => {
     switch (collectionSortOrder) {
       case 'alphabetical':
-        return 'Sort Z-A';
+        return t('SIDEBAR.SECTIONS.SORT_ZA');
       case 'reverseAlphabetical':
-        return 'Clear sort';
+        return t('SIDEBAR.SECTIONS.CLEAR_SORT');
       default:
-        return 'Sort A-Z';
+        return t('SIDEBAR.SECTIONS.SORT_AZ');
     }
   };
 
@@ -190,13 +192,13 @@ const CollectionsSection = () => {
   const handleStartRequest = () => {
     const scratchCollectionUid = activeWorkspace?.scratchCollectionUid;
     if (!scratchCollectionUid) {
-      toast.error('Unable to create request');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       return;
     }
 
     const scratchCollection = collections.find((c) => c.uid === scratchCollectionUid);
     if (!scratchCollection) {
-      toast.error('Unable to create request');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       return;
     }
 
@@ -212,7 +214,7 @@ const CollectionsSection = () => {
         }
       }
     });
-    const requestName = `Untitled ${maxNumber + 1}`;
+    const requestName = `${t('SIDEBAR.SECTIONS.UNTITLED')} ${maxNumber + 1}`;
     const filename = sanitizeName(requestName);
 
     dispatch(
@@ -227,7 +229,7 @@ const CollectionsSection = () => {
         isTransient: true
       })
     ).catch((err) => {
-      toast.error('An error occurred while creating the request');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
     });
   };
 
@@ -241,7 +243,7 @@ const CollectionsSection = () => {
     {
       id: 'create',
       leftSection: IconPlus,
-      label: 'Create collection',
+      label: t('SIDEBAR.SECTIONS.CREATE_COLLECTION'),
       onClick: () => {
         dispatch(setIsCreatingCollection(true));
       }
@@ -249,7 +251,7 @@ const CollectionsSection = () => {
     {
       id: 'open',
       leftSection: IconFolder,
-      label: 'Open collection',
+      label: t('SIDEBAR.SECTIONS.OPEN_COLLECTION'),
       onClick: () => {
         handleOpenCollection();
       }
@@ -257,7 +259,7 @@ const CollectionsSection = () => {
     {
       id: 'import',
       leftSection: IconDownload,
-      label: 'Import collection',
+      label: t('SIDEBAR.SECTIONS.IMPORT_COLLECTION'),
       onClick: () => {
         setImportCollectionModalOpen(true);
       }
@@ -276,7 +278,7 @@ const CollectionsSection = () => {
     {
       id: 'close-all',
       leftSection: IconSquareX,
-      label: 'Close all',
+      label: t('SIDEBAR.SECTIONS.CLOSE_ALL'),
       onClick: () => {
         selectAllCollectionsToClose();
       }
@@ -284,7 +286,7 @@ const CollectionsSection = () => {
     {
       id: 'open-in-terminal',
       leftSection: IconTerminal2,
-      label: 'Open in Terminal',
+      label: t('SIDEBAR.SECTIONS.OPEN_TERMINAL'),
       onClick: () => {
         openDevtoolsAndSwitchToTerminal(dispatch, activeWorkspace?.pathname);
       }
@@ -295,7 +297,7 @@ const CollectionsSection = () => {
     <>
       <ActionIcon
         onClick={handleToggleSearch}
-        label="Search requests"
+        label={t('SIDEBAR.SECTIONS.SEARCH_REQUESTS')}
       >
         <IconSearch size={14} stroke={1.5} aria-hidden="true" />
       </ActionIcon>
@@ -306,7 +308,7 @@ const CollectionsSection = () => {
         placement="bottom-end"
       >
         <ActionIcon
-          label="Add new collection"
+          label={t('SIDEBAR.SECTIONS.ADD_COLLECTION')}
         >
           <IconPlus size={14} stroke={1.5} aria-hidden="true" />
         </ActionIcon>
@@ -318,7 +320,7 @@ const CollectionsSection = () => {
         placement="bottom-end"
       >
         <ActionIcon
-          label="More actions"
+          label={t('SIDEBAR.SECTIONS.MORE_ACTIONS')}
         >
           <IconDotsVertical size={14} stroke={1.5} aria-hidden="true" />
         </ActionIcon>
@@ -403,7 +405,7 @@ const CollectionsSection = () => {
       )}
       <SidebarSection
         id="collections"
-        title="Collections"
+        title={t('SIDEBAR.SECTIONS.COLLECTIONS')}
         icon={IconBox}
         actions={sectionActions}
       >

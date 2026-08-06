@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { ignoreFolder, closeTabs } from 'providers/ReduxStore/slices/collections/actions';
@@ -7,6 +8,7 @@ import toast from 'react-hot-toast';
 
 const IgnoreCollectionItem = ({ onClose, item, collectionUid }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const collection = useSelector((state) => state.collections.collections?.find((c) => c.uid === collectionUid));
   const isYamlCollection = collection?.format === 'yml' || Boolean(collection?.brunoConfig?.opencollection);
   const configFileName = isYamlCollection ? 'opencollection.yml' : 'bruno.json';
@@ -16,11 +18,11 @@ const IgnoreCollectionItem = ({ onClose, item, collectionUid }) => {
       .then(() => {
         const tabUids = [...recursivelyGetAllItemUids(item.items), item.uid];
         dispatch(closeTabs({ tabUids }));
-        toast.success('Folder ignored');
+        toast.success(t('SIDEBAR.IGNORE_COLLECTION_ITEM.IGNORED'));
       })
       .catch((error) => {
         console.error('Error ignoring folder', error);
-        toast.error(error?.message || 'Error ignoring folder');
+        toast.error(error?.message || t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       });
     onClose();
   };
@@ -28,8 +30,8 @@ const IgnoreCollectionItem = ({ onClose, item, collectionUid }) => {
   return (
     <Modal
       size="md"
-      title="Ignore Folder"
-      confirmText="Ignore"
+      title={t('SIDEBAR.IGNORE_COLLECTION_ITEM.TITLE')}
+      confirmText={t('SIDEBAR.IGNORE_COLLECTION_ITEM.IGNORE')}
       handleConfirm={onConfirm}
       handleCancel={onClose}
     >

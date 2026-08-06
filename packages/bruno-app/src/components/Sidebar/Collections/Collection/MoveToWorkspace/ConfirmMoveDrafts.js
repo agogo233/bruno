@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { flattenItems, isItemARequest, hasRequestChanges, findCollectionByUid } from 'utils/collections';
 import { pluralizeWord } from 'utils/common';
@@ -13,6 +14,7 @@ import StyledWrapper from './StyledWrapper';
 const MAX_UNSAVED_REQUESTS_TO_SHOW = 5;
 
 const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isMoving, setIsMoving] = useState(false);
 
@@ -53,11 +55,11 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
   const moveAndClose = () => {
     dispatch(moveCollectionToWorkspace(collectionUid))
       .then(() => {
-        toast.success('Collection moved into workspace');
+        toast.success(t('SIDEBAR.MOVE_TO_WORKSPACE.MOVED'));
         onClose();
       })
       .catch((err) => {
-        toast.error(err?.message || 'An error occurred while moving the collection');
+        toast.error(err?.message || t('SIDEBAR.COMMON.ERROR_OCCURRED'));
         setIsMoving(false);
       });
   };
@@ -68,7 +70,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
     }
     // If there are transient drafts, we can't proceed with batch save
     if (currentTransientDrafts.length > 0) {
-      toast.error('Please save or discard transient requests first');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       return;
     }
     setIsMoving(true);
@@ -77,7 +79,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
       dispatch(saveMultipleRequests(currentDrafts))
         .then(() => moveAndClose())
         .catch(() => {
-          toast.error('Failed to save requests!');
+          toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
           setIsMoving(false);
         });
     } else {
@@ -113,7 +115,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
     <StyledWrapper>
       <Modal
         size="md"
-        title="Move into Workspace"
+        title={t('SIDEBAR.CONFIRM_MOVE_DRAFTS.TITLE')}
         handleCancel={onClose}
         disableEscapeKey={true}
         disableCloseOnOutsideClick={true}
@@ -122,10 +124,10 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
       >
         <div className="flex items-center">
           <IconAlertTriangle size={32} strokeWidth={1.5} className="warning-text" />
-          <h1 className="ml-2 text-lg font-medium">Hold on..</h1>
+          <h1 className="ml-2 text-lg font-medium">{t('SIDEBAR.CONFIRM_MOVE_DRAFTS.HOLD_ON')}</h1>
         </div>
         <p className="mt-4">
-          You have unsaved changes in <span className="font-medium">{allDrafts.length}</span>{' '}
+          {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.UNSAVED_CHANGES')} <span className="font-medium">{allDrafts.length}</span>{' '}
           {pluralizeWord('request', allDrafts.length)}.
         </p>
 
@@ -133,7 +135,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
         {currentDrafts.length > 0 && (
           <div className="mt-4">
             <p className="text-sm font-medium mb-2">
-              Saved {pluralizeWord('Request', currentDrafts.length)} ({currentDrafts.length})
+              {currentDrafts.length === 1 ? t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVED_REQUEST') : t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVED_REQUESTS')} ({currentDrafts.length})
             </p>
             <ul className="ml-2">
               {currentDrafts.slice(0, MAX_UNSAVED_REQUESTS_TO_SHOW).map((item) => {
@@ -157,10 +159,10 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
         {currentTransientDrafts.length > 0 && (
           <div className="mt-4">
             <p className="text-sm font-medium mb-2">
-              Transient {pluralizeWord('Request', currentTransientDrafts.length)} ({currentTransientDrafts.length})
+              {currentTransientDrafts.length === 1 ? t('SIDEBAR.CONFIRM_MOVE_DRAFTS.TRANSIENT_REQUEST') : t('SIDEBAR.CONFIRM_MOVE_DRAFTS.TRANSIENT_REQUESTS')} ({currentTransientDrafts.length})
             </p>
             <p className="text-xs transient-hint mb-3">
-              These requests need to be saved individually before moving the collection.
+              {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.NEED_SAVE')}
             </p>
             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
               {currentTransientDrafts.map((item) => {
@@ -179,8 +181,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
                       disabled={isMoving}
                       icon={<IconDeviceFloppy size={14} strokeWidth={1.5} />}
                     >
-                      Save
-                    </Button>
+                      {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVE')}
                   </div>
                 );
               })}
@@ -191,12 +192,12 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
         <div className="flex justify-between mt-6">
           <div>
             <Button data-testid="move-workspace-discard-all" color="danger" onClick={handleDiscardAll} disabled={isMoving}>
-              Discard All and Move
+              {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.DISCARD_ALL_MOVE')}
             </Button>
           </div>
           <div>
             <Button data-testid="move-workspace-cancel" className="mr-2" color="secondary" variant="ghost" onClick={onClose} disabled={isMoving}>
-              Cancel
+              {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.CANCEL')}
             </Button>
             <Button
               data-testid="move-workspace-save-and-move"
@@ -204,7 +205,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
               disabled={currentTransientDrafts.length > 0 || isMoving}
               title={currentTransientDrafts.length > 0 ? 'Please save or discard transient requests first' : ''}
             >
-              {isMoving ? 'Moving...' : currentDrafts.length > 1 ? 'Save All and Move' : 'Save and Move'}
+              {isMoving ? t('SIDEBAR.CONFIRM_MOVE_DRAFTS.MOVING') : currentDrafts.length > 1 ? t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVE_ALL_MOVE') : t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVE_AND_MOVE')}
             </Button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,6 +19,7 @@ import get from 'lodash/get';
 const CloneCollection = ({ onClose, collectionUid }) => {
   const inputRef = useRef();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [isEditing, toggleEditing] = useState(false);
   const collection = useSelector((state) => findCollectionByUid(state.collections.collections, collectionUid));
   const preferences = useSelector((state) => state.app.preferences);
@@ -34,8 +36,8 @@ const CloneCollection = ({ onClose, collectionUid }) => {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      collectionName: `${name} copy`,
-      collectionFolderName: `${sanitizeName(name)} copy`,
+      collectionName: `${name} ${t('SIDEBAR.CLONE_COLLECTION.COPY')}`,
+      collectionFolderName: `${sanitizeName(name)} ${t('SIDEBAR.CLONE_COLLECTION.COPY')}`,
       collectionLocation: defaultLocation
     },
     validationSchema: Yup.object({
@@ -63,10 +65,10 @@ const CloneCollection = ({ onClose, collectionUid }) => {
         )
       )
         .then(() => {
-          toast.success('Collection created!');
+          toast.success(t('SIDEBAR.CLONE_COLLECTION.CREATED'));
           onClose();
         })
-        .catch((e) => toast.error('An error occurred while creating the collection - ' + e));
+        .catch((e) => toast.error(t('SIDEBAR.COMMON.ERROR_CREATING') + e));
     }
   });
 
@@ -93,11 +95,11 @@ const CloneCollection = ({ onClose, collectionUid }) => {
   const onSubmit = () => formik.handleSubmit();
 
   return (
-    <Modal size="md" title="Clone Collection" confirmText="Create" handleConfirm={onSubmit} handleCancel={onClose}>
+    <Modal size="md" title={t('SIDEBAR.CLONE_COLLECTION.TITLE')} confirmText={t('SIDEBAR.CLONE_COLLECTION.CREATE')} handleConfirm={onSubmit} handleCancel={onClose}>
       <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
         <div>
           <label htmlFor="collection-name" className="flex items-center font-medium">
-            Name
+{t('SIDEBAR.CLONE_COLLECTION.NAME')}
           </label>
           <input
             id="collection-name"
@@ -120,7 +122,7 @@ const CloneCollection = ({ onClose, collectionUid }) => {
           ) : null}
 
           <label htmlFor="collection-location" className="block font-medium mt-3">
-            Location
+{t('SIDEBAR.CLONE_COLLECTION.LOCATION')}
           </label>
           <input
             id="collection-location"
@@ -143,14 +145,14 @@ const CloneCollection = ({ onClose, collectionUid }) => {
               className="text-link cursor-pointer hover:underline"
               onClick={browse}
             >
-              Browse
+              {t('SIDEBAR.CLONE_COLLECTION.BROWSE')}
             </span>
           </div>
 
           <div className="mt-4">
             <div className="flex items-center justify-between">
               <label htmlFor="filename" className="flex items-center font-medium">
-                Folder Name
+                {t('SIDEBAR.CLONE_COLLECTION.FOLDER_NAME')}
                 <Help width="300">
                   <p>
                     The name of the folder used to store the collection.

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconFileImport } from '@tabler/icons';
 import { toastError } from 'utils/common/error';
 import jsyaml from 'js-yaml';
@@ -10,29 +11,6 @@ import { isBrunoCollection } from 'utils/importers/bruno-collection';
 import { isOpenCollection } from 'utils/importers/opencollection';
 import { useTheme } from 'providers/Theme';
 
-const convertFileToObject = async (file) => {
-  const text = await file.text();
-
-  // Handle WSDL files - return as plain text
-  if (file.name.endsWith('.wsdl') || file.type === 'text/xml' || file.type === 'application/xml') {
-    return text;
-  }
-
-  try {
-    if (file.type === 'application/json' || file.name.endsWith('.json')) {
-      return JSON.parse(text);
-    }
-
-    const parsed = jsyaml.load(text, { schema: jsyaml.JSON_SCHEMA });
-    if (typeof parsed !== 'object' || parsed === null) {
-      throw new Error();
-    }
-    return parsed;
-  } catch {
-    throw new Error('Failed to parse the file – ensure it is valid JSON or YAML');
-  }
-};
-
 const FileTab = ({
   setIsLoading,
   handleSubmit,
@@ -41,6 +19,30 @@ const FileTab = ({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
+  const { t } = useTranslation();
+
+  const convertFileToObject = async (file) => {
+    const text = await file.text();
+
+    // Handle WSDL files - return as plain text
+    if (file.name.endsWith('.wsdl') || file.type === 'text/xml' || file.type === 'application/xml') {
+      return text;
+    }
+
+    try {
+      if (file.type === 'application/json' || file.name.endsWith('.json')) {
+        return JSON.parse(text);
+      }
+
+      const parsed = jsyaml.load(text, { schema: jsyaml.JSON_SCHEMA });
+      if (typeof parsed !== 'object' || parsed === null) {
+        throw new Error();
+      }
+      return parsed;
+    } catch {
+      throw new Error(t('SIDEBAR.IMPORT_COLLECTION_FILE.PARSE_ERROR'));
+    }
+  };
 
   const acceptedFileTypes = [
     '.json',
@@ -84,7 +86,7 @@ const FileTab = ({
         return;
       }
 
-      toastError(new Error('The ZIP file is not a valid Bruno collection'));
+      toastError(new Error(t('SIDEBAR.IMPORT_COLLECTION_FILE.INVALID_ZIP')));
     } catch (err) {
       toastError(err, 'Import ZIP file failed');
     } finally {
@@ -130,7 +132,7 @@ const FileTab = ({
         // Pass raw filesData to be processed in BulkImportCollectionLocation
         handleSubmit({ filesData, type: 'multiple' });
       } else {
-        throw new Error('No valid collections found in the selected files');
+        throw new Error(t('SIDEBAR.IMPORT_COLLECTION_FILE.NO_COLLECTIONS'));
       }
     } catch (err) {
       toastError(err, 'Import multiple files failed');
@@ -163,7 +165,7 @@ const FileTab = ({
       } else if (isBrunoCollection(data)) {
         type = 'bruno';
       } else {
-        throw new Error('Unsupported collection format');
+        throw new Error(t('SIDEBAR.IMPORT_COLLECTION_FILE.UNSUPPORTED_FORMAT'));
       }
 
       if (type === 'openapi') {
@@ -188,12 +190,12 @@ const FileTab = ({
 
     // If both ZIP and non-ZIP files are selected, show error
     if (zipFiles.length && (fileArray.length - zipFiles.length > 0)) {
-      setErrorMessage('Cannot mix ZIP files with other file types. Please select either a single ZIP file OR collection files (JSON/YAML)');
+      setErrorMessage(t('SIDEBAR.IMPORT_COLLECTION_FILE.MIXED_FILES'));
       return;
     }
 
     if (zipFiles.length > 1) {
-      setErrorMessage('Multiple ZIP files selected. Please select only one ZIP file at a time for import.');
+      setErrorMessage(t('SIDEBAR.IMPORT_COLLECTION_FILE.MULTIPLE_ZIPS'));
       return;
     }
 
@@ -261,17 +263,17 @@ const FileTab = ({
             accept={acceptedFileTypes.join(',')}
           />
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-            Drop file(s) to import or{' '}
+            {t('SIDEBAR.IMPORT_COLLECTION_FILE.DROP_HINT')}{' '}
             <button
               className="underline cursor-pointer"
               onClick={handleBrowseFiles}
               style={{ color: theme.textLink }}
             >
-              choose file(s)
+              {t('SIDEBAR.IMPORT_COLLECTION_FILE.CHOOSE_FILES')}
             </button>
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-            Supports Bruno, OpenCollection, Postman, Insomnia, OpenAPI 3.x / Swagger 2.0, WSDL, and ZIP formats
+            {t('SIDEBAR.IMPORT_COLLECTION_FILE.SUPPORTED_FORMATS')}
           </p>
         </div>
       </div>

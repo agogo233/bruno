@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import {
   IconAlertCircle,
@@ -35,6 +36,7 @@ const CompatEndpointCard = ({
   onRemoveEndpoint,
   onStatusChange
 }) => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(!endpoint.baseURL);
   const [keyDraft, setKeyDraft] = useState('');
   const [editing, setEditing] = useState(false);
@@ -65,9 +67,9 @@ const CompatEndpointCard = ({
       setKeyDraft('');
       setShowKey(false);
       setEditing(false);
-      setFeedback({ type: 'success', message: 'API key saved' });
+      setFeedback({ type: 'success', message: t('AI.COMPAT_KEY_SAVED') });
     } catch (err) {
-      setFeedback({ type: 'error', message: err.message || 'Failed to save API key' });
+      setFeedback({ type: 'error', message: err.message || t('AI.COMPAT_KEY_FAILED') });
     } finally {
       setSaving(false);
     }
@@ -80,9 +82,9 @@ const CompatEndpointCard = ({
       onStatusChange?.(status);
       setEditing(false);
       setKeyDraft('');
-      toast.success(`${endpoint.name || 'Endpoint'} API key removed`);
+      toast.success(t('AI.COMPAT_KEY_REMOVED', { name: endpoint.name || t('AI.COMPAT_DEFAULT_NAME') }));
     } catch (err) {
-      toast.error(err.message || 'Failed to clear API key');
+      toast.error(err.message || t('AI.COMPAT_KEY_CLEAR_FAILED'));
     }
   };
 
@@ -92,12 +94,12 @@ const CompatEndpointCard = ({
     try {
       const result = await testAiProvider({ providerId: provider.id });
       if (result.ok) {
-        setFeedback({ type: 'success', message: 'Connection successful' });
+        setFeedback({ type: 'success', message: t('AI.COMPAT_CONNECTION_OK') });
       } else {
-        setFeedback({ type: 'error', message: result.error || 'Connection failed' });
+        setFeedback({ type: 'error', message: result.error || t('AI.COMPAT_CONNECTION_FAILED') });
       }
     } catch (err) {
-      setFeedback({ type: 'error', message: err.message || 'Connection failed' });
+      setFeedback({ type: 'error', message: err.message || t('AI.COMPAT_CONNECTION_FAILED') });
     } finally {
       setTesting(false);
     }
@@ -170,7 +172,7 @@ const CompatEndpointCard = ({
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <IconServer size={16} strokeWidth={1.5} className="provider-logo flex-shrink-0" />
           <div className="flex flex-col min-w-0">
-            <span className="font-semibold text-[12.5px] truncate">{endpoint.name || 'Unnamed endpoint'}</span>
+            <span className="font-semibold text-[12.5px] truncate">{endpoint.name || t('AI.COMPAT_UNNAMED')}</span>
             {endpoint.baseURL && (
               <span className="provider-status text-[10.5px] truncate">{endpoint.baseURL}</span>
             )}
@@ -181,7 +183,7 @@ const CompatEndpointCard = ({
             <span className={`status-dot w-[7px] h-[7px] rounded-full ${provider.configured ? 'configured' : ''}`} />
             {provider.configured
               ? `${enabledModelsCount}/${models.length} model${models.length === 1 ? '' : 's'}`
-              : 'Not configured'}
+              : t('AI.PROVIDER_NOT_CONFIGURED')}
           </span>
           <span className="flex items-center" onClick={stopBubble}>
             {providerToggle}
@@ -199,13 +201,13 @@ const CompatEndpointCard = ({
             <div className="grid grid-cols-2 gap-2" onClick={stopBubble}>
               <div className="flex flex-col gap-1">
                 <label className="key-section-label text-[11px]" htmlFor={`endpoint-name-${endpoint.id}`}>
-                  Name
+{t('AI.COMPAT_NAME')}
                 </label>
                 <input
                   id={`endpoint-name-${endpoint.id}`}
                   type="text"
                   className="key-input w-full h-8 box-border text-xs leading-none pl-2.5 pr-2"
-                  placeholder="e.g. Ollama local"
+                  placeholder={t('AI.COMPAT_NAME_PLACEHOLDER')}
                   value={endpoint.name || ''}
                   onChange={(e) => onChangeName(e.target.value)}
                   onClick={stopBubble}
@@ -213,13 +215,13 @@ const CompatEndpointCard = ({
               </div>
               <div className="flex flex-col gap-1">
                 <label className="key-section-label text-[11px]" htmlFor={`endpoint-baseurl-${endpoint.id}`}>
-                  Base URL
+{t('AI.COMPAT_BASE_URL')}
                 </label>
                 <input
                   id={`endpoint-baseurl-${endpoint.id}`}
                   type="text"
                   className="key-input w-full h-8 box-border text-xs leading-none pl-2.5 pr-2"
-                  placeholder="https://api.example.com/v1"
+                  placeholder={t('AI.COMPAT_BASE_URL_PLACEHOLDER')}
                   value={endpoint.baseURL || ''}
                   onChange={(e) => onChangeBaseURL(e.target.value)}
                   autoComplete="off"
@@ -233,7 +235,7 @@ const CompatEndpointCard = ({
             {/* API key */}
             <div>
               <div className="key-section-label flex items-center justify-between gap-2 text-[11px] mb-1">
-                <span>API Key <span className="opacity-60">(optional)</span></span>
+                <span>API Key <span className="opacity-60">{t('AI.COMPAT_API_KEY_OPTIONAL')}</span></span>
               </div>
 
               {!editing ? (
@@ -244,7 +246,7 @@ const CompatEndpointCard = ({
                   {provider.hasApiKey ? (
                     <span className="key-display-mask text-xs">••••••••••••••••</span>
                   ) : (
-                    <span className="key-display-mask text-xs opacity-60">Not set</span>
+                    <span className="key-display-mask text-xs opacity-60">{t('AI.COMPAT_NOT_SET')}</span>
                   )}
                   <div className="flex items-center gap-0.5">
                     <button
@@ -252,8 +254,8 @@ const CompatEndpointCard = ({
                       className="btn-icon w-7 h-7 box-border inline-flex items-center justify-center cursor-pointer"
                       onClick={handleTest}
                       disabled={testing || pending || !providerEnabled || !endpoint.baseURL}
-                      title={endpoint.baseURL ? 'Test connection' : 'Set Base URL first'}
-                      aria-label="Test connection"
+                      title={endpoint.baseURL ? t('AI.PROVIDER_TEST_CONNECTION') : t('AI.COMPAT_SET_BASE_URL')}
+                      aria-label={t('AI.PROVIDER_TEST_CONNECTION')}
                       data-testid={`ai-endpoint-${endpoint.id}-test`}
                     >
                       {testing ? <IconLoader2 size={15} className="spin" /> : <IconBolt size={15} />}
@@ -263,8 +265,8 @@ const CompatEndpointCard = ({
                       className="btn-icon w-7 h-7 box-border inline-flex items-center justify-center cursor-pointer"
                       onClick={handleStartEditKey}
                       disabled={pending}
-                      title={provider.hasApiKey ? 'Replace key' : 'Add key'}
-                      aria-label={provider.hasApiKey ? 'Replace key' : 'Add key'}
+                      title={provider.hasApiKey ? t('AI.PROVIDER_REPLACE_KEY') : t('AI.COMPAT_ADD_KEY')}
+                      aria-label={provider.hasApiKey ? t('AI.PROVIDER_REPLACE_KEY') : t('AI.COMPAT_ADD_KEY')}
                       data-testid={`ai-endpoint-${endpoint.id}-edit-key`}
                     >
                       <IconPencil size={15} />
@@ -275,8 +277,8 @@ const CompatEndpointCard = ({
                         className="btn-icon danger w-7 h-7 box-border inline-flex items-center justify-center cursor-pointer"
                         onClick={handleClearKey}
                         disabled={pending}
-                        title="Remove key"
-                        aria-label="Remove key"
+                        title={t('AI.PROVIDER_REMOVE_KEY')}
+                        aria-label={t('AI.PROVIDER_REMOVE_KEY')}
                         data-testid={`ai-endpoint-${endpoint.id}-clear-key`}
                       >
                         <IconTrash size={15} />
@@ -291,7 +293,7 @@ const CompatEndpointCard = ({
                       id={`api-key-${provider.id}`}
                       type={showKey ? 'text' : 'password'}
                       className="key-input w-full h-8 box-border text-xs leading-none pl-2.5 pr-8"
-                      placeholder="sk-..."
+                      placeholder={t('AI.COMPAT_KEY_PLACEHOLDER')}
                       autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
@@ -308,7 +310,7 @@ const CompatEndpointCard = ({
                       className="key-eye-btn absolute right-1 p-1 inline-flex items-center cursor-pointer"
                       onClick={() => setShowKey(!showKey)}
                       tabIndex={-1}
-                      aria-label={showKey ? 'Hide API key' : 'Show API key'}
+                      aria-label={showKey ? t('AI.PROVIDER_HIDE_KEY') : t('AI.PROVIDER_SHOW_KEY')}
                     >
                       {showKey ? <IconEyeOff size={14} /> : <IconEye size={14} />}
                     </button>
@@ -321,13 +323,13 @@ const CompatEndpointCard = ({
                     data-testid={`ai-endpoint-${endpoint.id}-save-key`}
                   >
                     {saving ? <IconLoader2 size={13} className="spin" /> : <IconCheck size={13} />}
-                    Save
+{t('AI.PROVIDER_SAVE')}
                   </button>
                   <button
                     type="button"
                     className="btn-icon w-7 h-7 box-border inline-flex items-center justify-center cursor-pointer"
                     onClick={handleCancelEditKey}
-                    title="Cancel"
+                    title={t('AI.PROVIDER_CANCEL')}
                   >
                     <IconX size={15} />
                   </button>
@@ -337,7 +339,7 @@ const CompatEndpointCard = ({
               {pending && (
                 <div className="feedback flex items-center gap-1.5 text-[11px] px-2 py-1 mt-1.5" role="status">
                   <IconLoader2 size={12} className="spin" />
-                  Saving endpoint…
+                  {t('AI.COMPAT_SAVING')}
                 </div>
               )}
 
@@ -355,18 +357,18 @@ const CompatEndpointCard = ({
             {/* Models */}
             <div className="flex flex-col gap-1.5" onClick={stopBubble}>
               <div className="models-label-row flex items-center justify-between text-[11px]">
-                <span>Models</span>
+                <span>{t('AI.PROVIDER_MODELS')}</span>
                 {!provider.configured && (
                   <span className="keyless-hint flex items-center gap-1.5 text-[11px] py-1">
                     <IconAlertCircle size={12} />
-                    Set a Base URL to enable
+                    {t('AI.COMPAT_SET_BASE_URL_PROMPT')}
                   </span>
                 )}
               </div>
 
               {models.length === 0 && (
                 <div className="compat-models-empty text-[11px] px-2.5 py-2">
-                  No models yet. Add the model id your provider expects (e.g. <code>gpt-4o</code> or <code>llama3.1:8b</code>).
+                  {t('AI.COMPAT_NO_MODELS')}
                 </div>
               )}
 
@@ -391,22 +393,22 @@ const CompatEndpointCard = ({
                           type="text"
                           className="compat-inline-input flex-1 text-xs"
                           value={model.label || ''}
-                          placeholder="Display name"
+                          placeholder={t('AI.COMPAT_MODEL_DISPLAY_NAME')}
                           onChange={(e) => onUpdateModel(model.id, { label: e.target.value })}
                         />
                         <input
                           type="text"
                           className="compat-inline-input compat-inline-id flex-1 text-xs"
                           value={model.modelId || ''}
-                          placeholder="Model id"
+                          placeholder={t('AI.COMPAT_MODEL_ID')}
                           onChange={(e) => onUpdateModel(model.id, { modelId: e.target.value })}
                         />
                         <button
                           type="button"
                           className="btn-icon danger w-6 h-6 box-border inline-flex items-center justify-center cursor-pointer"
                           onClick={() => onRemoveModel(model.id)}
-                          title="Remove model"
-                          aria-label="Remove model"
+                          title={t('AI.COMPAT_REMOVE_MODEL')}
+                          aria-label={t('AI.COMPAT_REMOVE_MODEL')}
                         >
                           <IconTrash size={13} />
                         </button>
@@ -420,7 +422,7 @@ const CompatEndpointCard = ({
                 <input
                   type="text"
                   className="key-input flex-1 h-8 box-border text-xs leading-none pl-2.5 pr-2"
-                  placeholder="Model id (required)"
+                  placeholder={t('AI.COMPAT_MODEL_ID_REQUIRED')}
                   value={newModelId}
                   onChange={(e) => setNewModelId(e.target.value)}
                   onKeyDown={handleAddModelKeyDown}
@@ -429,7 +431,7 @@ const CompatEndpointCard = ({
                 <input
                   type="text"
                   className="key-input flex-1 h-8 box-border text-xs leading-none pl-2.5 pr-2"
-                  placeholder="Label (optional)"
+                  placeholder={t('AI.COMPAT_LABEL_OPTIONAL')}
                   value={newModelLabel}
                   onChange={(e) => setNewModelLabel(e.target.value)}
                   onKeyDown={handleAddModelKeyDown}
@@ -443,7 +445,7 @@ const CompatEndpointCard = ({
                   data-testid={`ai-endpoint-${endpoint.id}-add-model`}
                 >
                   <IconPlus size={13} />
-                  Add
+                    {t('AI.COMPAT_ADD')}
                 </button>
               </div>
             </div>
@@ -456,7 +458,7 @@ const CompatEndpointCard = ({
                 data-testid={`ai-endpoint-${endpoint.id}-remove`}
               >
                 <IconTrash size={12} />
-                Remove endpoint
+                {t('AI.COMPAT_REMOVE_ENDPOINT')}
               </button>
             </div>
           </div>

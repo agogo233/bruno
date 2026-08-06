@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
 import ColorBadge from 'components/ColorBadge';
 
@@ -27,6 +28,8 @@ const EnvironmentSelectionList = ({
   title = 'Environments',
   disabled = false
 }) => {
+  const { t } = useTranslation();
+  const resolvedTitle = title || t('SIDEBAR.ENVIRONMENT_SELECTION.TITLE');
   // O(1) membership checks regardless of how many environments are rendered.
   const selectedSet = useMemo(() => new Set(selectedUids), [selectedUids]);
 
@@ -77,9 +80,9 @@ const EnvironmentSelectionList = ({
     <>
       <div className="env-section-header">
         <div className="env-section-heading">
-          <h4 className="env-section-title" data-testid="env-section-title">{title}</h4>
+          <h4 className="env-section-title" data-testid="env-section-title">{resolvedTitle}</h4>
           <span className="env-section-count" data-testid="env-selected-count">
-            ({selectedCount}/{environments.length} selected)
+            ({selectedCount}/{environments.length} {t('SIDEBAR.ENVIRONMENT_SELECTION.SELECTED')})
           </span>
         </div>
         <label className="env-select-all">
@@ -92,13 +95,13 @@ const EnvironmentSelectionList = ({
             onChange={handleToggleAll}
             data-testid="env-select-all"
           />
-          <span className="env-select-all-label" data-testid="env-select-all-label">Select All</span>
+          <span className="env-select-all-label" data-testid="env-select-all-label">{t('SIDEBAR.ENVIRONMENT_SELECTION.SELECT_ALL')}</span>
         </label>
       </div>
       <Virtuoso
         className="env-list"
         role="group"
-        aria-label={title}
+        aria-label={resolvedTitle}
         style={{ height: visibleRows * ENV_ROW_HEIGHT }}
         data={environments}
         computeItemKey={computeItemKey}

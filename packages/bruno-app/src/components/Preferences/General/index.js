@@ -3,6 +3,8 @@ import get from 'lodash/get';
 import debounce from 'lodash/debounce';
 import { useFormik } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import { savePreferences } from 'providers/ReduxStore/slices/app';
 import { browseDirectory } from 'providers/ReduxStore/slices/collections/actions';
 import StyledWrapper from './StyledWrapper';
@@ -14,6 +16,7 @@ import { IconTrash } from '@tabler/icons';
 const General = () => {
   const preferences = useSelector((state) => state.app.preferences);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const inputFileCaCertificateRef = useRef();
 
   const preferencesSchema = Yup.object().shape({
@@ -32,10 +35,10 @@ const General = () => {
         return originalValue === '' ? undefined : value;
       })
       .nullable()
-      .test('isNumber', 'Request Timeout must be a number', (value) => {
+      .test('isNumber', t('GENERAL.TIMEOUT_NUMBER'), (value) => {
         return value === undefined || !isNaN(value);
       })
-      .test('isValidTimeout', 'Request Timeout must be equal or greater than 0', (value) => {
+      .test('isValidTimeout', t('GENERAL.TIMEOUT_MIN'), (value) => {
         return value === undefined || Number(value) >= 0;
       }),
     autoSave: Yup.object({
@@ -44,13 +47,13 @@ const General = () => {
         .transform((value, originalValue) => {
           return originalValue === '' ? undefined : value;
         })
-        .test('isNumber', 'Save Delay must be a number', (value) => {
+        .test('isNumber', t('GENERAL.SAVE_DELAY_NUMBER'), (value) => {
           return value === undefined || !isNaN(value);
         })
-        .test('isValidInterval', 'Save Delay must be at least 500ms', (value) => {
+        .test('isValidInterval', t('GENERAL.SAVE_DELAY_MIN'), (value) => {
           return value === undefined || Number(value) >= 500;
         })
-    }).test('intervalRequired', 'Save Delay is required when Auto Save is enabled', (value) => {
+    }).test('intervalRequired', t('GENERAL.SAVE_DELAY_REQUIRED'), (value) => {
       // If autosave is enabled, interval must be provided
       if (value.enabled && (value.interval === undefined || value.interval === '')) {
         return false;
@@ -125,7 +128,7 @@ const General = () => {
           defaultLocation: newPreferences.defaultLocation
         }
       }))
-      .catch((err) => console.log(err) && toast.error('Failed to update preferences'));
+      .catch((err) => console.log(err) && toast.error(t('GENERAL.FAILED_UPDATE')));
   }, [dispatch, preferences]);
 
   const handleSaveRef = useRef(handleSave);
@@ -176,9 +179,15 @@ const General = () => {
       });
   };
 
+  const handleLanguageChange = (e) => {
+    const lng = e.target.value;
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+  };
+
   return (
     <StyledWrapper className="w-full">
-      <div className="section-header">General Settings</div>
+      <div className="section-header">{t('GENERAL.SETTINGS')}</div>
       <form className="bruno-form" onSubmit={formik.handleSubmit}>
         <div className="flex items-center mb-2">
           <input
@@ -190,7 +199,7 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="sslVerification">
-            SSL/TLS Certificate Verification
+            {t('GENERAL.SSL_VERIFICATION')}
           </label>
         </div>
         <div className="flex items-center mt-2">
@@ -203,7 +212,7 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="customCaCertificateEnabled">
-            Use Custom CA Certificate
+            {t('GENERAL.USE_CUSTOM_CA')}
           </label>
         </div>
         {formik.values.customCaCertificate.filePath ? (
@@ -234,7 +243,7 @@ const General = () => {
               disabled={formik.values.customCaCertificate.enabled ? false : true}
               onClick={() => inputFileCaCertificateRef.current.click()}
             >
-              Select File
+              {t('GENERAL.SELECT_FILE')}
               <input
                 id="caCertFilePath"
                 type="file"
@@ -261,7 +270,7 @@ const General = () => {
             className={`block ml-2 select-none ${formik.values.customCaCertificate.enabled && formik.values.customCaCertificate.filePath ? '' : 'opacity-25'}`}
             htmlFor="keepDefaultCaCertificatesEnabled"
           >
-            Keep Default CA Certificates
+            {t('GENERAL.KEEP_DEFAULT_CA')}
           </label>
         </div>
         <div className="flex items-center mt-2">
@@ -274,7 +283,7 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="storeCookies">
-            Store Cookies automatically
+            {t('GENERAL.STORE_COOKIES')}
           </label>
         </div>
         <div className="flex items-center mt-2">
@@ -287,7 +296,7 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="sendCookies">
-            Send Cookies automatically
+            {t('GENERAL.SEND_COOKIES')}
           </label>
         </div>
         <div className="flex items-center mt-2">
@@ -300,12 +309,12 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="oauth2.useSystemBrowser">
-            Use System Browser for OAuth2 Authorization
+            {t('GENERAL.OAUTH2_SYSTEM_BROWSER')}
           </label>
         </div>
         <div className="flex flex-col mt-6">
           <label className="block select-none" htmlFor="timeout">
-            Request Timeout (in ms)
+            {t('GENERAL.REQUEST_TIMEOUT')}
           </label>
           <input
             type="text"
@@ -332,12 +341,12 @@ const General = () => {
             className="mousetrap mr-0"
           />
           <label className="block ml-2 select-none" htmlFor="autoSaveEnabled">
-            Enable Auto Save
+            {t('GENERAL.ENABLE_AUTO_SAVE')}
           </label>
         </div>
         <div className={`flex flex-col mt-2 ${!formik.values.autoSave.enabled ? 'opacity-50' : ''}`}>
           <label className="block select-none" htmlFor="autoSaveInterval">
-            Save Delay (in ms)
+            {t('GENERAL.SAVE_DELAY')}
           </label>
           <input
             type="text"
@@ -361,10 +370,10 @@ const General = () => {
         )}
         <div className="flex flex-col mt-6">
           <label className="block select-none default-location-label" htmlFor="defaultLocation">
-            Default Location
+            {t('GENERAL.DEFAULT_LOCATION')}
           </label>
           <p className="text-muted mt-1 text-xs">
-            Used as the default location for new workspaces and collections
+            {t('GENERAL.DEFAULT_LOCATION_DESC')}
           </p>
           <input
             type="text"
@@ -379,20 +388,34 @@ const General = () => {
             onChange={formik.handleChange}
             value={formik.values.defaultLocation || ''}
             onClick={browseDefaultLocation}
-            placeholder="Click to browse for default location"
+            placeholder={t('GENERAL.DEFAULT_LOCATION_PLACEHOLDER')}
           />
           <div className="mt-1">
             <span
               className="text-link cursor-pointer hover:underline default-location-browse"
               onClick={browseDefaultLocation}
             >
-              Browse
+              {t('GENERAL.BROWSE')}
             </span>
           </div>
         </div>
         {formik.touched.defaultLocation && formik.errors.defaultLocation ? (
           <div className="text-red-500">{formik.errors.defaultLocation}</div>
         ) : null}
+        <div className="flex flex-col mt-6">
+          <label className="block select-none" htmlFor="language">
+            {t('GENERAL.LANGUAGE')}
+          </label>
+          <select
+            id="language"
+            className="block textbox mt-2 w-48"
+            value={i18n.language}
+            onChange={handleLanguageChange}
+          >
+            <option value="en">English</option>
+            <option value="zh-CN">简体中文</option>
+          </select>
+        </div>
       </form>
     </StyledWrapper>
   );

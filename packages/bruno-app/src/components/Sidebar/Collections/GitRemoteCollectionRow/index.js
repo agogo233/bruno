@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { IconBrandGit, IconCopy, IconDots, IconUnlink } from '@tabler/icons';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import ActionIcon from 'ui/ActionIcon';
 import MenuDropdown from 'ui/MenuDropdown';
 import { useSidebarAccordion } from 'components/Sidebar/SidebarAccordionContext';
@@ -9,6 +10,7 @@ import RemoveGitRemote from 'components/WorkspaceHome/WorkspaceOverview/Collecti
 import StyledWrapper from './StyledWrapper';
 
 const GitRemoteCollectionRow = ({ entry }) => {
+  const { t } = useTranslation();
   const { dropdownContainerRef } = useSidebarAccordion();
   const menuDropdownRef = useRef(null);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -20,9 +22,9 @@ const GitRemoteCollectionRow = ({ entry }) => {
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(entry.remote);
-      toast.success('Git URL copied');
+      toast.success(t('SIDEBAR.GIT_REMOTE.URL_COPIED'));
     } catch (e) {
-      toast.error('Failed to copy URL');
+      toast.error(t('SIDEBAR.GIT_REMOTE.COPY_FAILED'));
     }
   };
 
@@ -35,19 +37,19 @@ const GitRemoteCollectionRow = ({ entry }) => {
     {
       id: 'clone-git',
       leftSection: IconBrandGit,
-      label: 'Clone from Git',
+      label: t('SIDEBAR.GIT_REMOTE.CLONE'),
       onClick: openCloneModal
     },
     {
       id: 'copy-url',
       leftSection: IconCopy,
-      label: 'Copy Git URL',
+      label: t('SIDEBAR.GIT_REMOTE.COPY_URL'),
       onClick: handleCopyUrl
     },
     {
       id: 'remove-git-remote',
       leftSection: IconUnlink,
-      label: 'Remove Git Remote',
+      label: t('SIDEBAR.GIT_REMOTE.REMOVE'),
       onClick: () => setShowRemoveGitModal(true)
     }
   ];

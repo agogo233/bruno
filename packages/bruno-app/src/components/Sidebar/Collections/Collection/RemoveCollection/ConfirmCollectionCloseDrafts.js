@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import filter from 'lodash/filter';
 import { useDispatch, useSelector } from 'react-redux';
 import { flattenItems, isItemARequest, hasRequestChanges, findCollectionByUid } from 'utils/collections';
@@ -16,6 +17,7 @@ const MAX_UNSAVED_REQUESTS_TO_SHOW = 5;
 
 const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const latestCollection = useSelector((state) => findCollectionByUid(state.collections.collections, collectionUid));
 
@@ -54,7 +56,7 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
   const handleSaveAll = () => {
     // If there are transient drafts, we can't proceed with batch save
     if (currentTransientDrafts.length > 0) {
-      toast.error('Please save or discard transient requests first');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       return;
     }
     // Save only non-transient drafts
@@ -66,10 +68,10 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
               toast.success('Collection removed from workspace');
               onClose();
             })
-            .catch(() => toast.error('An error occurred while removing the collection'));
+            .catch(() => toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED')));
         })
         .catch(() => {
-          toast.error('Failed to save requests!');
+          toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
         });
     } else {
       // No non-transient drafts, just remove the collection
@@ -78,7 +80,7 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
           toast.success('Collection removed from workspace');
           onClose();
         })
-        .catch(() => toast.error('An error occurred while removing the collection'));
+        .catch(() => toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED')));
     }
   };
 
@@ -97,7 +99,7 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
         toast.success('Collection removed from workspace');
         onClose();
       })
-      .catch(() => toast.error('An error occurred while removing the collection'));
+      .catch(() => toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED')));
   };
 
   const handleSaveTransient = (draft) => {
@@ -112,9 +114,9 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
     <StyledWrapper>
       <Modal
         size="md"
-        title="Remove Collection"
-        confirmText="Save and Remove"
-        cancelText="Remove without saving"
+        title={t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.TITLE')}
+        confirmText={t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVE_REMOVE')}
+        cancelText={t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.REMOVE_WITHOUT_SAVING')}
         handleCancel={onClose}
         disableEscapeKey={true}
         disableCloseOnOutsideClick={true}
@@ -123,18 +125,18 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
       >
         <div className="flex items-center">
           <IconAlertTriangle size={32} strokeWidth={1.5} className="warning-text" />
-          <h1 className="ml-2 text-lg font-medium">Hold on..</h1>
+          <h1 className="ml-2 text-lg font-medium">{t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.HOLD_ON')}</h1>
         </div>
         <p className="mt-4">
-          You have unsaved changes in <span className="font-medium">{allDrafts.length}</span>{' '}
-          {pluralizeWord('request', allDrafts.length)}.
+          {t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.UNSAVED_CHANGES')} <span className="font-medium">{allDrafts.length}</span>{' '}
+          {pluralizeWord(t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.REQUEST'), allDrafts.length)}.
         </p>
 
         {/* Regular (saved) requests with changes */}
         {currentDrafts.length > 0 && (
           <div className="mt-4">
             <p className="text-sm font-medium mb-2">
-              Saved {pluralizeWord('Request', currentDrafts.length)} ({currentDrafts.length})
+              Saved {pluralizeWord(t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVED_REQUEST'), currentDrafts.length)} ({currentDrafts.length})
             </p>
             <ul className="ml-2">
               {currentDrafts.slice(0, MAX_UNSAVED_REQUESTS_TO_SHOW).map((item) => {
@@ -158,10 +160,10 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
         {currentTransientDrafts.length > 0 && (
           <div className="mt-4">
             <p className="text-sm font-medium mb-2">
-              Transient {pluralizeWord('Request', currentTransientDrafts.length)} ({currentTransientDrafts.length})
+              Transient {pluralizeWord(t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.TRANSIENT_REQUEST'), currentTransientDrafts.length)} ({currentTransientDrafts.length})
             </p>
             <p className="text-xs transient-hint mb-3">
-              These requests need to be saved individually before closing the collection.
+              {t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.NEED_SAVE')}
             </p>
             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
               {currentTransientDrafts.map((item) => {
@@ -178,8 +180,7 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
                       onClick={() => handleSaveTransient(item)}
                       icon={<IconDeviceFloppy size={14} strokeWidth={1.5} />}
                     >
-                      Save
-                    </Button>
+                      {t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVE')}
                   </div>
                 );
               })}
@@ -190,19 +191,19 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
         <div className="flex justify-between mt-6">
           <div>
             <Button color="danger" onClick={handleDiscardAll}>
-              Discard All and Remove
+              {t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.DISCARD_ALL_REMOVE')}
             </Button>
           </div>
           <div>
             <Button className="mr-2" color="secondary" variant="ghost" onClick={onClose}>
-              Cancel
+{t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.CANCEL')}
             </Button>
             <Button
               onClick={handleSaveAll}
               disabled={currentTransientDrafts.length > 0}
               title={currentTransientDrafts.length > 0 ? 'Please save or discard transient requests first' : ''}
             >
-              {currentDrafts.length > 1 ? 'Save All and Remove' : 'Save and Remove'}
+              {currentDrafts.length > 1 ? t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVE_ALL_REMOVE') : t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVE_AND_REMOVE')}
             </Button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Modal from 'components/Modal';
@@ -18,6 +19,7 @@ import Button from 'ui/Button';
 
 const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const collection = useSelector((state) => state.collections.collections?.find((c) => c.uid === collectionUid));
   const isFolder = isItemAFolder(item);
   const inputRef = useRef();
@@ -76,7 +78,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
         }
         onClose();
       } catch (error) {
-        toast.error(error.message || 'An error occurred while renaming');
+        toast.error(error.message || t('SIDEBAR.COMMON.ERROR_RENAMING'));
       }
     }
   });
@@ -87,14 +89,14 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
     }
   }, [inputRef]);
 
-  const AdvancedOptions = forwardRef((props, ref) => {
+  const Advanced{t('SIDEBAR.RENAME_COLLECTION_ITEM.OPTIONS')} = forwardRef((props, ref) => {
     return (
       <div ref={ref} className="flex mr-2 text-link cursor-pointer items-center">
         <button
           className="btn-advanced"
           type="button"
         >
-          Options
+          {t('SIDEBAR.RENAME_COLLECTION_ITEM.OPTIONS')}
         </button>
         <IconCaretDown className="caret ml-1" size={14} strokeWidth={2} />
       </div>
@@ -106,14 +108,14 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
       <StyledWrapper>
         <Modal
           size="md"
-          title={`Rename ${isFolder ? 'Folder' : 'Request'}`}
-          handleCancel={onClose}
+          title={isFolder ? t('SIDEBAR.RENAME_COLLECTION_ITEM.RENAME_FOLDER') : t('SIDEBAR.RENAME_COLLECTION_ITEM.RENAME_REQUEST')}
+          handle{t('SIDEBAR.RENAME_COLLECTION_ITEM.CANCEL')}={onClose}
           hideFooter
         >
           <form className="bruno-form" onSubmit={formik.handleSubmit}>
             <div className="flex flex-col mt-2">
               <label htmlFor="name" className="block font-medium">
-                {isFolder ? 'Folder' : 'Request'} Name
+                {isFolder ? t('SIDEBAR.RENAME_COLLECTION_ITEM.FOLDER_NAME') : t('SIDEBAR.RENAME_COLLECTION_ITEM.REQUEST_NAME')}
               </label>
               <input
                 id="collection-item-name"
@@ -138,7 +140,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
               <div className="mt-4">
                 <div className="flex items-center justify-between">
                   <label htmlFor="filename" className="flex items-center font-medium">
-                    {isFolder ? 'Folder' : 'File'} Name <small className="font-normal text-muted ml-1">(on filesystem)</small>
+                    {isFolder ? t('SIDEBAR.RENAME_COLLECTION_ITEM.FOLDER_NAME') : t('SIDEBAR.RENAME_COLLECTION_ITEM.FILE_NAME')} <small className="font-normal text-muted ml-1">{t('SIDEBAR.RENAME_COLLECTION_ITEM.FILE_NAME_HINT')}</small>
                     { isFolder ? (
                       <Help width="300">
                         <p>
@@ -179,7 +181,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
                       id="file-name"
                       type="text"
                       name="filename"
-                      placeholder={isFolder ? 'Folder Name' : 'File Name'}
+                      placeholder={isFolder ? t('SIDEBAR.RENAME_COLLECTION_ITEM.FOLDER_NAME') : t('SIDEBAR.RENAME_COLLECTION_ITEM.FILE_NAME')}
                       className="!pr-10 block textbox mt-2 w-full"
                       autoComplete="off"
                       autoCorrect="off"
@@ -204,7 +206,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
             )}
             <div className="flex justify-between items-center mt-8 bruno-modal-footer">
               <div className="flex advanced-options">
-                <Dropdown onCreate={onDropdownCreate} icon={<AdvancedOptions />} placement="bottom-start">
+                <Dropdown onCreate={onDropdownCreate} icon={<Advanced{t('SIDEBAR.RENAME_COLLECTION_ITEM.OPTIONS')} />} placement="bottom-start">
                   <div
                     className="dropdown-item"
                     key="show-filesystem-name"
@@ -213,16 +215,16 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
                       toggleShowFilesystemName(!showFilesystemName);
                     }}
                   >
-                    {showFilesystemName ? 'Hide Filesystem Name' : 'Show Filesystem Name'}
+                    {showFilesystemName ? t('SIDEBAR.RENAME_COLLECTION_ITEM.HIDE_FS_NAME') : t('SIDEBAR.RENAME_COLLECTION_ITEM.SHOW_FS_NAME')}
                   </div>
                 </Dropdown>
               </div>
               <div className="flex justify-end">
                 <Button type="button" color="secondary" variant="ghost" onClick={onClose} className="mr-2">
-                  Cancel
+                  {t('SIDEBAR.RENAME_COLLECTION_ITEM.CANCEL')}
                 </Button>
                 <Button type="submit" data-testid="rename-item-button">
-                  Rename
+{t('SIDEBAR.RENAME_COLLECTION_ITEM.RENAME')}
                 </Button>
               </div>
             </div>

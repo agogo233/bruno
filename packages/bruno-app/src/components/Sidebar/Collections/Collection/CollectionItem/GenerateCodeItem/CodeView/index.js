@@ -6,11 +6,13 @@ import { useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import toast from 'react-hot-toast';
 import { IconCopy } from '@tabler/icons';
+import { useTranslation } from 'react-i18next';
 import { findCollectionByItemUid, getGlobalEnvironmentVariables } from 'utils/collections/index';
 import { cloneDeep } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { generateSnippet } from '../utils/snippet-generator';
 const CodeView = ({ language, item }) => {
+  const { t } = useTranslation();
   const { displayedTheme } = useTheme();
   const preferences = useSelector((state) => state.app.preferences);
   const { globalEnvironments, activeGlobalEnvironmentUid } = useSelector((state) => state.globalEnvironments);
@@ -54,7 +56,7 @@ const CodeView = ({ language, item }) => {
       <CopyToClipboard
         text={snippet}
         options={{ format: 'text/plain' }}
-        onCopy={() => toast.success('Copied to clipboard!')}
+        onCopy={() => toast.success(t('SIDEBAR.CODE_VIEW.COPIED'))}
       >
         <button className="copy-to-clipboard">
           <IconCopy size={20} strokeWidth={1.5} />

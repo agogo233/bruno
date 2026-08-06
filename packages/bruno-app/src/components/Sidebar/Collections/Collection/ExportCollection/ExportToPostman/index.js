@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -16,6 +17,7 @@ import StyledWrapper from './StyledWrapper';
 const FILE_EXISTS_ERROR = 'Name already exists in this location.';
 
 const ExportToPostman = ({ onClose, onExported, collection }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const inputRef = useRef();
   const [preserveScripts, setPreserveScripts] = useState(false);
@@ -56,7 +58,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
     try {
       const content = exportPostmanCollection(cloneDeep(collection), { preserveScripts });
       await dispatch(exportCollectionToPostman(values.location, `${values.fileName.trim()}.json`, content, overwrite));
-      toast.success('Collection exported successfully');
+      toast.success(t('SIDEBAR.EXPORT_TO_POSTMAN.EXPORTED'));
       onExported();
     } catch (error) {
       const message = error?.message || String(error);
@@ -66,7 +68,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
         formik.setFieldError('fileName', FILE_EXISTS_ERROR);
         return;
       }
-      toast.error('Failed to export collection: ' + message);
+      toast.error(t('SIDEBAR.COMMON.ERROR_EXPORTING') + message);
     } finally {
       setIsExporting(false);
     }
@@ -98,7 +100,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
     return (
       <div ref={ref} className="flex items-center text-link cursor-pointer">
         <button className="btn-advanced" type="button">
-          Options
+          {t('SIDEBAR.EXPORT_TO_POSTMAN.OPTIONS')}
         </button>
         <IconCaretDown className="caret ml-1" size={14} strokeWidth={2} />
       </div>
@@ -110,9 +112,9 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
       <StyledWrapper>
         <Modal
           size="md"
-          title="Export to Postman"
+          title={t('SIDEBAR.EXPORT_TO_POSTMAN.TITLE')}
           dataTestId="export-to-postman-modal"
-          confirmText={fileExists ? 'Replace' : 'Export'}
+          confirmText={fileExists ? t('SIDEBAR.EXPORT_TO_POSTMAN.REPLACE') : t('SIDEBAR.EXPORT_TO_POSTMAN.EXPORT')}
           confirmButtonColor={fileExists ? 'danger' : 'primary'}
           confirmDisabled={isExporting}
           handleConfirm={() => (fileExists ? handleReplace() : formik.handleSubmit())}
@@ -128,7 +130,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
                     setShowAdvancedOptions(!showAdvancedOptions);
                   }}
                 >
-                  {showAdvancedOptions ? 'Hide Advanced Options' : 'Show Advanced Options'}
+                  {showAdvancedOptions ? t('SIDEBAR.EXPORT_TO_POSTMAN.HIDE_ADVANCED') : t('SIDEBAR.EXPORT_TO_POSTMAN.SHOW_ADVANCED')}
                 </div>
               </Dropdown>
             </div>
@@ -136,7 +138,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
         >
           <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
             <label htmlFor="fileName" className="block font-medium">
-              Name
+              {t('SIDEBAR.EXPORT_TO_POSTMAN.NAME')}
             </label>
             <div className="relative">
               <input
@@ -159,7 +161,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
             ) : null}
 
             <label htmlFor="location" className="block font-medium mt-4">
-              Location
+              {t('SIDEBAR.EXPORT_TO_POSTMAN.LOCATION')}
             </label>
             <input
               id="location"
@@ -179,7 +181,7 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
             ) : null}
             <div className="mt-1">
               <span className="text-link cursor-pointer hover:underline" onClick={browse}>
-                Browse
+                {t('SIDEBAR.EXPORT_TO_POSTMAN.BROWSE')}
               </span>
             </div>
 
@@ -193,9 +195,9 @@ const ExportToPostman = ({ onClose, onExported, collection }) => {
                   data-testid="preserve-scripts-toggle"
                 />
                 <div>
-                  <span className="preserve-scripts-label">Preserve scripts</span>
+                  <span className="preserve-scripts-label">{t('SIDEBAR.EXPORT_TO_POSTMAN.PRESERVE_SCRIPTS')}</span>
                   <p className="preserve-scripts-description">
-                    Export Bruno scripts without translating them.
+                    {t('SIDEBAR.EXPORT_TO_POSTMAN.PRESERVE_SCRIPTS_HINT')}
                   </p>
                 </div>
               </label>

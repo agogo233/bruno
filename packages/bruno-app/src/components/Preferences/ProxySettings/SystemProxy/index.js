@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconLoader2, IconRefresh } from '@tabler/icons';
@@ -6,6 +7,7 @@ import StyledWrapper from '../StyledWrapper';
 import { formatProxyTimestamp } from 'utils/common';
 
 const SystemProxy = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const systemProxyVariables = useSelector((state) => state.app.systemProxyVariables);
   const lastRefreshedAt = useSelector((state) => state.app.systemProxyLastRefreshedAt);
@@ -40,10 +42,10 @@ const SystemProxy = () => {
           <div className="flex flex-row items-center gap-2">
             <div>
               <h2 className="text-xs system-proxy-title flex flex-row">
-                System Proxy {isFetching ? <IconLoader2 className="animate-spin ml-1" size={16} strokeWidth={1.5} /> : null}
+                {t('PROXY.SYSTEM_PROXY_TITLE')} {isFetching ? <IconLoader2 className="animate-spin ml-1" size={16} strokeWidth={1.5} /> : null}
               </h2>
               <small className="system-proxy-description">
-                Below values are sourced from your system proxy settings.
+                {t('PROXY.SYSTEM_PROXY_DESC')}
               </small>
             </div>
           </div>
@@ -51,7 +53,7 @@ const SystemProxy = () => {
         {error && (
           <div className="mb-2 p-3 system-proxy-error-container rounded">
             <small className="system-proxy-error-text">
-              Error loading system proxy settings: {error}
+              {t('PROXY.SYSTEM_PROXY_ERROR')} {error}
             </small>
           </div>
         )}
@@ -59,7 +61,7 @@ const SystemProxy = () => {
           <div className="mb-2">
             <small className="font-medium flex flex-row gap-2">
               <div className="system-proxy-source-label text-xs">
-                Proxy source:
+                {t('PROXY.SYSTEM_PROXY_SOURCE')}
               </div>
               <div className="system-proxy-source-value">
                 {source}
@@ -68,7 +70,7 @@ const SystemProxy = () => {
           </div>
         )}
         <small className="system-proxy-info-text">
-          These values cannot be directly updated in Bruno. Please refer to your OS documentation to update these.
+          {t('PROXY.SYSTEM_PROXY_INFO')}
         </small>
         <div className="flex flex-col justify-start items-start pt-2">
           <div className="mb-1 flex items-center">
@@ -103,7 +105,7 @@ const SystemProxy = () => {
             data-testid="system-proxy-refresh-button"
           >
             <IconRefresh size={14} strokeWidth={1.5} className="mr-1" />
-            Refresh
+{t('PROXY.REFRESH')}
           </span>
           {lastRefreshedAt && (
             <small
@@ -111,7 +113,7 @@ const SystemProxy = () => {
               data-testid="system-proxy-last-refreshed"
               data-refreshed-at={lastRefreshedAt}
             >
-              Last refreshed: {formatProxyTimestamp(lastRefreshedAt)}
+              {t('PROXY.LAST_REFRESHED')} {formatProxyTimestamp(lastRefreshedAt)}
             </small>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Modal from 'components/Modal';
@@ -9,6 +10,7 @@ import { findCollectionByUid } from 'utils/collections/index';
 
 const RenameCollection = ({ collectionUid, onClose }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const inputRef = useRef();
   const collection = useSelector((state) => findCollectionByUid(state.collections.collections, collectionUid));
   const formik = useFormik({
@@ -24,11 +26,11 @@ const RenameCollection = ({ collectionUid, onClose }) => {
     onSubmit: (values) => {
       dispatch(renameCollection(values.name, collection.uid))
         .then(() => {
-          toast.success('Collection renamed!');
+          toast.success(t('SIDEBAR.RENAME_COLLECTION.RENAMED'));
           onClose();
         })
         .catch((err) => {
-          toast.error(err ? err.message : 'An error occurred while renaming the collection');
+          toast.error(err ? err.message : t('SIDEBAR.COMMON.ERROR_RENAMING'));
         });
     }
   });
@@ -42,11 +44,11 @@ const RenameCollection = ({ collectionUid, onClose }) => {
   const onSubmit = () => formik.handleSubmit();
 
   return (
-    <Modal size="md" title="Rename Collection" confirmText="Rename" handleConfirm={onSubmit} handleCancel={onClose}>
+    <Modal size="md" title={t('SIDEBAR.RENAME_COLLECTION.TITLE')} confirmText={t('SIDEBAR.RENAME_COLLECTION.RENAME')} handleConfirm={onSubmit} handleCancel={onClose}>
       <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
         <div>
           <label htmlFor="name" className="block font-medium">
-            Name
+{t('SIDEBAR.RENAME_COLLECTION.NAME')}
           </label>
           <input
             id="collection-name"

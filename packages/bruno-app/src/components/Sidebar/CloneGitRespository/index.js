@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -43,13 +44,14 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
     : (activeWorkspace?.pathname ? path.join(activeWorkspace.pathname, 'collections') : '');
   const inputRef = useRef();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (progressData) {
       setSteps((prev) =>
         prev.map((step) =>
           step.step === 'clone' && !step?.completed
-            ? { ...step, title: 'Cloning repository', completed: false, info: progressData.progressData }
+            ? { ...step, title: t('SIDEBAR.CLONE_GIT.CLONING'), completed: false, info: progressData.progressData }
             : step
         )
       );
@@ -67,18 +69,18 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
       ...prev,
       {
         step: 'clone',
-        title: 'Cloning repository',
+        title: t('SIDEBAR.CLONE_GIT.CLONING'),
         completed: false
       }
     ]);
   };
 
   const cloneFinished = () => {
-    toast.success('Repository cloned successfully');
+    toast.success(t('SIDEBAR.CLONE_GIT.REPO_CLONED'));
     setSteps((prev) =>
       prev.map((step) =>
         step.step === 'clone'
-          ? { ...step, title: 'Cloning successful', completed: true, info: '' }
+          ? { ...step, title: t('SIDEBAR.CLONE_GIT.CLONE_SUCCESS'), completed: true, info: '' }
           : step
       )
     );
@@ -88,7 +90,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
     setSteps((prev) =>
       prev.map((step) =>
         step.step === 'clone'
-          ? { ...step, title: 'Cloning failed', completed: true, error: true }
+          ? { ...step, title: t('SIDEBAR.CLONE_GIT.CLONE_FAILED'), completed: true, error: true }
           : step
       )
     );
@@ -99,17 +101,17 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
       ...prev,
       {
         step: 'scan',
-        title: 'Scanning for Bruno files',
+        title: t('SIDEBAR.CLONE_GIT.SCANNING'),
         completed: false
       }
     ]);
   };
 
   const scanFinished = () => {
-    toast.success('Repository scanned successfully');
+    toast.success(t('SIDEBAR.CLONE_GIT.REPO_SCANNED'));
     setSteps((prev) =>
       prev.map((step) =>
-        step.step === 'scan' ? { ...step, title: 'Scan successful', completed: true, info: '' } : step
+        step.step === 'scan' ? { ...step, title: t('SIDEBAR.CLONE_GIT.SCAN_SUCCESS'), completed: true, info: '' } : step
       )
     );
   };
@@ -121,7 +123,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
       collectionLocation: defaultLocation
     },
     validationSchema: Yup.object({
-      repositoryUrl: Yup.string().required('Repository URL is required'),
+      repositoryUrl: Yup.string().required(t('SIDEBAR.CLONE_GIT.URL_REQUIRED')),
       collectionLocation: Yup.string().min(1, 'Location is required').required('Location is required')
     }),
     onSubmit: async (values) => {
@@ -205,7 +207,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
           onClick={handleBackButtonClick}
           data-testid="clone-git-repository-modal-back-btn"
         >
-          Back
+{t('SIDEBAR.CLONE_GIT.BACK')}
         </Button>
       );
     }
@@ -222,13 +224,13 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
   const handleConfirm = () => {
     const buttonText = getConfirmText();
     switch (buttonText) {
-      case 'Clone':
+      case 'SIDEBAR.CLONE_GIT.CLONE':
         formik.handleSubmit();
         break;
-      case 'Close':
+      case 'SIDEBAR.CLONE_GIT.CLOSE':
         onClose();
         break;
-      case 'Open':
+      case 'SIDEBAR.CLONE_GIT.OPEN':
         if (collectionPaths.length > 0 && selectedCollectionPaths.length > 0) {
           dispatch(openMultipleCollections(selectedCollectionPaths));
           onClose();
@@ -242,10 +244,10 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
 
   const getConfirmText = () =>
     !steps.length
-      ? 'Clone'
+      ? 'SIDEBAR.CLONE_GIT.CLONE'
       : steps.some((step) => !step.completed || step.error || (isScanCompleted() && !collectionPaths?.length))
-        ? 'Close'
-        : 'Open';
+        ? 'SIDEBAR.CLONE_GIT.CLOSE'
+        : 'SIDEBAR.CLONE_GIT.OPEN';
 
   if (!gitVersion) {
     return <GitNotFoundModal onClose={onClose} />;
@@ -255,8 +257,8 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
     <Portal id="clone-repository-portal">
       <Modal
         size="md"
-        title="Clone Git Repository"
-        confirmText={getConfirmText()}
+        title={t('SIDEBAR.CLONE_GIT.TITLE')}
+        confirmText={t(getConfirmText())}
         handleConfirm={handleConfirm}
         handleCancel={onClose}
         confirmDisabled={isConfirmDisabled()}
@@ -285,7 +287,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
                   : (
                       <>
                         <label htmlFor="repository-url" className="flex items-center font-semibold">
-                          Git Repository URL
+                          {t('SIDEBAR.CLONE_GIT.REPO_URL')}
                         </label>
                         <input
                           id="repository-url"
@@ -306,7 +308,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
                   <div className="text-red-500">{formik.errors.repositoryUrl}</div>
                 )}
                 <label htmlFor="collection-location" className="block font-semibold mt-3">
-                  Location
+{t('SIDEBAR.CLONE_GIT.LOCATION')}
                 </label>
                 <input
                   id="collection-location"
@@ -326,7 +328,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
                 )}
                 <div className="mt-1">
                   <span className="text-link cursor-pointer hover:underline" onClick={browse}>
-                    Browse
+                    {t('SIDEBAR.CLONE_GIT.BROWSE')}
                   </span>
                 </div>
               </div>
@@ -363,13 +365,13 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
                   {collectionPaths.length === 0 && (
                     <div className="scan-warning flex items-start gap-2">
                       <IconAlertCircle className="scan-warning-icon" size={18} strokeWidth={1.5} />
-                      <div>No Bruno collections were found in this repository.</div>
+                      <div>{t('SIDEBAR.CLONE_GIT.NO_COLLECTIONS')}</div>
                     </div>
                   )}
                   {collectionPaths.length > 0 && (
                     <SelectionList
-                      title="Collections"
-                      searchPlaceholder="Search Collections"
+                      title={t('SIDEBAR.CLONE_GIT.COLLECTIONS')}
+                      searchPlaceholder={t('SIDEBAR.CLONE_GIT.SEARCH_COLLECTIONS')}
                       items={collectionPaths}
                       selectedItems={selectedCollectionPaths}
                       onSelectAll={handleSelectAllCollections}

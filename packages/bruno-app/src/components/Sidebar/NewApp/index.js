@@ -7,8 +7,10 @@ import Modal from 'components/Modal';
 import Portal from 'components/Portal';
 import { newApp } from 'providers/ReduxStore/slices/collections/actions';
 import { sanitizeName, validateName, validateNameError } from 'utils/common/regex';
+import { useTranslation } from 'react-i18next';
 
 const NewApp = ({ collectionUid, item, onClose }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const submitLockRef = useRef(false);
 
@@ -22,10 +24,10 @@ const NewApp = ({ collectionUid, item, onClose }) => {
     validationSchema: Yup.object({
       appName: Yup.string()
         .trim()
-        .min(1, 'App name is required')
+        .min(1, t('SIDEBAR.NEW_APP.NAME_REQUIRED'))
         .max(255, 'Must be 255 characters or less')
         .test('valid-name', validateNameError, (value) => validateName(value || ''))
-        .required('App name is required')
+        .required(t('SIDEBAR.NEW_APP.NAME_REQUIRED'))
     }),
     onSubmit: (values) => {
       const name = values.appName.trim();
@@ -38,10 +40,10 @@ const NewApp = ({ collectionUid, item, onClose }) => {
         })
       )
         .then(() => {
-          toast.success('App created');
+          toast.success(t('SIDEBAR.NEW_APP.CREATED'));
           onClose();
         })
-        .catch((err) => toast.error(err?.message || 'Failed to create app'))
+        .catch((err) => toast.error(err?.message || t('SIDEBAR.NEW_APP.FAILED')))
         .finally(() => { submitLockRef.current = false; });
     }
   });
@@ -57,8 +59,8 @@ const NewApp = ({ collectionUid, item, onClose }) => {
     <Portal>
       <Modal
         size="md"
-        title="New App"
-        confirmText="Create"
+        title={t('SIDEBAR.NEW_APP.TITLE')}
+        confirmText={t('SIDEBAR.NEW_APP.CREATE')}
         handleConfirm={onSubmit}
         handleCancel={onClose}
         disableEscapeKey={false}
@@ -71,7 +73,7 @@ const NewApp = ({ collectionUid, item, onClose }) => {
           data-testid="new-app-form"
         >
           <label htmlFor="appName" className="block font-semibold">
-            Name
+{t('SIDEBAR.NEW_APP.NAME')}
           </label>
           <input
             id="appName"

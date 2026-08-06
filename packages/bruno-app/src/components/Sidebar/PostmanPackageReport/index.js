@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import {
@@ -67,6 +68,7 @@ const getInstallFailureMessage = (result) => {
 };
 
 const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const collections = useSelector((state) => state.collections.collections);
   const collection = useMemo(
@@ -107,7 +109,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
 
   const handleInstall = async () => {
     if (!collectionPath) {
-      toast.error('Cannot install: collection path not available.');
+      toast.error(t('SIDEBAR.POSTMAN_PACKAGE.PATH_UNAVAILABLE'));
       return;
     }
     if (needsInstall.length === 0) return;
@@ -126,12 +128,12 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
           `Installed ${needsInstall.length} package${needsInstall.length === 1 ? '' : 's'}`
         );
       } else {
-        toast.error('npm install failed. See details below.');
+        toast.error(t('SIDEBAR.POSTMAN_PACKAGE.INSTALL_FAILED'));
       }
     } catch (err) {
       console.error('Install failed:', err);
       setInstallResult({ success: false, stderr: err?.message || String(err), exitCode: -1 });
-      toast.error('Failed to start npm install');
+      toast.error(t('SIDEBAR.POSTMAN_PACKAGE.NPM_FAILED'));
     } finally {
       setInstalling(false);
     }
@@ -139,15 +141,15 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
 
   const handleSwitchToDeveloperMode = () => {
     if (!collection?.uid) {
-      toast.error('Could not locate the imported collection to switch modes.');
+      toast.error(t('SIDEBAR.COMMON.COLLECTION_NOT_FOUND'));
       return;
     }
     setSwitchingMode(true);
     dispatch(saveCollectionSecurityConfig(collection.uid, { jsSandboxMode: 'developer' }))
-      .then(() => toast.success('Developer Mode enabled'))
+      .then(() => toast.success(t('SIDEBAR.POSTMAN_PACKAGE.DEV_MODE_ENABLED')))
       .catch((err) => {
         console.error(err);
-        toast.error('Failed to switch sandbox mode');
+        toast.error(t('SIDEBAR.POSTMAN_PACKAGE.SANDBOX_FAILED'));
       })
       .finally(() => setSwitchingMode(false));
   };
@@ -158,27 +160,27 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast.error('Could not copy to clipboard');
+      toast.error(t('SIDEBAR.POSTMAN_PACKAGE.CLIPBOARD_FAILED'));
     }
   };
 
   const isDismissAction = installDone || needsInstall.length === 0;
   const confirmText = installDone
-    ? 'Done'
+    ? t('SIDEBAR.POSTMAN_PACKAGE.DONE')
     : installing
-      ? 'Installing…'
+      ? t('SIDEBAR.POSTMAN_PACKAGE.INSTALLING')
       : needsInstall.length > 0
         ? `Install ${needsInstall.length} package${needsInstall.length === 1 ? '' : 's'}`
-        : 'Done';
+        : t('SIDEBAR.POSTMAN_PACKAGE.DONE');
   const handleConfirm = isDismissAction ? onClose : handleInstall;
 
   return (
     <StyledWrapper>
       <Modal
         size="md"
-        title="Install packages"
+        title={t('SIDEBAR.POSTMAN_PACKAGE.INSTALL')}
         confirmText={confirmText}
-        cancelText="Skip"
+        cancelText={t('SIDEBAR.POSTMAN_PACKAGE.SKIP')}
         hideCancel={installDone || (needsInstall.length === 0 && !installFailed)}
         confirmDisabled={installing}
         confirmButtonColor={isDismissAction ? 'secondary' : 'primary'}
@@ -190,7 +192,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
         {needsInstall.length > 0 && (
           <div className="pkg-section">
             <div className="pkg-section-head">
-              <span className="pkg-section-title">Packages used in scripts</span>
+              <span className="pkg-section-title">{t('SIDEBAR.POSTMAN_PACKAGE.PACKAGES_USED')}</span>
               <span className="pkg-section-count">{needsInstall.length}</span>
             </div>
             {!installing && !installDone && (
@@ -205,7 +207,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
               <div className="pkg-cmd-block">
                 <div className="pkg-cmd-label">
                   <IconTerminal2 size={12} strokeWidth={1.75} />
-                  <span>Or install manually</span>
+                  <span>{t('SIDEBAR.POSTMAN_PACKAGE.INSTALL_MANUAL')}</span>
                 </div>
                 <div className="pkg-cmd-row">
                   <code className="pkg-cmd-code">{installCommand}</code>
@@ -224,7 +226,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
             {installing && (
               <div className="pkg-inline-status pkg-inline-info">
                 <IconLoader2 size={14} strokeWidth={1.75} className="pkg-spin" />
-                <span>Installing {needsInstall.length} package{needsInstall.length === 1 ? '' : 's'}…</span>
+                <span>{t('SIDEBAR.POSTMAN_PACKAGE.INSTALL_STATUS')} {needsInstall.length} package{needsInstall.length === 1 ? '' : 's'}…</span>
               </div>
             )}
 
@@ -232,7 +234,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
               <div className="pkg-inline-status pkg-inline-success">
                 <IconCircleCheck size={14} strokeWidth={1.75} />
                 <span>
-                  Installed {(installResult.installed || needsInstall).length} package
+                  {t('SIDEBAR.POSTMAN_PACKAGE.INSTALLED_STATUS')} {(installResult.installed || needsInstall).length} package
                   {(installResult.installed || needsInstall).length === 1 ? '' : 's'} into this collection.
                 </span>
               </div>
@@ -244,16 +246,16 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
           <div className="pkg-section pkg-devmode">
             <div className="pkg-devmode-head">
               <IconAlertTriangle size={18} strokeWidth={1.75} />
-              <span className="pkg-devmode-title">Scripts use libraries that need Developer Mode</span>
+              <span className="pkg-devmode-title">{t('SIDEBAR.POSTMAN_PACKAGE.NEEDS_DEV_MODE')}</span>
             </div>
             <p className="pkg-devmode-desc">
               Your imported scripts call {renderPackageExamples(devMode)}
-              {', '}which need <strong>Developer Mode</strong> to run.
+              {', '}which need <strong>{t('SIDEBAR.POSTMAN_PACKAGE.DEV_MODE')}</strong> to run.
             </p>
             <PackageList items={devMode} />
             <div className="pkg-devmode-trust">
               <IconShieldLock size={15} strokeWidth={1.75} />
-              <span>Only enable Developer Mode for collections you trust.</span>
+              <span>{t('SIDEBAR.POSTMAN_PACKAGE.DEV_MODE_HINT')}</span>
             </div>
             <Button
               color="primary"
@@ -263,7 +265,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
               onClick={handleSwitchToDeveloperMode}
               data-testid="switch-to-developer-mode"
             >
-              Switch to Developer Mode
+              {t('SIDEBAR.POSTMAN_PACKAGE.SWITCH_TO_DEV')}
             </Button>
           </div>
         )}
@@ -272,7 +274,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
           <div className="pkg-section pkg-section-danger">
             <div className="pkg-section-head">
               <IconBan size={14} strokeWidth={1.75} />
-              <span className="pkg-section-title">Not supported in Bruno</span>
+              <span className="pkg-section-title">{t('SIDEBAR.POSTMAN_PACKAGE.NOT_SUPPORTED')}</span>
               <span className="pkg-section-count">{unsupported.length}</span>
             </div>
             <p className="pkg-section-help">
@@ -288,7 +290,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
             <div className="pkg-status pkg-status-success">
               <IconCircleCheck size={14} strokeWidth={1.75} />
               <span>
-                This collection runs in <strong>Developer Mode</strong> - your scripts can use these
+                This collection runs in <strong>{t('SIDEBAR.POSTMAN_PACKAGE.DEV_MODE')}</strong> - your scripts can use these
                 packages right away.
               </span>
             </div>
@@ -296,15 +298,15 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
             <div className="pkg-section pkg-devmode">
               <div className="pkg-devmode-head">
                 <IconAlertTriangle size={18} strokeWidth={1.75} />
-                <span className="pkg-devmode-title">External modules require Developer Mode</span>
+                <span className="pkg-devmode-title">{t('SIDEBAR.POSTMAN_PACKAGE.EXTERNAL_MODULES')}</span>
               </div>
               <p className="pkg-devmode-desc">
                 Custom npm packages (such as {renderPackageExamples(installResult.installed || needsInstall)})
-                {' '}are installed, but this collection is currently running in <strong>Safe Mode</strong>.
+                {' '}are installed, but this collection is currently running in <strong>{t('SIDEBAR.POSTMAN_PACKAGE.SAFE_MODE')}</strong>.
               </p>
               <div className="pkg-devmode-trust">
                 <IconShieldLock size={15} strokeWidth={1.75} />
-                <span>Only enable Developer Mode for collections you trust.</span>
+                <span>{t('SIDEBAR.POSTMAN_PACKAGE.DEV_MODE_HINT')}</span>
               </div>
               <Button
                 color="primary"
@@ -314,7 +316,7 @@ const PostmanPackageReport = ({ report, collectionPath, onClose }) => {
                 onClick={handleSwitchToDeveloperMode}
                 data-testid="switch-to-developer-mode"
               >
-                Switch to Developer Mode
+                {t('SIDEBAR.POSTMAN_PACKAGE.SWITCH_TO_DEV')}
               </Button>
             </div>
           )

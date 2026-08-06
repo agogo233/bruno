@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -99,12 +100,12 @@ const convertCollection = async (format, rawData, { groupingType, collectionForm
   }
 };
 
-const groupingOptions = [
-  { value: 'tags', label: 'Tags', description: 'Group requests by OpenAPI/Swagger tags', testId: 'grouping-option-tags' },
-  { value: 'path', label: 'Paths', description: 'Group requests by URL path structure', testId: 'grouping-option-path' }
-];
-
 const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sourceUrl, filePath, rawContent }) => {
+  const { t } = useTranslation();
+  const groupingOptions = [
+    { value: 'tags', label: t('SIDEBAR.IMPORT_COLLECTION_LOCATION.TAGS'), description: t('SIDEBAR.IMPORT_COLLECTION_LOCATION.TAGS_HINT'), testId: 'grouping-option-tags' },
+    { value: 'path', label: t('SIDEBAR.IMPORT_COLLECTION_LOCATION.PATHS'), description: t('SIDEBAR.IMPORT_COLLECTION_LOCATION.PATHS_HINT'), testId: 'grouping-option-path' }
+  ];
   const inputRef = useRef();
   const dispatch = useDispatch();
   const [groupingType, setGroupingType] = useState('tags');
@@ -181,7 +182,7 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
     return (
       <div ref={ref} className="flex items-center text-link cursor-pointer">
         <button className="btn-advanced" type="button">
-          Options
+          {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.OPTIONS')}
         </button>
         <IconCaretDown className="caret ml-1" size={14} strokeWidth={2} />
       </div>
@@ -237,8 +238,8 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
       <StyledWrapper>
         <Modal
           size="md"
-          title="Import Collection"
-          confirmText="Import"
+          title={t('SIDEBAR.IMPORT_COLLECTION_LOCATION.TITLE')}
+          confirmText={t('SIDEBAR.IMPORT_COLLECTION_LOCATION.IMPORT')}
           handleConfirm={onSubmit}
           handleCancel={onClose}
           dataTestId="import-collection-location-modal"
@@ -254,7 +255,7 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
                       setShowAdvancedOptions(!showAdvancedOptions);
                     }}
                   >
-                    {showAdvancedOptions ? 'Hide Advanced Options' : 'Show Advanced Options'}
+                    {showAdvancedOptions ? t('SIDEBAR.IMPORT_COLLECTION_LOCATION.HIDE_ADVANCED') : t('SIDEBAR.IMPORT_COLLECTION_LOCATION.SHOW_ADVANCED')}
                   </div>
                 </Dropdown>
               </div>
@@ -264,13 +265,13 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
           <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
             <div>
               <label htmlFor="collectionName" className="block font-medium">
-                Name
+                {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.NAME')}
               </label>
               <div className="mt-2">{collectionName}</div>
 
               <>
                 <label htmlFor="collectionLocation" className="font-medium mt-4 flex items-center">
-                  Location
+                  {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.LOCATION')}
                   <Help>
                     <p>Bruno stores your collections on your computer's filesystem.</p>
                     <p className="mt-2">Choose the location where you want to store this collection.</p>
@@ -302,21 +303,21 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
                   className="text-link cursor-pointer hover:underline"
                   onClick={browse}
                 >
-                  Browse
+                  {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.BROWSE')}
                 </span>
               </div>
 
               {showAdvancedOptions && !isZipImport && (
                 <div className="mt-4">
                   <label htmlFor="format" className="flex items-center font-medium">
-                    File Format
+                    {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.FILE_FORMAT')}
                     <Help width="300">
                       <p>Choose the file format for storing requests in this collection.</p>
                       <p className="mt-2">
-                        <strong>OpenCollection (YAML):</strong> Industry-standard YAML format (.yml files)
+                        <strong>{t('SIDEBAR.IMPORT_COLLECTION_LOCATION.OPEN_COLLECTION')}:</strong> Industry-standard YAML format (.yml files)
                       </p>
                       <p className="mt-1">
-                        <strong>BRU:</strong> Bruno's native file format (.bru files)
+                        <strong>{t('SIDEBAR.IMPORT_COLLECTION_LOCATION.BRU')}:</strong> Bruno's native file format (.bru files)
                       </p>
                     </Help>
                   </label>
@@ -327,8 +328,8 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
                     value={collectionFormat}
                     onChange={(e) => setCollectionFormat(e.target.value)}
                   >
-                    <option value="yml">OpenCollection (YAML)</option>
-                    <option value="bru">BRU Format (.bru)</option>
+                    <option value="yml">{t('SIDEBAR.IMPORT_COLLECTION_LOCATION.OPEN_COLLECTION')}</option>
+                    <option value="bru">{t('SIDEBAR.IMPORT_COLLECTION_LOCATION.BRU_FORMAT')}</option>
                   </select>
                 </div>
               )}
@@ -343,9 +344,9 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
                     data-testid="preserve-scripts-toggle"
                   />
                   <div>
-                    <span className="checkbox-option-label">Preserve scripts</span>
+                    <span className="checkbox-option-label">{t('SIDEBAR.IMPORT_COLLECTION_LOCATION.PRESERVE_SCRIPTS')}</span>
                     <p className="checkbox-option-description">
-                      Import Postman scripts without translating them.
+                      {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.PRESERVE_SCRIPTS_HINT')}
                     </p>
                   </div>
                 </label>
@@ -356,10 +357,10 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
               <div className="mt-4 flex gap-4 items-center justify-between">
                 <div>
                   <label htmlFor="groupingType" className="block font-medium">
-                    Folder arrangement
+                    {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.FOLDER_ARRANGEMENT')}
                   </label>
                   <p className="text-muted text-xs mt-1 mb-2">
-                    Select whether to create folders according to the spec's paths or tags.
+                    {t('SIDEBAR.IMPORT_COLLECTION_LOCATION.FOLDER_ARRANGEMENT_HINT')}
                   </p>
                 </div>
                 <div className="relative">

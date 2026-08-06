@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import * as FileSaver from 'file-saver';
@@ -19,12 +20,6 @@ import { sanitizeName } from 'utils/common/regex';
 import { escapeHtml } from 'utils/response';
 
 const CDN_BASE_URL = 'https://cdn.usebruno.com';
-
-const FEATURES = [
-  'Standalone HTML file - no server required',
-  'Interactive API playground',
-  'Host on any static file server'
-];
 
 const buildHtmlDocument = (collectionName, escapedYamlContent) => `<!DOCTYPE html>
 <html lang="en">
@@ -52,9 +47,9 @@ const buildHtmlDocument = (collectionName, escapedYamlContent) => `<!DOCTYPE htm
 </body>
 </html>`;
 
-const CollectionNotFound = ({ onClose }) => (
+const CollectionNotFound = ({ onClose, t }) => (
   <Portal>
-    <Modal size="md" title="Generate Documentation" confirmText="Close" handleConfirm={onClose} hideCancel>
+    <Modal size="md" title={t('SIDEBAR.GENERATE_DOCS.TITLE')} confirmText={t('SIDEBAR.GENERATE_DOCS.CLOSE')} handleConfirm={onClose} hideCancel>
       <StyledWrapper className="w-[500px]">
         <div className="flex items-center gap-2 text-warning">
           <IconAlertTriangle size={16} className="shrink-0" />
@@ -66,6 +61,7 @@ const CollectionNotFound = ({ onClose }) => (
 );
 
 const GenerateDocumentation = ({ onClose, collectionUid }) => {
+  const { t } = useTranslation();
   const { version } = useApp();
   const collection = useSelector((state) =>
     findCollectionByUid(state.collections.collections, collectionUid)
@@ -164,25 +160,25 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
       const fileName = `${sanitizeName(collection.name)}-documentation.html`;
       FileSaver.saveAs(new Blob([htmlContent], { type: 'text/html' }), fileName);
 
-      toast.success('Documentation generated successfully');
+      toast.success(t('SIDEBAR.GENERATE_DOCS.GENERATED'));
       onClose();
     } catch (error) {
       console.error('Error generating documentation:', error);
-      toast.error('Failed to generate documentation');
+      toast.error(t('SIDEBAR.GENERATE_DOCS.FAILED'));
     }
   }, [collection, version, onClose, currentVersion, selectedEnvUids]);
 
   if (!collection) {
-    return <CollectionNotFound onClose={onClose} />;
+    return <CollectionNotFound onClose={onClose} t={t} />;
   }
 
   return (
     <Portal>
       <Modal
         size="md"
-        title="Generate Documentation"
-        confirmText={isLoading ? 'Loading...' : 'Generate'}
-        cancelText="Cancel"
+        title={t('SIDEBAR.GENERATE_DOCS.TITLE')}
+        confirmText={isLoading ? t('SIDEBAR.GENERATE_DOCS.LOADING') : t('SIDEBAR.GENERATE_DOCS.GENERATE')}
+        cancelText={t('SIDEBAR.GENERATE_DOCS.CANCEL')}
         handleConfirm={isLoading ? undefined : handleGenerate}
         handleCancel={onClose}
         confirmDisabled={isLoading}
@@ -191,26 +187,32 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
           {isLoading ? (
             <div className="flex items-center justify-center gap-3 py-8">
               <IconLoader2 size={20} className="animate-spin" />
-              <span>Loading collection...</span>
+              <span>{t('SIDEBAR.GENERATE_DOCS.LOADING_COLLECTION')}</span>
             </div>
           ) : (
             <div className="content">
               <h3 className="title flex items-center gap-2 mt-2 font-medium">
                 <IconBook size={18} />
-                <span>Interactive API Documentation</span>
+                <span>{t('SIDEBAR.GENERATE_DOCS.INTERACTIVE_DOCS')}</span>
               </h3>
               <p className="description mb-4">
-                Generate a standalone HTML file that can be hosted anywhere or shared with your team.
+                {t('SIDEBAR.GENERATE_DOCS.DESCRIPTION')}
               </p>
 
               <ul className="features flex flex-col list-none gap-2 p-0 mb-4">
-                {FEATURES.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2.5">
+                  <li className="flex items-center gap-2.5">
                     <IconCheck size={16} className="check-icon flex-shrink-0" />
-                    <span>{feature}</span>
+                    <span>{t('SIDEBAR.GENERATE_DOCS.FEATURE_NO_SERVER')}</span>
                   </li>
-                ))}
-              </ul>
+                  <li className="flex items-center gap-2.5">
+                    <IconCheck size={16} className="check-icon flex-shrink-0" />
+                    <span>{t('SIDEBAR.GENERATE_DOCS.FEATURE_PLAYGROUND')}</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <IconCheck size={16} className="check-icon flex-shrink-0" />
+                    <span>{t('SIDEBAR.GENERATE_DOCS.FEATURE_HOSTING')}</span>
+                  </li>
+                </ul>
 
               <div className="config-card mb-4">
                 <CollectionVersionInfo name={collection.name} version={currentVersion} folderCount={folderCount} requestCount={requestCount} environmentCount={environments.length} />
@@ -219,7 +221,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
                     <div className="card-divider" />
                     <div className="env-section">
                       <EnvironmentSelectionList
-                        title="Environments to include"
+                        title={t('SIDEBAR.GENERATE_DOCS.ENVIRONMENTS')}
                         environments={environments}
                         selectedUids={selectedEnvUids}
                         onToggle={toggleEnv}

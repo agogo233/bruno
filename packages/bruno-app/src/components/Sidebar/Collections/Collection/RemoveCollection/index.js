@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import Modal from 'components/Modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +12,7 @@ import StyledWrapper from './StyledWrapper';
 
 const RemoveCollection = ({ onClose, collectionUid }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const collection = useSelector((state) => findCollectionByUid(state.collections.collections, collectionUid));
 
   // Detect drafts in the collection
@@ -22,16 +24,16 @@ const RemoveCollection = ({ onClose, collectionUid }) => {
 
   const onConfirm = () => {
     if (!collection) {
-      toast.error('Collection not found');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       onClose();
       return;
     }
     dispatch(removeCollection(collection.uid))
       .then(() => {
-        toast.success('Collection removed from workspace');
+        toast.success(t('SIDEBAR.REMOVE_COLLECTION.REMOVED'));
         onClose();
       })
-      .catch(() => toast.error('An error occurred while removing the collection'));
+      .catch(() => toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED')));
   };
 
   if (!collection) {
@@ -48,19 +50,19 @@ const RemoveCollection = ({ onClose, collectionUid }) => {
     <StyledWrapper>
       <Modal
         size="sm"
-        title="Remove Collection"
-        confirmText="Remove"
+        title={t('SIDEBAR.REMOVE_COLLECTION.TITLE')}
+        confirmText={t('SIDEBAR.REMOVE_COLLECTION.REMOVE')}
         confirmButtonColor="danger"
         handleConfirm={onConfirm}
         handleCancel={onClose}
       >
-        <p className="mb-4">Are you sure you want to close following collection in Bruno?</p>
+        <p className="mb-4">{t('SIDEBAR.REMOVE_COLLECTION.CONFIRM')}</p>
         <div className="collection-info-card">
           <div className="collection-name">{collection.name}</div>
           <div className="collection-path">{collection.pathname}</div>
         </div>
         <p className="mt-4 text-muted text-sm">
-          It will still be available in the filesystem at the above location and can be re-opened later.
+          {t('SIDEBAR.REMOVE_COLLECTION.HINT')}
         </p>
       </Modal>
     </StyledWrapper>

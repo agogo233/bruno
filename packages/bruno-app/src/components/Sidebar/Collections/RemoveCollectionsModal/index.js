@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { filter, groupBy } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import Portal from 'components/Portal';
 import {
@@ -48,6 +49,7 @@ const getDisplayItems = (items, maxWidth = MAX_COLLECTIONS_WIDTH) => {
 
 const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const allCollections = useSelector((state) => state.collections.collections || []);
   const [showAllCollections, setShowAllCollections] = useState(false);
 
@@ -119,7 +121,7 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
       })
       .catch((error) => {
         console.error('Error closing collections:', error);
-        toast.error('An error occurred while closing collections');
+        toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       })
       .finally(() => {
         onClose();
@@ -157,7 +159,7 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
       handleCloseAllCollections();
     } catch (error) {
       console.error('Error saving drafts:', error);
-      toast.error('An error occurred while saving changes');
+      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
       handleCancel();
     }
   };
@@ -182,7 +184,7 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
       onClick={() => setShowAllCollections(!showAllCollections)}
     >
       <span className="text-link">
-        {showAllCollections ? 'Show less' : `Show ${hiddenCollectionsCount} more`}
+        {showAllCollections ? t('SIDEBAR.REMOVE_COLLECTIONS.SHOW_LESS') : `${t('SIDEBAR.REMOVE_COLLECTIONS.SHOW')} ${hiddenCollectionsCount} ${t('SIDEBAR.REMOVE_COLLECTIONS.MORE')}`}
       </span>
     </span>
   ) : null;
@@ -191,7 +193,7 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
     <Portal>
       <Modal
         size="md"
-        title="Close all collections"
+        title={t('SIDEBAR.REMOVE_COLLECTIONS.TITLE')}
         disableEscapeKey={hasUnsavedChanges}
         disableCloseOnOutsideClick={hasUnsavedChanges}
         handleCancel={handleCancel}
@@ -202,14 +204,14 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
             <>
               <div className="flex items-center font-normal">
                 <IconAlertTriangle size={32} strokeWidth={1.5} className="text-yellow-600" />
-                <h1 className="ml-2 text-lg font-medium">Hold on..</h1>
+                <h1 className="ml-2 text-lg font-medium">{t('SIDEBAR.REMOVE_COLLECTIONS.HOLD_ON')}</h1>
               </div>
               <div className="font-normal mt-4">
-                Do you want to save changes you made to the following{' '}
-                {collectionsWithUnsavedChanges.length === 1 ? 'collection' : 'collections'}?
+                {t('SIDEBAR.REMOVE_COLLECTIONS.SAVE_CHANGES')}{' '}
+                {collectionsWithUnsavedChanges.length === 1 ? t('SIDEBAR.REMOVE_COLLECTIONS.COLLECTION') : t('SIDEBAR.REMOVE_COLLECTIONS.COLLECTIONS')}?
               </div>
               <div className="mt-2 text-xs text-gray-500">
-                Collections will be removed from the current workspace but will still be available in the file system and can be re-opened later.
+                {t('SIDEBAR.REMOVE_COLLECTIONS.REMOVAL_HINT')}
               </div>
 
               <div className="mt-4">
@@ -228,15 +230,15 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
               <div className="flex justify-between mt-6">
                 <div>
                   <Button color="danger" onClick={handleDiscard}>
-                    Discard and Close
+                    {t('SIDEBAR.REMOVE_COLLECTIONS.DISCARD_CLOSE')}
                   </Button>
                 </div>
                 <div>
                   <Button className="mr-2" color="secondary" variant="ghost" onClick={handleCancel}>
-                    Cancel
+{t('SIDEBAR.REMOVE_COLLECTIONS.CANCEL')}
                   </Button>
                   <Button onClick={handleSave}>
-                    Save and Close
+                    {t('SIDEBAR.REMOVE_COLLECTIONS.SAVE_CLOSE')}
                   </Button>
                 </div>
               </div>
@@ -245,22 +247,22 @@ const RemoveCollectionsModal = ({ collectionUids, onClose }) => {
             <>
               <div className="mt-4">
                 {hasMultipleCollections ? (
-                  `Are you sure you want to close all ${collectionUids.length} collections in this workspace?`
+                  <>{t('SIDEBAR.REMOVE_COLLECTIONS.CONFIRM_CLOSE_ALL')} {collectionUids.length} {t('SIDEBAR.REMOVE_COLLECTIONS.IN_WORKSPACE')}</>
                 ) : (
                   <>
-                    Are you sure you want to close the collection <strong>{singleCollectionName}</strong> from this workspace?
+                    {t('SIDEBAR.REMOVE_COLLECTIONS.CONFIRM_CLOSE')} <strong>{singleCollectionName}</strong> {t('SIDEBAR.REMOVE_COLLECTIONS.FROM_WORKSPACE')}
                   </>
                 )}
               </div>
               <div className="mt-4 text-xs text-gray-500">
-                Collections will be removed from the current workspace but will still be available in the file system and can be re-opened later.
+                {t('SIDEBAR.REMOVE_COLLECTIONS.REMOVAL_HINT')}
               </div>
               <div className="flex justify-end mt-6">
                 <Button className="mr-2" color="secondary" variant="ghost" onClick={handleCancel} data-testid="modal-close-button">
-                  Cancel
+                  {t('SIDEBAR.REMOVE_COLLECTIONS.CANCEL')}
                 </Button>
                 <Button color="warning" onClick={handleCloseAllCollections}>
-                  {hasMultipleCollections ? 'Close All' : 'Close'}
+                  {hasMultipleCollections ? t('SIDEBAR.REMOVE_COLLECTIONS.CLOSE_ALL') : t('SIDEBAR.REMOVE_COLLECTIONS.CLOSE')}
                 </Button>
               </div>
             </>

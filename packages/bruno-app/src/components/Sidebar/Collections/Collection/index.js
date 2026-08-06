@@ -32,6 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTab, makeTabPermanent } from 'providers/ReduxStore/slices/tabs';
 import { setFocusedSidebarPath } from 'providers/ReduxStore/slices/app';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import NewRequest from 'components/Sidebar/NewRequest';
 import NewFolder from 'components/Sidebar/NewFolder';
 import NewApp from 'components/Sidebar/NewApp';
@@ -69,6 +70,7 @@ const EMPTY_STATE_DELAY_MS = 300;
 
 const Collection = ({ collection, searchText }) => {
   const isMockServerEnabled = useBetaFeature(BETA_FEATURES.MOCK_SERVER);
+  const { t } = useTranslation();
   const { dropdownContainerRef } = useSidebarAccordion();
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
@@ -212,17 +214,17 @@ const Collection = ({ collection, searchText }) => {
   const handleShowInFolder = () => {
     dispatch(showInFolder(collection.pathname)).catch((error) => {
       console.error('Error opening the folder', error);
-      toast.error('Error opening the folder');
+      toast.error(t('SIDEBAR.COLLECTION.FOLDER_OPEN_ERROR'));
     });
   };
 
   const handlePasteItem = () => {
     dispatch(pasteItem(collection.uid, null))
       .then(() => {
-        toast.success('Item pasted successfully');
+        toast.success(t('SIDEBAR.COLLECTION.PASTE_SUCCESS'));
       })
       .catch((err) => {
-        toast.error(err ? err.message : 'An error occurred while pasting the item');
+        toast.error(err ? err.message : t('SIDEBAR.COLLECTION.PASTE_ERROR'));
       });
   };
 
@@ -368,7 +370,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'new-request',
       leftSection: IconFilePlus,
-      label: 'New Request',
+      label: t('SIDEBAR.COLLECTION.NEW_REQUEST'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowNewRequestModal(true);
@@ -377,7 +379,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'new-folder',
       leftSection: IconFolderPlus,
-      label: 'New Folder',
+      label: t('SIDEBAR.COLLECTION.NEW_FOLDER'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowNewFolderModal(true);
@@ -386,7 +388,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'new-app',
       leftSection: IconAppWindow,
-      label: 'New App',
+      label: t('SIDEBAR.COLLECTION.NEW_APP'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowNewAppModal(true);
@@ -395,7 +397,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'run',
       leftSection: IconPlayerPlay,
-      label: 'Run',
+      label: t('SIDEBAR.COLLECTION.RUN'),
       onClick: () => {
         ensureCollectionIsMounted();
         handleRun();
@@ -404,7 +406,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'clone',
       leftSection: IconCopy,
-      label: 'Clone',
+      label: t('SIDEBAR.COLLECTION.CLONE'),
       testId: 'clone-collection',
       onClick: () => {
         setShowCloneCollectionModalOpen(true);
@@ -413,7 +415,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'sync-openapi',
       leftSection: OpenAPISyncIcon,
-      label: 'OpenAPI',
+      label: t('SIDEBAR.COLLECTION.OPENAPI'),
       onClick: openOpenAPISyncTab
     },
     ...(hasCopiedItems
@@ -421,7 +423,7 @@ const Collection = ({ collection, searchText }) => {
           {
             id: 'paste',
             leftSection: IconClipboard,
-            label: 'Paste',
+            label: t('SIDEBAR.COLLECTION.PASTE'),
             onClick: handlePasteItem
           }
         ]
@@ -429,7 +431,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'rename',
       leftSection: IconEdit,
-      label: 'Rename',
+      label: t('SIDEBAR.COLLECTION.RENAME'),
       onClick: () => {
         setShowRenameCollectionModal(true);
       }
@@ -437,7 +439,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'share',
       leftSection: IconShare,
-      label: 'Share',
+      label: t('SIDEBAR.COLLECTION.SHARE'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowShareCollectionModal(true);
@@ -446,7 +448,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'generate-docs',
       leftSection: IconBook,
-      label: 'Generate Docs',
+      label: t('SIDEBAR.COLLECTION.GENERATE_DOCS'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowGenerateDocumentationModal(true);
@@ -455,7 +457,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'collapse',
       leftSection: IconFoldDown,
-      label: 'Collapse',
+      label: t('SIDEBAR.COLLECTION.COLLAPSE'),
       onClick: handleCollapseFullCollection
     },
     {
@@ -467,8 +469,8 @@ const Collection = ({ collection, searchText }) => {
     ...(isMockServerEnabled ? [{
       id: 'create-mock-server',
       leftSection: IconServer,
-      label: 'Create Mock server',
-      rightSection: <StatusBadge status="info" size="xs">Beta</StatusBadge>,
+      label: t('SIDEBAR.COLLECTION.CREATE_MOCK'),
+      rightSection: <StatusBadge status="info" size="xs">{t('SIDEBAR.COLLECTION.BETA')}</StatusBadge>,
       onClick: openMockServerDashboard
     }] : []),
     {
@@ -478,13 +480,13 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'settings',
       leftSection: IconSettings,
-      label: 'Settings',
+      label: t('SIDEBAR.COLLECTION.SETTINGS'),
       onClick: viewCollectionSettings
     },
     {
       id: 'terminal',
       leftSection: IconTerminal2,
-      label: 'Open in Terminal',
+      label: t('SIDEBAR.COLLECTION.OPEN_TERMINAL'),
       onClick: async () => {
         const collectionCwd = collection.pathname;
         await openDevtoolsAndSwitchToTerminal(dispatch, collectionCwd);
@@ -495,7 +497,7 @@ const Collection = ({ collection, searchText }) => {
           {
             id: 'move-to-workspace',
             leftSection: IconFileArrowRight,
-            label: 'Move into Workspace',
+            label: t('SIDEBAR.COLLECTION.MOVE_TO_WORKSPACE'),
             testId: 'move-collection-to-workspace',
             onClick: () => {
               setShowMoveToWorkspaceModal(true);
@@ -506,7 +508,7 @@ const Collection = ({ collection, searchText }) => {
     {
       id: 'remove',
       leftSection: IconX,
-      label: 'Remove',
+      label: t('SIDEBAR.COLLECTION.REMOVE'),
       onClick: () => {
         setShowRemoveCollectionModal(true);
       }
@@ -617,7 +619,7 @@ const Collection = ({ collection, searchText }) => {
                     appendTo={dropdownContainerRef?.current || document.body}
                     popperOptions={{ strategy: 'fixed' }}
                   >
-                    <button className="ml-1 add-request-link">+ Add request</button>
+                    <button className="ml-1 add-request-link">{t('SIDEBAR.COLLECTION.ADD_REQUEST')}</button>
                   </MenuDropdown>
                 </div>
               </div>
