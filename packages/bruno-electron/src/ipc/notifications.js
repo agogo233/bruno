@@ -3,7 +3,8 @@ const { ipcMain } = require('electron');
 const fetch = require('node-fetch');
 
 const fetchNotifications = async () => {
-  const url = process.env.BRUNO_INFO_ENDPOINT || 'https://appinfo.usebruno.com';
+  const url = process.env.BRUNO_INFO_ENDPOINT;
+  if (!url) return [];
   const data = await fetch(url).then((res) => res.json());
   return data?.notifications || [];
 };
