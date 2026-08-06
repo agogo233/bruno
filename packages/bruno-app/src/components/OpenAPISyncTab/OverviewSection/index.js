@@ -41,16 +41,13 @@ const SUMMARY_CARDS = [
 const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, remoteDrift, onTabSelect, error, onOpenSettings }) => {
   const openApiSyncConfig = collection?.brunoConfig?.openapi?.[0];
 
-  const reduxError = useSelector((state) => state.openapiSync?.collectionUpdates?.[collection.uid]?.error);
   const specMeta = useSelector((state) => state.openapiSync?.storedSpecMeta?.[collection.uid] || null);
-  const activeError = error || reduxError;
+  const activeError = error;
 
   const version = specMeta?.version;
   const endpointCount = specMeta?.endpointCount ?? null;
   const lastSyncDate = openApiSyncConfig?.lastSyncDate;
   const groupBy = openApiSyncConfig?.groupBy || 'tags';
-  const autoCheckEnabled = openApiSyncConfig?.autoCheck !== false;
-  const autoCheckInterval = openApiSyncConfig?.autoCheckInterval || 5;
 
   // Endpoint Summary counts
   // Total: from collection items in Redux; In Sync: from remote spec comparison
@@ -90,8 +87,7 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
     { label: 'Spec Version', value: version ? `v${version}` : '–' },
     { label: 'Endpoints in Spec', value: endpointCount != null ? endpointCount : '–' },
     { label: 'Last Synced At', value: lastSyncDate ? moment(lastSyncDate).fromNow() : '–', tooltip: lastSyncDate ? moment(lastSyncDate).format('MMMM D, YYYY [at] h:mm A') : undefined },
-    { label: 'Folder Grouping', value: capitalize(groupBy) },
-    { label: 'Auto Check for Updates', value: autoCheckEnabled ? `Every ${autoCheckInterval} min` : 'Disabled' }
+    { label: 'Folder Grouping', value: capitalize(groupBy) }
   ];
 
   const hasCollectionChanges = changedInCollection > 0;

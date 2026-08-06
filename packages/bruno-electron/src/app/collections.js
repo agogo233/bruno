@@ -34,9 +34,7 @@ const configSchema = Yup.object({
       sourceUrl: Yup.string().notRequired(),
       lastSyncDate: Yup.string().notRequired(),
       specHash: Yup.string().notRequired(),
-      groupBy: Yup.string().oneOf(['tags', 'path']).notRequired(),
-      autoCheck: Yup.boolean().notRequired(),
-      autoCheckInterval: Yup.number().notRequired()
+      groupBy: Yup.string().oneOf(['tags', 'path']).notRequired()
     })
   ).notRequired()
 });

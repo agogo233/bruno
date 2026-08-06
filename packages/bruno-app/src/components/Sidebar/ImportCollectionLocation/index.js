@@ -110,7 +110,6 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
   const [groupingType, setGroupingType] = useState('tags');
   const [collectionFormat, setCollectionFormat] = useState(DEFAULT_COLLECTION_FORMAT);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [enableCheckForSpecUpdates, setEnableCheckForSpecUpdates] = useState(false);
   const [preserveScripts, setPreserveScripts] = useState(false);
   const dropdownTippyRef = useRef();
   const optionsDropdownTippyRef = useRef();
@@ -120,8 +119,6 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
   const isOpenApiFromUrl = isOpenApi && !!sourceUrl && !filePath;
   const isOpenApiFromFile = isOpenApi && !!filePath && !sourceUrl;
   const isSwagger2 = isOpenApi && rawData?.swagger && String(rawData.swagger).startsWith('2');
-  const showCheckForSpecUpdatesOption = isOpenApiFromUrl || isOpenApiFromFile;
-
   const { workspaces, activeWorkspaceUid } = useSelector((state) => state.workspaces);
   const preferences = useSelector((state) => state.app.preferences);
   const activeWorkspace = workspaces.find((w) => w.uid === activeWorkspaceUid);
@@ -147,31 +144,6 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
     onSubmit: async (values) => {
       const { collection: convertedCollection, issues } = await convertCollection(format, rawData, { groupingType, collectionFormat, preserveScripts });
       const options = { format: collectionFormat };
-
-      if (showCheckForSpecUpdatesOption && enableCheckForSpecUpdates) {
-        const syncSourceUrl = sourceUrl || filePath; // URL or absolute path (backend converts to relative)
-        const baseBrunoConfig = {
-          version: convertedCollection.version || '1',
-          name: convertedCollection.name || 'Untitled Collection',
-          type: 'collection',
-          ignore: ['node_modules', '.git']
-        };
-
-        convertedCollection.brunoConfig = {
-          ...baseBrunoConfig,
-          ...convertedCollection.brunoConfig,
-          openapi: [
-            {
-              sourceUrl: syncSourceUrl,
-              groupBy: groupingType,
-              autoCheck: true,
-              autoCheckInterval: 5
-            }
-          ]
-        };
-
-        options.rawOpenAPISpec = rawContent || rawData;
-      }
 
       handleSubmit(convertedCollection, values.collectionLocation, options);
 
@@ -408,25 +380,6 @@ const ImportCollectionLocation = ({ onClose, handleSubmit, rawData, format, sour
                   </Dropdown>
                 </div>
               </div>
-            )}
-            {showCheckForSpecUpdatesOption && (
-              <label className={`mt-4 flex items-start gap-2 ${isSwagger2 ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}`}>
-                <input
-                  type="checkbox"
-                  checked={isSwagger2 ? false : enableCheckForSpecUpdates}
-                  onChange={(e) => setEnableCheckForSpecUpdates(e.target.checked)}
-                  disabled={isSwagger2}
-                  className={`checkbox mt-0.5 ${isSwagger2 ? '' : 'cursor-pointer'}`}
-                />
-                <div>
-                  <span className="checkbox-option-label">Check for Spec Updates</span>
-                  <p className="checkbox-option-description">
-                    {isSwagger2
-                      ? 'OpenAPI Sync is not supported for Swagger 2.0 specs.'
-                      : 'Stay notified of spec changes and sync your collection with the spec.'}
-                  </p>
-                </div>
-              </label>
             )}
           </form>
         </Modal>

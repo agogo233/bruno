@@ -14,12 +14,8 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
   const [mode, setMode] = useState(initialMode);
   const [url, setUrl] = useState(isUrl ? normalizedSourceUrl : '');
   const [filePath, setFilePath] = useState(isUrl ? '' : normalizedSourceUrl);
-  const [autoCheck, setAutoCheck] = useState(openApiSyncConfig?.autoCheck !== false);
-  const [checkInterval, setCheckInterval] = useState(openApiSyncConfig?.autoCheckInterval || 5);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null);
-
-  const intervals = [5, 15, 30, 60];
 
   const effectiveSource = mode === 'file' ? filePath : url.trim();
   const canSave = mode === 'file' ? !!effectiveSource : isHttpUrl(effectiveSource.trim());
@@ -27,7 +23,7 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onSave({ sourceUrl: effectiveSource, autoCheck, autoCheckInterval: checkInterval });
+      await onSave({ sourceUrl: effectiveSource });
       onClose();
     } catch (_) {
       // caller (handleSaveSettings) already shows a toast on failure
@@ -106,42 +102,6 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
               </>
             )}
           </div>
-
-          <div className="settings-field">
-            <label className="settings-label">Auto-check for updates</label>
-            <div className="settings-toggle-row">
-              <div className="toggle-info">
-                <div className="toggle-description">
-                  Automatically check for spec changes at a regular interval
-                </div>
-              </div>
-              <button
-                className={`toggle-switch ${autoCheck ? 'active' : ''}`}
-                onClick={() => setAutoCheck(!autoCheck)}
-                type="button"
-              >
-                <span className="toggle-knob" />
-              </button>
-            </div>
-          </div>
-
-          {autoCheck && (
-            <div className="settings-field">
-              <label className="settings-label">Check interval</label>
-              <div className="interval-buttons">
-                {intervals.map((mins) => (
-                  <button
-                    key={mins}
-                    type="button"
-                    className={checkInterval === mins ? 'active' : ''}
-                    onClick={() => setCheckInterval(mins)}
-                  >
-                    {mins} min
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="settings-footer">

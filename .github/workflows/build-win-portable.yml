@@ -1,0 +1,58 @@
+name: Build Windows Portable ZIP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-win-portable:
+    name: Build Bruno Win x64 Portable ZIP
+    runs-on: windows-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node Dependencies
+        uses: ./.github/actions/common/setup-node-deps
+        with:
+          shell: pwsh
+
+      - name: Build Web Frontend
+        run: npm run build:web
+        shell: pwsh
+
+      - name: Prepare Electron Assets
+        shell: pwsh
+        run: |
+          $outDir = "packages/bruno-electron/out"
+          $webDir = "packages/bruno-electron/web"
+          Remove-Item -Recurse -Force $outDir -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force $webDir -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path $webDir -Force | Out-Null
+          Copy-Item -Recurse "packages/bruno-app/dist/*" $webDir
+
+          foreach ($file in Get-ChildItem "$webDir" -Filter "*.html" -File) {
+            $content = Get-Content $file.FullName -Encoding UTF8 -Raw
+            $content = $content -replace '/static/', './static/'
+            [System.IO.File]::WriteAllText($file.FullName, $content, [System.Text.Encoding]::UTF8)
+          }
+
+          foreach ($file in Get-ChildItem "$webDir/static/css" -Filter "*.css" -File -Recurse) {
+            $content = Get-Content $file.FullName -Encoding UTF8 -Raw
+            $content = $content -replace '/static/font', '../../static/font'
+            [System.IO.File]::WriteAllText($file.FullName, $content, [System.Text.Encoding]::UTF8)
+          }
+
+          Get-ChildItem "$webDir" -Recurse -Include "*.map" -File | Remove-Item -Force -ErrorAction SilentlyContinue
+
+      - name: Build Windows Portable ZIP
+        run: npm run dist:win-portable --workspace=packages/bruno-electron
+        shell: pwsh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Bruno_Win_x64_Portable
+          path: packages/bruno-electron/out/Bruno_*_win.zip
+          retention-days: 30

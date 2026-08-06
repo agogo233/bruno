@@ -20,7 +20,6 @@ const SpecStatusSection = ({
   onCheck, onOpenSettings
 }) => {
   const openApiSyncConfig = collection?.brunoConfig?.openapi?.[0];
-  const lastCheckedAt = useSelector((state) => state.openapiSync?.collectionUpdates?.[collection.uid]?.lastChecked);
 
   const {
     isSyncing, showConfirmModal, confirmGroups,
@@ -64,7 +63,7 @@ const SpecStatusSection = ({
       };
     }
     return null;
-  }, [fileNotFound, error, sourceUrl, specDrift, lastSyncedAt, storedSpec, lastCheckedAt, hasRemoteUpdates]);
+  }, [fileNotFound, error, sourceUrl, specDrift, lastSyncedAt, storedSpec, hasRemoteUpdates]);
   return (
     <>
       {bannerState && (

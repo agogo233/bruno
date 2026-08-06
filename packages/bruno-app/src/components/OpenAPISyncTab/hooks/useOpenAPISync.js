@@ -6,7 +6,6 @@ import { closeTabs } from 'providers/ReduxStore/slices/collections/actions';
 import { getDefaultRequestPaneTab } from 'utils/collections';
 import {
   clearCollectionState,
-  setCollectionUpdate,
   setStoredSpec,
   setStoredSpecMeta,
   setDrift
@@ -158,13 +157,6 @@ const useOpenAPISync = (collection) => {
       updateDrift({ specDrift: result, lastChecked: Date.now() });
       updateStoredSpec(result.storedSpec || null);
 
-      // Update Redux store so toolbar status stays in sync
-      dispatch(setCollectionUpdate({
-        collectionUid: collection.uid,
-        hasUpdates: result.isValid !== false && result.hasChanges,
-        error: result.isValid === false ? result.error : null
-      }));
-
       // Fetch remote drift (remote spec vs collection) for collection-centric categorization
       if (result.newSpec) {
         const remoteComparison = await ipcRenderer.invoke('renderer:get-collection-drift', {
@@ -186,11 +178,6 @@ const useOpenAPISync = (collection) => {
     } catch (err) {
       console.error('Error checking for updates:', err);
       setError(formatIpcError(err) || 'Failed to check for updates');
-      dispatch(setCollectionUpdate({
-        collectionUid: collection.uid,
-        hasUpdates: false,
-        error: formatIpcError(err) || 'Failed to check for updates'
-      }));
     } finally {
       updateDrift({ fetching: false });
       setIsLoading(false);
@@ -264,9 +251,7 @@ const useOpenAPISync = (collection) => {
         collectionPath: collection.pathname,
         config: {
           sourceUrl: trimmedUrl,
-          groupBy: 'tags',
-          autoCheck: true,
-          autoCheckInterval: 5
+          groupBy: 'tags'
         }
       });
 
@@ -352,7 +337,7 @@ const useOpenAPISync = (collection) => {
   };
 
   // Save connection settings from the modal
-  const handleSaveSettings = async ({ sourceUrl: newUrl, autoCheck, autoCheckInterval }) => {
+  const handleSaveSettings = async ({ sourceUrl: newUrl }) => {
     const sourceUrlChanged = newUrl !== openApiSyncConfig?.sourceUrl;
 
     // Validate the spec before saving if source URL changed (URL only; files are validated at picker)
@@ -377,9 +362,7 @@ const useOpenAPISync = (collection) => {
       await ipcRenderer.invoke('renderer:update-openapi-sync-config', {
         collectionPath: collection.pathname,
         config: {
-          sourceUrl: newUrl,
-          autoCheck,
-          autoCheckInterval
+          sourceUrl: newUrl
         }
       });
       setSourceUrl(newUrl);

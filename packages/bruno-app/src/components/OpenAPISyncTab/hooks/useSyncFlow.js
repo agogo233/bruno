@@ -1,14 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { clearCollectionUpdate } from 'providers/ReduxStore/slices/openapi-sync';
 import { formatIpcError } from 'utils/common/error';
 
 const useSyncFlow = ({
   collection, specDrift, remoteDrift, collectionDrift,
   setError, checkForUpdates
 }) => {
-  const dispatch = useDispatch();
 
   const [pendingSyncMode, setPendingSyncMode] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -77,7 +74,6 @@ const useSyncFlow = ({
 
       setPendingSyncMode(null);
 
-      dispatch(clearCollectionUpdate({ collectionUid: collection.uid }));
       toast.success(
         mode === 'spec-only' ? 'Spec updated successfully'
           : mode === 'reset' ? 'Collection reset to spec successfully'

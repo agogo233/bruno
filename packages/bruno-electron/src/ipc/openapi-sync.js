@@ -874,21 +874,6 @@ const loadStoredSpecCollection = (collectionPath, brunoConfig) => {
 };
 
 const registerOpenAPISyncIpc = (mainWindow) => {
-  ipcMain.handle('renderer:check-openapi-updates', async (event, {
-    collectionUid, collectionPath, sourceUrl, storedSpecHash, environmentContext
-  }) => {
-    try {
-      const result = await fetchSpecFromSource({ collectionUid, collectionPath, sourceUrl, environmentContext });
-      if (result.error) {
-        return { hasUpdates: false, error: result.error, errorCode: result.errorCode };
-      }
-      const remoteSpecHash = generateSpecHash(result.spec);
-      return { hasUpdates: storedSpecHash !== remoteSpecHash, remoteSpecHash };
-    } catch (error) {
-      console.error('[OpenAPI Sync] Lightweight check error:', error.message);
-      return { hasUpdates: false, error: error.message };
-    }
-  });
 
   ipcMain.handle('renderer:compare-openapi-specs', async (event, {
     collectionUid, collectionPath, sourceUrl, environmentContext
@@ -1684,7 +1669,7 @@ const registerOpenAPISyncIpc = (mainWindow) => {
       const { format, brunoConfig, collectionRoot } = loadBrunoConfig(collectionPath);
 
       // Merge new config into existing entry (allowlist keys only)
-      const allowedKeys = ['sourceUrl', 'groupBy', 'lastSyncDate', 'specHash', 'autoCheck', 'autoCheckInterval'];
+      const allowedKeys = ['sourceUrl', 'groupBy', 'lastSyncDate', 'specHash'];
       const sanitizedConfig = {};
       for (const key of allowedKeys) {
         if (key in config) {
@@ -1710,8 +1695,6 @@ const registerOpenAPISyncIpc = (mainWindow) => {
       if (existingEntry) {
         brunoConfig.openapi = [{ ...existingEntry, ...sanitizedConfig }];
       } else {
-        if (!('autoCheck' in sanitizedConfig)) sanitizedConfig.autoCheck = true;
-        if (!('autoCheckInterval' in sanitizedConfig)) sanitizedConfig.autoCheckInterval = 5;
         brunoConfig.openapi = [sanitizedConfig];
       }
 

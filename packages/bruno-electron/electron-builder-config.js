@@ -99,6 +99,10 @@ const config = {
       {
         target: 'nsis',
         arch: ['x64', 'arm64']
+      },
+      {
+        target: 'zip',
+        arch: ['x64']
       }
     ],
     sign: null,

@@ -195,16 +195,13 @@ const CollectionHeader = ({ collection, isScratchCollection }) => {
     };
   }, [isRenamingWorkspace, handleCancelWorkspaceRename, currentWorkspace?.isCreating]);
 
-  const collectionUpdates = useSelector((state) => state.openapiSync?.collectionUpdates || {});
-  const { theme } = useTheme();
+   const { theme } = useTheme();
 
   if (!collection) {
     return null;
   }
 
   const hasOpenApiSyncConfigured = collection?.brunoConfig?.openapi?.[0]?.sourceUrl;
-  const hasOpenApiUpdates = hasOpenApiSyncConfigured && collectionUpdates[collection.uid]?.hasUpdates;
-  const hasOpenApiError = hasOpenApiSyncConfigured && collectionUpdates[collection.uid]?.error;
 
   // Get mounted collections for the current workspace (excluding scratch collections)
   const mountedCollections = collections.filter((c) => {
@@ -773,20 +770,17 @@ const CollectionHeader = ({ collection, isScratchCollection }) => {
                 </div>
               )}
               {/* OpenAPI Sync - standalone only when configured and beta enabled */}
-              {hasOpenApiSyncConfigured && (
-                <ToolHint
-                  text={hasOpenApiError ? 'OpenAPI Error' : hasOpenApiUpdates ? 'OpenAPI Updates Available' : 'OpenAPI'}
-                  toolhintId="OpenApiSyncToolhintId"
-                  place="bottom"
-                >
-                  <ActionIcon onClick={viewOpenApiSync} aria-label="OpenAPI" size="sm" className="relative">
-                    <OpenAPISyncIcon size={15} />
-                    {(hasOpenApiUpdates || hasOpenApiError) && (
-                      <span className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: hasOpenApiError ? theme.status.danger.text : theme.status.warning.text }} />
-                    )}
-                  </ActionIcon>
-                </ToolHint>
-              )}
+               {hasOpenApiSyncConfigured && (
+                 <ToolHint
+                   text="OpenAPI"
+                   toolhintId="OpenApiSyncToolhintId"
+                   place="bottom"
+                 >
+                   <ActionIcon onClick={viewOpenApiSync} aria-label="OpenAPI" size="sm" className="relative">
+                     <OpenAPISyncIcon size={15} />
+                   </ActionIcon>
+                 </ToolHint>
+               )}
               {/* Runner - always visible */}
               <ToolHint text="Runner" toolhintId="RunnerToolhintId" place="bottom">
                 <ActionIcon onClick={handleRun} aria-label="Runner" size="sm" data-testid="runner">
