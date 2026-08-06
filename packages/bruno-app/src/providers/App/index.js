@@ -5,7 +5,6 @@ import { refreshScreenWidth, hydrateSidebarState } from 'providers/ReduxStore/sl
 import ConfirmAppClose from './ConfirmAppClose';
 import MigrateCollectionToYmlModal from 'components/MigrateCollectionToYmlModal';
 import useIpcEvents from './useIpcEvents';
-import useTelemetry from './useTelemetry';
 import StyledWrapper from './StyledWrapper';
 import useChangelogOnUpdate from './useChangelogOnUpdate';
 import { version } from '../../../package.json';
@@ -13,7 +12,6 @@ import { version } from '../../../package.json';
 export const AppContext = React.createContext();
 
 export const AppProvider = (props) => {
-  useTelemetry({ version });
   useIpcEvents();
   useChangelogOnUpdate();
   const dispatch = useDispatch();
