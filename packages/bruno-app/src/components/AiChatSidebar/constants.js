@@ -1,16 +1,16 @@
 export const PROCESSING_STAGES = [
-  { id: 'sending', label: 'Sending request', icon: 'send' },
-  { id: 'thinking', label: 'AI is thinking', icon: 'sparkles' },
-  { id: 'generating', label: 'Generating response', icon: 'wand' },
-  { id: 'applying', label: 'Preparing changes', icon: 'code' }
+  { id: 'sending', label: 'Sending request', key: 'AI_CHAT_SIDEBAR.SIDEBAR.PROCESSING_SENDING', icon: 'send' },
+  { id: 'thinking', label: 'AI is thinking', key: 'AI_CHAT_SIDEBAR.SIDEBAR.PROCESSING_THINKING', icon: 'sparkles' },
+  { id: 'generating', label: 'Generating response', key: 'AI_CHAT_SIDEBAR.SIDEBAR.PROCESSING_GENERATING', icon: 'wand' },
+  { id: 'applying', label: 'Preparing changes', key: 'AI_CHAT_SIDEBAR.SIDEBAR.PROCESSING_APPLYING', icon: 'code' }
 ];
 
 export const CONTENT_TYPE_LABELS = {
-  'app': 'App',
-  'tests': 'Tests',
-  'pre-request': 'Script',
-  'post-response': 'Script',
-  'docs': 'Docs'
+  'app': 'AI_CHAT_SIDEBAR.SIDEBAR.CONTENT_TYPE_APP',
+  'tests': 'AI_CHAT_SIDEBAR.SIDEBAR.CONTENT_TYPE_TESTS',
+  'pre-request': 'AI_CHAT_SIDEBAR.SIDEBAR.CONTENT_TYPE_SCRIPT',
+  'post-response': 'AI_CHAT_SIDEBAR.SIDEBAR.CONTENT_TYPE_SCRIPT',
+  'docs': 'AI_CHAT_SIDEBAR.SIDEBAR.CONTENT_TYPE_DOCS'
 };
 
 export const SUGGESTIONS_BY_TYPE = {

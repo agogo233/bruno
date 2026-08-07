@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import find from 'lodash/find';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconFileCode, IconDots } from '@tabler/icons';
@@ -12,6 +13,7 @@ import toast from 'react-hot-toast';
 
 const ApiSpecPanel = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [createApiSpecModalOpen, setCreateApiSpecModalOpen] = useState(false);
 
@@ -32,7 +34,7 @@ const ApiSpecPanel = () => {
   );
 
   if (!uid) {
-    return <div className="p-4 opacity-50">API Spec not found!</div>;
+    return <div className="p-4 opacity-50">{t('API_SPEC.NOT_FOUND')}</div>;
   }
 
   const MenuIcon = forwardRef((props, ref) => {
@@ -45,7 +47,7 @@ const ApiSpecPanel = () => {
 
   const handleOpenApiSpec = () => {
     dispatch(openApiSpec()).catch(
-      (err) => console.log(err) && toast.error('An error occurred while opening the API spec')
+      (err) => console.log(err) && toast.error(t('API_SPEC.OPEN_ERROR'))
     );
   };
 
@@ -56,7 +58,7 @@ const ApiSpecPanel = () => {
         <div className="flex flex-row justify-start gap-x-4 col-span-1">
           <div className="flex w-fit items-center cursor-pointer">
             <IconFileCode size={18} strokeWidth={1.5} />
-            <span className="ml-2 mr-4 font-semibold">API Designer</span>
+            <span className="ml-2 mr-4 font-semibold">{t('API_SPEC.TITLE')}</span>
           </div>
         </div>
         <div className="w-full col-span-1 flex justify-center" title={pathname}>
@@ -71,7 +73,7 @@ const ApiSpecPanel = () => {
                 setCreateApiSpecModalOpen(true);
               }}
             >
-              Create API Spec
+              {t('API_SPEC.CREATE')}
             </div>
             <div
               className="dropdown-item"
@@ -80,7 +82,7 @@ const ApiSpecPanel = () => {
                 handleOpenApiSpec();
               }}
             >
-              Open API Spec
+              {t('API_SPEC.OPEN')}
             </div>
           </Dropdown>
         </div>

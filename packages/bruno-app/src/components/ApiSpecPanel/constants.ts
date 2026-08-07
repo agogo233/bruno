@@ -1,6 +1,8 @@
+import i18next from 'i18next';
+
 export const SPEC_PREVIEW_ERRORS = {
-  EMPTY: 'Unable to render preview: No API definition provided.',
-  INVALID_YAML_JSON: 'Unable to render preview: content is not a valid YAML or JSON.',
-  INVALID_OPENAPI: 'Unable to render preview: content is not a valid OpenAPI specification.',
-  TIMEOUT: 'Preview timed out. The spec may be too large or contain unsupported content.'
+  EMPTY: () => i18next.t('API_SPEC.PREVIEW_ERROR_EMPTY'),
+  INVALID_YAML_JSON: () => i18next.t('API_SPEC.PREVIEW_ERROR_INVALID_YAML_JSON'),
+  INVALID_OPENAPI: () => i18next.t('API_SPEC.PREVIEW_ERROR_INVALID_OPENAPI'),
+  TIMEOUT: () => i18next.t('API_SPEC.PREVIEW_ERROR_TIMEOUT')
 } as const;

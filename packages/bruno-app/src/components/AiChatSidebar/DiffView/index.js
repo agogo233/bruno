@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { diffLines } from 'diff';
 import { IconCheck, IconX, IconCode, IconChevronDown, IconChevronUp } from '@tabler/icons';
 import StyledWrapper from './StyledWrapper';
@@ -10,6 +11,7 @@ const DiffView = ({ originalCode, newCode, onAccept, onReject, status, contentTy
   const [isExpanded, setIsExpanded] = useState(true);
   const [expandedFromTop, setExpandedFromTop] = useState({});
   const [expandedFromBottom, setExpandedFromBottom] = useState({});
+  const { t } = useTranslation();
 
   const diffResult = useMemo(() => {
     const changes = diffLines(originalCode || '', newCode || '');
@@ -101,24 +103,24 @@ const DiffView = ({ originalCode, newCode, onAccept, onReject, status, contentTy
     if (status === 'accepted') {
       return (
         <span className="status-badge accepted">
-          <IconCheck size={12} /> Applied
+          <IconCheck size={12} /> {t('AI_CHAT_SIDEBAR.DIFF_VIEW.APPLIED')}
         </span>
       );
     }
     if (status === 'rejected') {
       return (
         <span className="status-badge rejected">
-          <IconX size={12} /> Dismissed
+          <IconX size={12} /> {t('AI_CHAT_SIDEBAR.DIFF_VIEW.DISMISSED')}
         </span>
       );
     }
     return (
       <div className="diff-actions">
-        <button className="diff-btn reject" onClick={onReject} title="Dismiss changes">
+        <button className="diff-btn reject" onClick={onReject} title={t('AI_CHAT_SIDEBAR.DIFF_VIEW.DISMISS_CHANGES')}>
           <IconX size={12} />
         </button>
-        <button className="diff-btn accept" onClick={onAccept} title="Apply changes" disabled={disableAccept}>
-          <IconCheck size={12} /> Apply
+        <button className="diff-btn accept" onClick={onAccept} title={t('AI_CHAT_SIDEBAR.DIFF_VIEW.APPLY_CHANGES')} disabled={disableAccept}>
+          <IconCheck size={12} /> {t('AI_CHAT_SIDEBAR.DIFF_VIEW.APPLY')}
         </button>
       </div>
     );
@@ -154,12 +156,12 @@ const DiffView = ({ originalCode, newCode, onAccept, onReject, status, contentTy
               <div className="expand-gutter">
                 <div className="expand-buttons">
                   {!isAtTop && (
-                    <button className="expand-btn" onClick={() => expandUp(hunk.startIndex, hunk.count)} title="Expand up">
+                    <button className="expand-btn" onClick={() => expandUp(hunk.startIndex, hunk.count)} title={t('AI_CHAT_SIDEBAR.DIFF_VIEW.EXPAND_UP')}>
                       <IconChevronUp size={10} />
                     </button>
                   )}
                   {!isAtBottom && (
-                    <button className="expand-btn" onClick={() => expandDown(hunk.startIndex, hunk.count)} title="Expand down">
+                    <button className="expand-btn" onClick={() => expandDown(hunk.startIndex, hunk.count)} title={t('AI_CHAT_SIDEBAR.DIFF_VIEW.EXPAND_DOWN')}>
                       <IconChevronDown size={10} />
                     </button>
                   )}
@@ -202,9 +204,9 @@ const DiffView = ({ originalCode, newCode, onAccept, onReject, status, contentTy
 
       <button className="diff-toggle" onClick={() => setIsExpanded((v) => !v)}>
         {isExpanded ? (
-          <><IconChevronUp size={12} /> Hide</>
+          <><IconChevronUp size={12} /> {t('AI_CHAT_SIDEBAR.DIFF_VIEW.HIDE')}</>
         ) : (
-          <><IconChevronDown size={12} /> Show ({diffResult.additions + diffResult.deletions})</>
+          <><IconChevronDown size={12} /> {t('AI_CHAT_SIDEBAR.DIFF_VIEW.SHOW', { count: diffResult.additions + diffResult.deletions })}</>
         )}
       </button>
     </StyledWrapper>

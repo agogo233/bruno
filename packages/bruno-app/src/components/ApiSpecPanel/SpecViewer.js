@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import jsyaml from 'js-yaml';
 import { useTheme } from 'providers/Theme';
@@ -12,23 +13,23 @@ import { SPEC_PREVIEW_ERRORS } from './constants';
 
 const PREVIEW_TIMEOUT_MS = 15000;
 
-const getPreviewParseError = (content) => {
-  if (!content || typeof content !== 'string') return null;
-  let parsed;
-  try {
-    parsed = JSON.parse(content);
-  } catch {
+  const getPreviewParseError = (content) => {
+    if (!content || typeof content !== 'string') return null;
+    let parsed;
     try {
-      parsed = jsyaml.load(content);
+      parsed = JSON.parse(content);
     } catch {
-      return SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON;
+      try {
+        parsed = jsyaml.load(content);
+      } catch {
+        return SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON();
+      }
     }
-  }
-  if (!isOpenApiSpec(parsed)) {
-    return SPEC_PREVIEW_ERRORS.INVALID_OPENAPI;
-  }
-  return null;
-};
+    if (!isOpenApiSpec(parsed)) {
+      return SPEC_PREVIEW_ERRORS.INVALID_OPENAPI();
+    }
+    return null;
+  };
 
 const MIN_LEFT_PANE_WIDTH = 300;
 const MIN_RIGHT_PANE_WIDTH = 450;
@@ -45,6 +46,7 @@ const MIN_RIGHT_PANE_WIDTH = 450;
  */
 const SpecViewer = ({ content, readOnly, onSave, leftPaneWidth, onLeftPaneWidthChange }) => {
   const { displayedTheme, theme } = useTheme();
+  const { t } = useTranslation();
   const preferences = useSelector((state) => state.app.preferences);
 
   const [editorContent, setEditorContent] = useState(content);
@@ -82,7 +84,7 @@ const SpecViewer = ({ content, readOnly, onSave, leftPaneWidth, onLeftPaneWidthC
     clearTimeout(previewTimeoutRef.current);
 
     if (!content || !content.trim()) {
-      setPreviewError(SPEC_PREVIEW_ERRORS.EMPTY);
+      setPreviewError(SPEC_PREVIEW_ERRORS.EMPTY());
       return;
     }
 
@@ -94,7 +96,7 @@ const SpecViewer = ({ content, readOnly, onSave, leftPaneWidth, onLeftPaneWidthC
     setPreviewError(null);
 
     previewTimeoutRef.current = setTimeout(() => {
-      setPreviewError(SPEC_PREVIEW_ERRORS.TIMEOUT);
+      setPreviewError(SPEC_PREVIEW_ERRORS.TIMEOUT());
     }, PREVIEW_TIMEOUT_MS);
 
     return () => clearTimeout(previewTimeoutRef.current);
@@ -170,7 +172,7 @@ const SpecViewer = ({ content, readOnly, onSave, leftPaneWidth, onLeftPaneWidthC
               >
                 <div className="flex items-center justify-center gap-2 opacity-70">
                   <IconLoader2 size={20} className="animate-spin" />
-                  <span>Generating preview…</span>
+                  <span>{t('API_SPEC.GENERATING_PREVIEW')}</span>
                 </div>
               </div>
             )}

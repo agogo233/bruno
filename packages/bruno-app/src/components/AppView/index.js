@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { sendNetworkRequest } from 'utils/network/index';
 import { findEnvironmentInCollection } from 'utils/collections';
@@ -146,6 +147,7 @@ const REQUEST_CTX_BOOTSTRAP = `<script>
 </script>`;
 
 const AppView = ({ item, collection, code }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { displayedTheme, theme, themeVariantLight, themeVariantDark } = useTheme();
   const src = useMemo(() => toDataUrl(wrapHtml(REQUEST_CTX_BOOTSTRAP, code || '')), [code]);
@@ -203,7 +205,7 @@ const AppView = ({ item, collection, code }) => {
         if (result?.error) {
           const errorMessage = typeof result.error === 'string'
             ? result.error
-            : result.error?.message || 'Request failed';
+            : result.error?.message || t('APP_VIEW.REQUEST_FAILED');
           push({ type: 'response', requestId, error: errorMessage });
           return;
         }
@@ -227,7 +229,7 @@ const AppView = ({ item, collection, code }) => {
 
         push({ type: 'response', requestId, response: projectResponse(result) });
       } catch (err) {
-        push({ type: 'response', requestId, error: err?.message || 'Request failed' });
+        push({ type: 'response', requestId, error: err?.message || t('APP_VIEW.REQUEST_FAILED') });
       }
     },
     [item, collection, environment, dispatch]
@@ -302,9 +304,9 @@ const AppView = ({ item, collection, code }) => {
   return (
     <StyledWrapper data-testid="app-view">
       <div className="app-view-toolbar">
-        <span>App mode - {item.name}</span>
+        <span>{t('APP_VIEW.APP_MODE', { name: item.name })}</span>
         <button type="button" className="app-exit-btn" data-testid="app-exit-button" onClick={disableApp}>
-          Exit to editor
+          {t('APP_VIEW.EXIT_TO_EDITOR')}
         </button>
       </div>
       {code && code.trim().length ? (
@@ -319,8 +321,8 @@ const AppView = ({ item, collection, code }) => {
         </div>
       ) : (
         <EmptyAppState
-          title="No app yet"
-          hint="Add HTML/JS in the App tab to render a custom UI for this request."
+          title={t('APP_VIEW.NO_APP_YET')}
+          hint={t('APP_VIEW.NO_APP_YET_HINT')}
           actions={(
             <>
               <Button
@@ -330,7 +332,7 @@ const AppView = ({ item, collection, code }) => {
                 onClick={goToAppTab}
                 data-testid="empty-app-add-code"
               >
-                Add app code
+                {t('APP_VIEW.ADD_APP_CODE')}
               </Button>
               <Button
                 size="sm"
@@ -339,7 +341,7 @@ const AppView = ({ item, collection, code }) => {
                 onClick={openAppsDocs}
                 data-testid="empty-app-learn-more"
               >
-                Learn more
+                {t('APP_VIEW.LEARN_MORE')}
               </Button>
             </>
           )}

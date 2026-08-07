@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import { relativeDate } from 'utils/common';
 
 const NotificationList = ({ items, selectedId, onSelect }) => {
+  const { t } = useTranslation();
   return (
     <ul className="notif-list">
       {items.map((notification) => {
@@ -13,6 +15,7 @@ const NotificationList = ({ items, selectedId, onSelect }) => {
             className={classnames('notif-list-item', { active: isActive, unread: isUnread })}
             role="button"
             tabIndex={0}
+            aria-label={t('NOTIFICATIONS.LIST.ENTER')}
             onClick={() => onSelect(notification)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -27,7 +30,7 @@ const NotificationList = ({ items, selectedId, onSelect }) => {
           </li>
         );
       })}
-      {items.length === 0 && <li className="notif-list-empty">No notifications to show.</li>}
+      {items.length === 0 && <li className="notif-list-empty">{t('NOTIFICATIONS.LIST.EMPTY')}</li>}
     </ul>
   );
 };

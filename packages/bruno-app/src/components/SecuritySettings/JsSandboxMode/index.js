@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { IconShieldCheck, IconCode } from '@tabler/icons';
 import Dropdown from 'components/Dropdown';
@@ -7,26 +8,9 @@ import { saveCollectionSecurityConfig } from 'providers/ReduxStore/slices/collec
 import StyledWrapper from './StyledWrapper';
 import ToolHint from 'components/ToolHint';
 
-const SANDBOX_OPTIONS = [
-  {
-    key: 'safe',
-    label: 'Safe Mode',
-    description: 'JavaScript code is executed in a secure sandbox and cannot access your filesystem or execute system commands.',
-    icon: IconShieldCheck,
-    recommended: true
-  },
-  {
-    key: 'developer',
-    label: 'Developer Mode',
-    description: 'JavaScript code has access to the filesystem, can execute system commands and access sensitive information.',
-    icon: IconCode,
-    warning: 'Use only if you trust the authors of the collection',
-    recommended: false
-  }
-];
-
 const JsSandboxMode = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const dropdownRef = useRef(null);
   const [selectedMode, setSelectedMode] = useState(collection?.securityConfig?.jsSandboxMode || 'safe');
 
@@ -63,7 +47,7 @@ const JsSandboxMode = ({ collection }) => {
       })
       .catch((err) => {
         console.error(err);
-        toast.error('Failed to update sandbox mode');
+        toast.error(t('SECURITY.sandboxModeUpdateFailed'));
       });
   };
 
@@ -81,8 +65,7 @@ const JsSandboxMode = ({ collection }) => {
         aria-checked={isActive}
         data-testid={`sandbox-mode-${option.key}`}
       >
-
-        <div className="dropdown-label">
+        <div className="sandbox-label">
           <div className="sandbox-option-title">
             <div className="sandbox-option-radio">
               <input
@@ -93,11 +76,11 @@ const JsSandboxMode = ({ collection }) => {
               />
             </div>
             <OptionIcon size={24} strokeWidth={1.5} />
-            {option.label}
-            {option.recommended && <span className="recommended-badge">Recommended</span>}
+            {t(option.labelKey)}
+            {option.recommended && <span className="recommended-badge">{t('SECURITY.recommended')}</span>}
           </div>
-          {option.warning && (<div><span className="developer-mode-warning">{option.warning}</span></div>)}
-          <div className="sandbox-option-description">{option.description}</div>
+          {option.warningKey && (<div><span className="developer-mode-warning">{t(option.warningKey)}</span></div>)}
+          <div className="sandbox-option-description">{t(option.descriptionKey)}</div>
         </div>
       </button>
     );
@@ -105,7 +88,7 @@ const JsSandboxMode = ({ collection }) => {
 
   const triggerIcon = (
     <div>
-      <ToolHint text={`${selectedMode === 'developer' ? 'Developer Mode' : 'Safe Mode'}`} toolhintId="JavascriptSandboxToolhintId" place="bottom">
+      <ToolHint text={selectedMode === 'developer' ? t('SECURITY.developerMode') : t('SECURITY.safeMode')} toolhintId="JavascriptSandboxToolhintId" place="bottom">
         <div className={`sandbox-icon ${selectedMode === 'developer' ? 'developer-mode' : 'safe-mode'}`} data-testid="sandbox-mode-selector">
           {selectedMode === 'developer' ? <IconCode size={14} strokeWidth={2} /> : <IconShieldCheck size={14} strokeWidth={2} />}
         </div>
@@ -117,8 +100,24 @@ const JsSandboxMode = ({ collection }) => {
     <StyledWrapper className="flex" onKeyDown={handleKeyDown}>
       <Dropdown onCreate={onDropdownCreate} icon={triggerIcon} placement="bottom-start">
         <div className="sandbox-dropdown">
-          <div className="sandbox-header">JavaScript Sandbox</div>
-          {SANDBOX_OPTIONS.map(renderOption)}
+          <div className="sandbox-header">{t('SECURITY.javascriptSandbox')}</div>
+          {[
+            {
+              key: 'safe',
+              labelKey: 'SECURITY.safeMode',
+              descriptionKey: 'SECURITY.safeModeDescription',
+              icon: IconShieldCheck,
+              recommended: true
+            },
+            {
+              key: 'developer',
+              labelKey: 'SECURITY.developerMode',
+              descriptionKey: 'SECURITY.developerModeDescription',
+              warningKey: 'SECURITY.developerModeWarning',
+              icon: IconCode,
+              recommended: false
+            }
+          ].map(renderOption)}
         </div>
       </Dropdown>
     </StyledWrapper>

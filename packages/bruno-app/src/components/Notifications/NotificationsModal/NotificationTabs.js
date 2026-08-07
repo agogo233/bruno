@@ -1,16 +1,18 @@
+import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import { IconDotsVertical } from '@tabler/icons';
 import { useEffect, useRef } from 'react';
 import Dropdown from 'components/Dropdown';
 import { TABS } from '../hooks/useNotifications';
 
-const menuIcon = (
-  <span className="notif-menu-trigger" aria-label="Notifications menu">
+const menuIcon = (label) => (
+  <span className="notif-menu-trigger" aria-label={label}>
     <IconDotsVertical size={16} strokeWidth={1.5} />
   </span>
 );
 
 const NotificationTabs = ({ activeTab, unreadCount, onTabChange, onMarkAllRead, onClearAll }) => {
+  const { t } = useTranslation();
   const dropdownTippyRef = useRef(null);
   const onDropdownCreate = (ref) => (dropdownTippyRef.current = ref);
   const hideDropdown = () => dropdownTippyRef.current?.hide();
@@ -35,18 +37,18 @@ const NotificationTabs = ({ activeTab, unreadCount, onTabChange, onMarkAllRead, 
           className={classnames('notif-tab', { active: activeTab === TABS.ALL })}
           onClick={() => onTabChange(TABS.ALL)}
         >
-          All
+          {t('NOTIFICATIONS.TABS.ALL')}
         </button>
         <button
           type="button"
           className={classnames('notif-tab', { active: activeTab === TABS.UNREAD })}
           onClick={() => onTabChange(TABS.UNREAD)}
         >
-          Unread
+          {t('NOTIFICATIONS.TABS.UNREAD')}
           {unreadCount > 0 && <span className="notif-tab-badge">{unreadCount}</span>}
         </button>
       </div>
-      <Dropdown icon={menuIcon} placement="bottom-end" onCreate={onDropdownCreate}>
+      <Dropdown icon={menuIcon(t('NOTIFICATIONS.MENU_LABEL'))} placement="bottom-end" onCreate={onDropdownCreate}>
         <div
           className={classnames('dropdown-item', { disabled: unreadCount === 0 })}
           onClick={() => {
@@ -55,7 +57,7 @@ const NotificationTabs = ({ activeTab, unreadCount, onTabChange, onMarkAllRead, 
             onMarkAllRead();
           }}
         >
-          Mark all as read
+          {t('NOTIFICATIONS.MARK_ALL_READ')}
         </div>
         <div
           className="dropdown-item"
@@ -64,7 +66,7 @@ const NotificationTabs = ({ activeTab, unreadCount, onTabChange, onMarkAllRead, 
             onClearAll();
           }}
         >
-          Clear all
+          {t('NOTIFICATIONS.CLEAR_ALL')}
         </div>
       </Dropdown>
     </div>

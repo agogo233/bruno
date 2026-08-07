@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   IconX,
   IconPlayerStop,
@@ -159,7 +160,7 @@ const HistoryPopover = ({ items, activeId, onPick, onDelete, onClose }) => {
   return (
     <div className="history-popover" ref={popoverRef} role="menu">
       {items.length === 0 ? (
-        <div className="history-popover__empty">No past conversations</div>
+        <div className="history-popover__empty">{t('AI_CHAT_SIDEBAR.SIDEBAR.NO_HISTORY')}</div>
       ) : (
         items.map((item) => (
           <div
@@ -168,7 +169,7 @@ const HistoryPopover = ({ items, activeId, onPick, onDelete, onClose }) => {
             role="menuitem"
           >
             <button className="history-popover__title" onClick={() => onPick(item.id)} title={item.title}>
-              <span className="history-popover__title-text">{item.title || '(untitled)'}</span>
+                  <span className="history-popover__title-text">{item.title || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED')}</span>
               <span className="history-popover__meta">{formatRelativeTime(item.updatedAt)}</span>
             </button>
             <button
@@ -176,8 +177,8 @@ const HistoryPopover = ({ items, activeId, onPick, onDelete, onClose }) => {
               onClick={(e) => {
                 e.stopPropagation(); onDelete(item.id);
               }}
-              title="Delete conversation"
-              aria-label="Delete conversation"
+              title={t('AI_CHAT_SIDEBAR.SIDEBAR.DELETE_CONVERSATION')}
+              aria-label={t('AI_CHAT_SIDEBAR.SIDEBAR.DELETE_CONVERSATION')}
             >
               <IconTrash size={12} />
             </button>
@@ -189,6 +190,7 @@ const HistoryPopover = ({ items, activeId, onPick, onDelete, onClose }) => {
 };
 
 const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const isPopout = variant === 'popout';
   const [input, _setInput] = useState(() => draftInputCache);
@@ -235,15 +237,15 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
   const aiContext = useMemo(() => {
     if (!focusedTab || !collection) return null;
     if (activeItem && (isItemARequest(activeItem) || activeItem.type === 'app')) {
-      return { kind: 'request', item: activeItem, pathname: activeItem.pathname || '', name: activeItem.name || 'Untitled' };
+      return { kind: 'request', item: activeItem, pathname: activeItem.pathname || '', name: activeItem.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED') };
     }
     if (activeItem && isItemAFolder(activeItem)) {
-      return { kind: 'folder', folder: activeItem, pathname: activeItem.pathname || '', name: activeItem.name || 'Untitled' };
+      return { kind: 'folder', folder: activeItem, pathname: activeItem.pathname || '', name: activeItem.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED') };
     }
     // Anything else (collection-settings, runner, variables, openapi-sync,
     // .js files in File Mode …) falls back to the collection root so the AI
     // button always opens a useful chat instead of a no-op.
-    return { kind: 'collection', pathname: collection.pathname || '', name: collection.name || 'Untitled Collection' };
+    return { kind: 'collection', pathname: collection.pathname || '', name: collection.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED_COLLECTION') };
   }, [focusedTab, collection, activeItem]);
 
   const currentChat = allChats[activeTabUid] || { messages: [], isLoading: false, error: null, historyList: [] };
@@ -282,7 +284,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
     try { localStorage.setItem(SELECTED_MODEL_LS_KEY, AUTO_MODEL_ID); } catch {}
   }, [availableModels, selectedModel]);
 
-  const requestName = aiContext?.name || activeItem?.name || 'Untitled';
+  const requestName = aiContext?.name || activeItem?.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED');
 
   const appEnabled = useMemo(() => {
     if (aiContext?.kind !== 'request' || !activeItem) return true;
@@ -437,19 +439,19 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
       .filter(([, chat]) => chat.messages?.length > 0)
       .map(([tabUid, chat]) => {
         if (tabUid === collection.uid) {
-          return { id: tabUid, name: collection.name || 'Untitled Collection', method: 'ROOT', messageCount: chat.messages.length };
+          return { id: tabUid, name: collection.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED_COLLECTION'), method: 'ROOT', messageCount: chat.messages.length };
         }
         const item = findItemInCollection(collection, tabUid);
         if (!item) return null;
         if (isItemAFolder(item)) {
-          return { id: tabUid, name: item.name || 'Untitled', method: 'FOLDER', messageCount: chat.messages.length };
+          return { id: tabUid, name: item.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED'), method: 'FOLDER', messageCount: chat.messages.length };
         }
         const method = item.draft
           ? get(item, 'draft.request.method', 'GET')
           : get(item, 'request.method', 'GET');
         return {
           id: tabUid,
-          name: item.name || 'Untitled',
+          name: item.name || t('AI_CHAT_SIDEBAR.SIDEBAR.UNTITLED'),
           method,
           messageCount: chat.messages.length
         };
@@ -668,8 +670,8 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
   };
 
   const selectedModelLabel = useMemo(() => {
-    if (selectedModel === AUTO_MODEL_ID) return 'Auto';
-    return availableModels.find((m) => m.id === selectedModel)?.label || 'Auto';
+    if (selectedModel === AUTO_MODEL_ID) return t('AI_CHAT_SIDEBAR.SIDEBAR.AUTO');
+    return availableModels.find((m) => m.id === selectedModel)?.label || t('AI_CHAT_SIDEBAR.SIDEBAR.AUTO');
   }, [availableModels, selectedModel]);
 
   const ModelSelectorTrigger = forwardRef((props, ref) => (
@@ -683,7 +685,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
 
   const modelMenuItems = useMemo(
     () => [
-      { id: AUTO_MODEL_ID, label: 'Auto', onClick: () => handleModelSelect(AUTO_MODEL_ID) },
+      { id: AUTO_MODEL_ID, label: t('AI_CHAT_SIDEBAR.SIDEBAR.AUTO'), onClick: () => handleModelSelect(AUTO_MODEL_ID) },
       ...availableModels.map((model) => ({
         id: model.id,
         label: model.label,
@@ -707,7 +709,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
             {stage.icon === 'code' && <IconCode size={12} />}
             {stage.icon === 'send' && <IconCornerDownLeft size={12} />}
           </div>
-          <span className="processing-label">{stage.label}</span>
+          <span className="processing-label">{t(stage.key)}</span>
           <div className="processing-dots"><span></span><span></span><span></span></div>
         </div>
         <div className="processing-bar"><div className="processing-bar-fill"></div></div>
@@ -734,7 +736,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
               {showThinking && (
                 <div className="message-status">
                   <span className="message-status__spinner" />
-                  <span>Thinking…</span>
+                  <span>{t('AI_CHAT_SIDEBAR.SIDEBAR.THINKING')}</span>
                 </div>
               )}
 
@@ -774,7 +776,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
               {showWorking && (
                 <div className="message-status">
                   <span className="message-status__spinner" />
-                  <span>Working…</span>
+                  <span>{t('AI_CHAT_SIDEBAR.SIDEBAR.WORKING')}</span>
                 </div>
               )}
 
@@ -788,10 +790,10 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
                     key={`write-${writeIdx}`}
                     originalCode={write.originalContent || ''}
                     newCode={write.content}
-                    contentTypeLabel={CONTENT_TYPE_LABELS[write.type] || write.type}
+                    contentTypeLabel={t(CONTENT_TYPE_LABELS[write.type] || write.type)}
                     warning={
-                      notRead ? 'Content was not read first — changes may overwrite unrelated edits'
-                        : isStale ? 'Content has been modified since AI read it'
+                      notRead ? t('AI_CHAT_SIDEBAR.SIDEBAR.WARNING_NOT_READ')
+                        : isStale ? t('AI_CHAT_SIDEBAR.SIDEBAR.WARNING_MODIFIED')
                           : null
                     }
                     disableAccept={isStale || notRead}
@@ -813,7 +815,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
               )}
 
               {!isStreaming && msg.cancelled && (
-                <div className="message-cancelled"><em>Cancelled</em></div>
+                <div className="message-cancelled"><em>{t('AI_CHAT_SIDEBAR.SIDEBAR.CANCELLED')}</em></div>
               )}
             </>
           )}
@@ -827,10 +829,10 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
     return (
       <div className="empty-state">
         <div className="empty-icon"><IconSparkles size={20} /></div>
-        <h3>AI Assistant</h3>
-        <p>Ask me to generate or modify code, tests, scripts, and docs.</p>
+        <h3>{t('AI_CHAT_SIDEBAR.SIDEBAR.ASSISTANT_TITLE')}</h3>
+        <p>{t('AI_CHAT_SIDEBAR.SIDEBAR.ASSISTANT_DESC')}</p>
         <div className="suggestions">
-          <p className="suggestions-title">Try asking:</p>
+          <p className="suggestions-title">{t('AI_CHAT_SIDEBAR.SIDEBAR.TRY_ASKING')}</p>
           <div className="suggestion-chips">
             {suggestions.map((s, i) => (
               <button key={i} className="suggestion-chip" onClick={() => handleSuggestionClick(s.prompt)}>
@@ -847,7 +849,6 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
   if (!aiContext) return null;
 
   const placeholders = PLACEHOLDER_BY_TYPE[contentType] || PLACEHOLDER_BY_TYPE.app;
-  const placeholder = currentContent ? placeholders.filled : placeholders.empty;
   const historyCount = historyList?.length || 0;
 
   return (
@@ -862,7 +863,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
           onMouseDown={handleResizeStart}
           role="separator"
           aria-orientation="vertical"
-          aria-label="Resize AI sidebar"
+          aria-label={t('AI_CHAT_SIDEBAR.SIDEBAR.RESIZE_SIDEBAR')}
         >
           <div className="drag-border" />
         </div>
@@ -883,7 +884,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
                 placement="bottom-start"
                 selectedItemId={activeTabUid}
               >
-                <button className="chat-switcher-btn" title="Switch chat">
+                <button className="chat-switcher-btn" title={t('AI_CHAT_SIDEBAR.SIDEBAR.SWITCH_CHAT')}>
                   <IconChevronDown size={14} />
                 </button>
               </MenuDropdown>
@@ -893,7 +894,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
             <button
               className="icon-btn"
               onClick={handleNewChat}
-              title="New Session"
+               title={t('AI_CHAT_SIDEBAR.SIDEBAR.NEW_SESSION')}
               disabled={isLoading || messages.length === 0}
             >
               <IconPlus size={14} />
@@ -902,7 +903,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
               <button
                 className={`icon-btn ${historyOpen ? 'is-active' : ''}`}
                 onClick={() => setHistoryOpen((v) => !v)}
-                title="History"
+                 title={t('AI_CHAT_SIDEBAR.SIDEBAR.HISTORY')}
                 disabled={historyCount === 0}
               >
                 <IconHistory size={14} />
@@ -920,12 +921,12 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
             <button
               className="icon-btn"
               onClick={handleTogglePopout}
-              title={isPopout ? 'Dock to sidebar' : 'Open in new window'}
+               title={isPopout ? t('AI_CHAT_SIDEBAR.SIDEBAR.DOCK') : t('AI_CHAT_SIDEBAR.SIDEBAR.OPEN_POPOUT')}
               data-testid="ai-popout-toggle"
             >
               {isPopout ? <IconLayoutSidebarRightExpand size={14} /> : <IconExternalLink size={14} />}
             </button>
-            <button className="icon-btn close-btn" onClick={handleClose} title="Close">
+            <button className="icon-btn close-btn" onClick={handleClose} title={t('AI_CHAT_SIDEBAR.SIDEBAR.CLOSE')}>
               <IconX size={14} />
             </button>
           </div>
@@ -950,7 +951,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
         <div className="ai-sidebar-input">
           {availableModels.length === 0 ? (
             <div className="no-models-warning">
-              No AI models available. Configure a provider and enable models in Preferences &gt; AI.
+              {t('AI_CHAT_SIDEBAR.SIDEBAR.NO_MODELS')}
             </div>
           ) : (
             <div className="input-container">
@@ -959,7 +960,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
                 value={input}
                 onChange={handleTextareaChange}
                 onKeyDown={handleKeyDown}
-                placeholder={placeholder}
+                placeholder={t(currentContent ? `AI_CHAT_SIDEBAR.SIDEBAR.PLACEHOLDER_FILLED.${contentType}` : `AI_CHAT_SIDEBAR.SIDEBAR.PLACEHOLDER_EMPTY.${contentType}`)}
                 disabled={isLoading}
                 rows={1}
               />
@@ -977,18 +978,18 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
                     rounded="sm"
                     icon={<IconPlayerStop size={12} />}
                     onClick={handleStop}
-                    title="Stop generating"
+                    title={t('AI_CHAT_SIDEBAR.SIDEBAR.STOP_GENERATING')}
                   >
-                    Stop
+                    {t('AI_CHAT_SIDEBAR.SIDEBAR.STOP')}
                   </Button>
                 ) : (
                   <button
                     className="send-btn"
                     onClick={handleSubmit}
-                    title="Send (Enter)"
-                    disabled={!input.trim()}
-                  >
-                    Send <IconCornerDownLeft size={12} />
+                     title={t('AI_CHAT_SIDEBAR.SIDEBAR.SEND')}
+                     disabled={!input.trim()}
+                   >
+                     {t('AI_CHAT_SIDEBAR.SIDEBAR.SEND')} <IconCornerDownLeft size={12} />
                   </button>
                 )}
               </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Markdown from 'components/MarkDown';
 import { parseToRgb, rgba } from 'polished';
 import { useTheme } from 'providers/Theme';
@@ -20,12 +21,13 @@ export const getBadgeStyle = (color, theme) => {
 };
 
 const NotificationDetail = ({ notification }) => {
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
   if (!notification) {
     return (
       <div className="notif-detail">
-        <div className="notif-empty">Select a notification to read more.</div>
+        <div className="notif-empty">{t('NOTIFICATIONS.DETAIL.SELECT')}</div>
       </div>
     );
   }
