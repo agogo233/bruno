@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons';
 import Method from './Common/Method/index';
@@ -37,6 +38,7 @@ const TimelineItem = ({
   scope,
   phase
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isExpanded, _toggleExpand] = usePersistedState({
     key: `timeline-${timestamp}`,
@@ -73,7 +75,7 @@ const TimelineItem = ({
       : null;
   const code = numericCode != null
     ? numericCode
-    : (statusText || (error ? 'Error' : undefined));
+    : (statusText || (error ? t('RESPONSE_PANE.TIMELINE.ERROR') : undefined));
   const showNetworkLogs = response?.timeline && response.timeline.length > 0;
   const badge = getBadge({ source, isOauth2 });
 
@@ -130,9 +132,9 @@ const TimelineItem = ({
   };
 
   const tabs = [
-    { id: 'request', label: 'Request' },
-    { id: 'response', label: 'Response' },
-    ...(showNetworkLogs ? [{ id: 'network', label: 'Network' }] : [])
+    { id: 'request', label: t('RESPONSE_PANE.TIMELINE.REQUEST') },
+    { id: 'response', label: t('RESPONSE_PANE.TIMELINE.RESPONSE') },
+    ...(showNetworkLogs ? [{ id: 'network', label: t('RESPONSE_PANE.TIMELINE.NETWORK') }] : [])
   ];
 
   return (
@@ -158,7 +160,7 @@ const TimelineItem = ({
           </div>
           <div className="tl-col-url" title={url} data-testid="timeline-url">{url}</div>
           <div className="tl-col-badge">
-            <span className={badge.badgeClass} data-testid={`timeline-badge-${badge.kind}`}>{badge.badgeLabel}</span>
+            <span className={badge.badgeClass} data-testid={`timeline-badge-${badge.kind}`}>{t(`RESPONSE_PANE.TIMELINE.${badge.badgeKey}`)}</span>
           </div>
           {!hideTimestamp && (
             <div className="tl-col-time">
@@ -178,7 +180,7 @@ const TimelineItem = ({
                 <a
                   className={`tl-header-src${canNavigate ? '' : ' is-disabled'}`}
                   href="#"
-                  title={canNavigate ? `Open ${sourceFile}` : sourceFile}
+                  title={canNavigate ? t('RESPONSE_PANE.SCRIPT_ERROR.OPEN_FILE', { file: sourceFile }) : sourceFile}
                   onClick={canNavigate ? handleNavigate : (ev) => ev.preventDefault()}
                   data-testid="timeline-source-link"
                 >

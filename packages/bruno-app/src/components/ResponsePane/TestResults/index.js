@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import StyledWrapper from './StyledWrapper';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useTrackScroll } from 'hooks/useTrackScroll';
@@ -9,18 +10,21 @@ import {
   IconCircleX
 } from '@tabler/icons';
 
-const ResultIcon = ({ status }) => (
+const ResultIcon = ({ status }) => {
+  const { t } = useTranslation();
+  return (
   <span
     data-testid={status === 'pass' ? 'test-result-icon-pass' : 'test-result-icon-fail'}
     className={`inline-flex items-center ${status === 'pass' ? 'test-success' : 'test-failure'}`}
   >
     {status === 'pass' ? (
-      <IconCircleCheck size={14} className="mr-1" aria-label="Test passed" />
+      <IconCircleCheck size={14} className="mr-1" aria-label={t('RESPONSE_PANE.TEST_RESULTS.PASSED')} />
     ) : (
-      <IconCircleX size={14} className="mr-1" aria-label="Test failed" />
+      <IconCircleX size={14} className="mr-1" aria-label={t('RESPONSE_PANE.TEST_RESULTS.FAILED')} />
     )}
   </span>
-);
+  );
+};
 
 const ErrorMessage = ({ error }) => error && (
   <>
@@ -50,6 +54,7 @@ const TestSection = ({
   onToggle,
   type = 'test'
 }) => {
+  const { t } = useTranslation();
   const passedResults = results.filter((result) => result.status === 'pass');
   const failedResults = results.filter((result) => result.status === 'fail');
 
@@ -67,7 +72,7 @@ const TestSection = ({
             : <IconChevronRight size={18} stroke={1.5} />}
         </span>
         <span className="flex-grow">
-          {title} ({results.length}), Passed: {passedResults.length}, Failed: {failedResults.length}
+          {t('RESPONSE_PANE.TEST_RESULTS.SUMMARY', { title, count: results.length, passed: passedResults.length, failed: failedResults.length })}
         </span>
       </div>
       {isExpanded && (
@@ -84,6 +89,7 @@ const TestSection = ({
 };
 
 const TestResults = ({ item, results, assertionResults, preRequestTestResults, postResponseTestResults }) => {
+  const { t } = useTranslation();
   results = results || [];
   assertionResults = assertionResults || [];
   preRequestTestResults = preRequestTestResults || [];
@@ -117,13 +123,13 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
   };
 
   if (!results.length && !assertionResults.length && !preRequestTestResults.length && !postResponseTestResults.length) {
-    return <div>No tests found</div>;
+    return <div>{t('RESPONSE_PANE.TEST_RESULTS.NO_TESTS')}</div>;
   }
 
   return (
     <StyledWrapper className="flex flex-col" ref={wrapperRef}>
       <TestSection
-        title="Pre-Request Tests"
+        title={t('RESPONSE_PANE.TEST_RESULTS.PRE_REQUEST')}
         results={preRequestTestResults}
         isExpanded={expandedSections.preRequest}
         onToggle={() => toggleSection('preRequest')}
@@ -131,7 +137,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
       />
 
       <TestSection
-        title="Post-Response Tests"
+        title={t('RESPONSE_PANE.TEST_RESULTS.POST_RESPONSE')}
         results={postResponseTestResults}
         isExpanded={expandedSections.postResponse}
         onToggle={() => toggleSection('postResponse')}
@@ -139,7 +145,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
       />
 
       <TestSection
-        title="Tests"
+        title={t('RESPONSE_PANE.TEST_RESULTS.TESTS')}
         results={results}
         isExpanded={expandedSections.tests}
         onToggle={() => toggleSection('tests')}
@@ -147,7 +153,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
       />
 
       <TestSection
-        title="Assertions"
+        title={t('RESPONSE_PANE.TEST_RESULTS.ASSERTIONS')}
         results={assertionResults}
         isExpanded={expandedSections.assertions}
         onToggle={() => toggleSection('assertions')}

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { IconBookmark } from '@tabler/icons';
 import { addResponseExample } from 'providers/ReduxStore/slices/collections';
@@ -13,19 +14,8 @@ import classnames from 'classnames';
 import StyledWrapper from './StyledWrapper';
 import ActionIcon from 'ui/ActionIcon/index';
 
-const getTitleText = ({ isResponseTooLarge, isStreamingResponse }) => {
-  if (isStreamingResponse) {
-    return 'Response Examples aren\'t supported in streaming responses yet.';
-  }
-
-  if (isResponseTooLarge) {
-    return 'Response size exceeds 5MB limit. Cannot save as example.';
-  }
-
-  return 'Save current response as example';
-};
-
 const ResponseBookmark = forwardRef(({ item, collection, responseSize, children }, ref) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [showSaveResponseExampleModal, setShowSaveResponseExampleModal] = useState(false);
   const response = item.response || {};
@@ -47,14 +37,14 @@ const ResponseBookmark = forwardRef(({ item, collection, responseSize, children 
 
   const handleSaveClick = (e) => {
     if (!response || response.error) {
-      toast.error('No valid response to save as example');
+      toast.error(t('RESPONSE_PANE.BOOKMARK.NO_VALID_RESPONSE'));
       e.preventDefault();
       e.stopPropagation();
       return;
     }
 
     if (isResponseTooLarge) {
-      toast.error('Response size exceeds 5MB limit. Cannot save as example.');
+      toast.error(t('RESPONSE_PANE.BOOKMARK.TOO_LARGE'));
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -124,13 +114,20 @@ const ResponseBookmark = forwardRef(({ item, collection, responseSize, children 
     }));
 
     setShowSaveResponseExampleModal(false);
-    toast.success(`Example "${name}" created successfully`);
+    toast.success(t('RESPONSE_PANE.BOOKMARK.CREATED', { name }));
   };
 
-  const disabledMessage = getTitleText({
-    isResponseTooLarge,
-    isStreamingResponse
-  });
+  const disabledMessage = (() => {
+    if (isStreamingResponse) {
+      return t('RESPONSE_PANE.BOOKMARK.STREAMING_NOT_SUPPORTED');
+    }
+
+    if (isResponseTooLarge) {
+      return t('RESPONSE_PANE.BOOKMARK.TOO_LARGE');
+    }
+
+    return t('RESPONSE_PANE.BOOKMARK.SAVE_CURRENT_AS_EXAMPLE');
+  })();
 
   return (
     <>
@@ -158,7 +155,7 @@ const ResponseBookmark = forwardRef(({ item, collection, responseSize, children 
         isOpen={showSaveResponseExampleModal}
         onClose={() => setShowSaveResponseExampleModal(false)}
         onSave={saveAsExample}
-        title="Save Response as Example"
+        title={t('RESPONSE_PANE.BOOKMARK.SAVE_AS_EXAMPLE_TITLE')}
         initialName={getInitialExampleName(item)}
       />
     </>

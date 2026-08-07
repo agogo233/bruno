@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import StyledWrapper from './StyledWrapper';
 import { IconExclamationCircle, IconChevronRight, IconInfoCircle, IconChevronDown, IconArrowUpRight, IconArrowDownLeft } from '@tabler/icons';
@@ -35,12 +36,12 @@ const parseContent = (content) => {
   };
 };
 
-const getDataTypeText = (type) => {
+const getDataTypeText = (type, t) => {
   const textMap = {
-    'text/plain': 'RAW',
-    'application/json': 'JSON'
+    'text/plain': t('RESPONSE_PANE.WS.RAW'),
+    'application/json': t('RESPONSE_PANE.WS.JSON')
   };
-  return textMap[type] ?? 'RAW';
+  return textMap[type] ?? t('RESPONSE_PANE.WS.RAW');
 };
 
 /**
@@ -60,6 +61,7 @@ const TypeIcon = ({ type }) => {
 };
 
 const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
+  const { t } = useTranslation();
   const [showHex, setShowHex] = useState(false);
   const preferences = useSelector((state) => state.app.preferences);
   const { displayedTheme } = useTheme();
@@ -72,7 +74,7 @@ const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
   const isOutgoing = message.type === 'outgoing';
   let contentHexdump = message.messageHexdump;
   let parsedContent = parseContent(message.message);
-  const dataType = getDataTypeText(parsedContent.type);
+  const dataType = getDataTypeText(parsedContent.type, t);
 
   useEffect(() => {
     if (notified.current === true) return;
@@ -147,7 +149,7 @@ const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
               role="tab"
               onClick={() => setShowHex(true)}
             >
-              hexdump
+              {t('RESPONSE_PANE.WS.HEXDUMP')}
             </div>
             <div
               className={classnames('select-none capitalize', {
@@ -177,6 +179,7 @@ const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
 });
 
 const WSMessagesList = ({ messages = [] }) => {
+  const { t } = useTranslation();
   const virtuosoRef = useRef(null);
   const [scrollerElement, setScrollerElement] = useState(null);
   const [openMessages, setOpenMessages] = useState(new Set());
@@ -240,7 +243,7 @@ const WSMessagesList = ({ messages = [] }) => {
   }, []);
 
   if (!messages.length) {
-    return <StyledWrapper><div className="empty-state">No messages yet.</div></StyledWrapper>;
+    return <StyledWrapper><div className="empty-state">{t('RESPONSE_PANE.WS.NO_MESSAGES')}</div></StyledWrapper>;
   }
 
   return (

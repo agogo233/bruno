@@ -1,21 +1,24 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconSend } from '@tabler/icons';
 import { useSelector } from 'react-redux';
 import StyledWrapper from './StyledWrapper';
 import { isMacOS } from 'utils/common/platform';
 import { getKeyBindingDisplayTextByOS } from 'providers/Hotkeys/keyMappings';
 
-const KEY_BINDING_ACTIONS = [
-  { label: 'Send Request', action: 'sendRequest' },
-  { label: 'New Request', action: 'newRequest' },
-  { label: 'Edit Environments', action: 'editEnvironment' }
-];
-
 const Placeholder = () => {
+  const { t } = useTranslation();
   const isMac = isMacOS();
   const os = isMac ? 'mac' : 'windows';
   const preferences = useSelector((state) => state.app.preferences);
   const isVerticalLayout = preferences?.layout?.responsePaneOrientation === 'vertical';
+
+  const KEY_BINDING_ACTIONS = [
+    { label: t('RESPONSE_PANE.PLACEHOLDER.SEND_REQUEST'), action: 'sendRequest' },
+    { label: t('RESPONSE_PANE.PLACEHOLDER.NEW_REQUEST'), action: 'newRequest' },
+    { label: t('RESPONSE_PANE.PLACEHOLDER.EDIT_ENVIRONMENTS'), action: 'editEnvironment' }
+  ];
+
   const keyBindingActions = useMemo(() => {
     return KEY_BINDING_ACTIONS.map(({ label, action }) => ({
       label,

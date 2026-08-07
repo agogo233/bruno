@@ -1,15 +1,16 @@
+import { useTranslation } from 'react-i18next';
 import { useTheme } from 'providers/Theme';
 import { formatSize } from 'utils/common';
 import BodyBlock from '../Common/Body/index';
 import Headers from '../Common/Headers/index';
 
-const safeStringifyJSONIfNotString = (obj) => {
+const safeStringifyJSONIfNotString = (obj, t) => {
   if (obj === null || obj === undefined) return '';
   if (typeof obj === 'string') return obj;
   try {
     return JSON.stringify(obj);
   } catch (e) {
-    return '[Unserializable Object]';
+    return t('RESPONSE_PANE.TIMELINE.UNSERIALIZABLE');
   }
 };
 
@@ -42,9 +43,10 @@ const ResponseMeta = ({ code, statusText, duration, size }) => {
 };
 
 const Response = ({ collection, response, item }) => {
+  const { t } = useTranslation();
   let { status, statusCode, statusText, dataBuffer, headers, data, error, duration, size } = response || {};
   if (!dataBuffer) {
-    dataBuffer = Buffer.from(safeStringifyJSONIfNotString(data))?.toString('base64');
+    dataBuffer = Buffer.from(safeStringifyJSONIfNotString(data, t))?.toString('base64');
   }
 
   return (

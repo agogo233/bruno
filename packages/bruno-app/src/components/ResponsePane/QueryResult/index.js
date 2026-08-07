@@ -1,4 +1,5 @@
 import { debounce } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from 'providers/Theme/index';
 import React, { useMemo, useState } from 'react';
 import { formatResponse, getContentType } from 'utils/common';
@@ -9,27 +10,27 @@ import QueryResultPreview from './QueryResultPreview';
 import StyledWrapper from './StyledWrapper';
 
 // Raw format options (for byte format types)
-const RAW_FORMAT_OPTIONS = [
-  { id: 'raw', label: 'Raw', type: 'item', codeMirrorMode: 'text/plain' },
-  { id: 'hex', label: 'Hex', type: 'item', codeMirrorMode: 'text/plain' },
-  { id: 'base64', label: 'Base64', type: 'item', codeMirrorMode: 'text/plain' }
+const getRawFormatOptions = (t) => [
+  { id: 'raw', label: t('RESPONSE_PANE.QUERY_RESULT.RAW'), type: 'item', codeMirrorMode: 'text/plain' },
+  { id: 'hex', label: t('RESPONSE_PANE.QUERY_RESULT.HEX'), type: 'item', codeMirrorMode: 'text/plain' },
+  { id: 'base64', label: t('RESPONSE_PANE.QUERY_RESULT.BASE64'), type: 'item', codeMirrorMode: 'text/plain' }
 ];
 
 // Preview format options
-const PREVIEW_FORMAT_OPTIONS = [
+const getPreviewFormatOptions = (t) => [
   // Structured formats
-  { id: 'json', label: 'JSON', type: 'item', codeMirrorMode: 'application/ld+json' },
-  { id: 'html', label: 'HTML', type: 'item', codeMirrorMode: 'xml' },
-  { id: 'xml', label: 'XML', type: 'item', codeMirrorMode: 'xml' },
-  { id: 'javascript', label: 'JavaScript', type: 'item', codeMirrorMode: 'javascript' },
+  { id: 'json', label: t('RESPONSE_PANE.QUERY_RESULT.JSON'), type: 'item', codeMirrorMode: 'application/ld+json' },
+  { id: 'html', label: t('RESPONSE_PANE.QUERY_RESULT.HTML'), type: 'item', codeMirrorMode: 'xml' },
+  { id: 'xml', label: t('RESPONSE_PANE.QUERY_RESULT.XML'), type: 'item', codeMirrorMode: 'xml' },
+  { id: 'javascript', label: t('RESPONSE_PANE.QUERY_RESULT.JAVASCRIPT'), type: 'item', codeMirrorMode: 'javascript' },
   // Divider
   { type: 'divider', id: 'divider-structured-raw' },
   // Raw formats
-  ...RAW_FORMAT_OPTIONS
+  ...getRawFormatOptions(t)
 ];
 
-const formatErrorMessage = (error) => {
-  if (!error) return 'Something went wrong';
+const formatErrorMessage = (error, t) => {
+  if (!error) return t('RESPONSE_PANE.QUERY_RESULT.SOMETHING_WRONG');
 
   const remoteMethodError = 'Error invoking remote method \'send-http-request\':';
 
@@ -59,6 +60,7 @@ export const useInitialResponseFormat = (dataBuffer, headers) => {
 
 // Custom hook to determine preview format options based on content type
 export const useResponsePreviewFormatOptions = (dataBuffer, headers) => {
+  const { t } = useTranslation();
   return useMemo(() => {
     const detectedContentType = detectContentTypeFromBase64(dataBuffer);
     const contentType = getContentType(headers);
@@ -81,11 +83,11 @@ export const useResponsePreviewFormatOptions = (dataBuffer, headers) => {
 
     if (contentTypeToCheck && isByteFormatType(contentTypeToCheck)) {
       // Return only raw format options (no structured formats)
-      return RAW_FORMAT_OPTIONS;
+      return getRawFormatOptions(t);
     }
 
     // Return all format options
-    return PREVIEW_FORMAT_OPTIONS;
+    return getPreviewFormatOptions(t);
   }, [dataBuffer, headers]);
 };
 
@@ -105,6 +107,7 @@ const QueryResult = ({
   onFilterExpandChange,
   docKey
 }) => {
+  const { t } = useTranslation();
   const contentType = getContentType(headers);
   const [showLargeResponse, setShowLargeResponse] = useState(false);
   const { displayedTheme } = useTheme();
@@ -168,7 +171,7 @@ const QueryResult = ({
 
   const codeMirrorMode = useMemo(() => {
     // Find the codeMirrorMode from PREVIEW_FORMAT_OPTIONS (contains all format options)
-    return PREVIEW_FORMAT_OPTIONS
+    return getPreviewFormatOptions(t)
       .filter((option) => option.type === 'item' || !option.type)
       .find((option) => option.id === selectedFormat)?.codeMirrorMode || 'text/plain';
   }, [selectedFormat]);
@@ -184,13 +187,13 @@ const QueryResult = ({
       {error ? (
         <div>
           {hasScriptError ? null : (
-            <div className="error" style={{ whiteSpace: 'pre-line' }}>{formatErrorMessage(error)}</div>
+            <div className="error" style={{ whiteSpace: 'pre-line' }}>{formatErrorMessage(error, t)}</div>
           )}
 
           {error && typeof error === 'string' && error.toLowerCase().includes('self signed certificate') ? (
             <div className="mt-6 muted text-xs">
-              You can disable SSL verification in the Preferences. <br />
-              To open the Preferences, click on the gear icon in the bottom left corner.
+              {t('RESPONSE_PANE.QUERY_RESULT.SSL_HINT_1')} <br />
+              {t('RESPONSE_PANE.QUERY_RESULT.SSL_HINT_2')}
             </div>
           ) : null}
         </div>

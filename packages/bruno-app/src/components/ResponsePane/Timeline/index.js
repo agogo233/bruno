@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import StyledWrapper from './StyledWrapper';
 import { findItemInCollection, findParentItemInCollection } from 'utils/collections/index';
 import { get } from 'lodash';
@@ -48,6 +49,7 @@ const getEffectiveAuthSource = (collection, item) => {
 };
 
 const Timeline = ({ collection, item }) => {
+  const { t } = useTranslation();
   const wrapperRef = useRef(null);
   const [scroll, setScroll] = usePersistedState({ key: `response-timeline-scroll-${item.uid}`, default: 0 });
   useTrackScroll({ ref: wrapperRef, selector: null, onChange: setScroll, initialValue: scroll });
@@ -92,7 +94,7 @@ const Timeline = ({ collection, item }) => {
               onClick={() => setActiveFilter(chip.id)}
               data-testid={`timeline-chip-${chip.id}`}
             >
-              {chip.label}
+              {t(`RESPONSE_PANE.TIMELINE.${chip.labelKey}`)}
               <span className="timeline-chip-count" data-testid="timeline-chip-count">{counts[chip.id] ?? 0}</span>
             </button>
           ))}
