@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Portal from 'components/Portal';
 import Modal from 'components/Modal';
 
@@ -8,6 +9,7 @@ const RenameMockResponseModal = ({
   onConfirm,
   isSaving = false
 }) => {
+  const { t } = useTranslation();
   const inputRef = useRef();
   const [name, setName] = useState(response?.name || '');
 
@@ -31,9 +33,9 @@ const RenameMockResponseModal = ({
     <Portal>
       <Modal
         size="sm"
-        title="Rename Mock Response"
-        confirmText={isSaving ? 'Renaming...' : 'Rename'}
-        cancelText="Cancel"
+        title={t('MOCK_SERVER.RESPONSE_RENAME_MODAL.TITLE')}
+        confirmText={isSaving ? t('MOCK_SERVER.RESPONSE_RENAME_MODAL.RENAMING') : t('MOCK_SERVER.RESPONSE_RENAME_MODAL.RENAME')}
+        cancelText={t('MOCK_SERVER.RESPONSE_RENAME_MODAL.CANCEL')}
         handleConfirm={handleConfirm}
         handleCancel={onClose}
         confirmDisabled={isSaving || !name.trim()}
@@ -41,7 +43,7 @@ const RenameMockResponseModal = ({
       >
         <div>
           <label htmlFor="mock-response-rename-name" className="block font-medium">
-            Name
+            {t('MOCK_SERVER.RESPONSE_RENAME_MODAL.NAME')}
           </label>
           <input
             id="mock-response-rename-name"

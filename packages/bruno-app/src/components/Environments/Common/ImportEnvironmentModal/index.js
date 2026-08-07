@@ -10,9 +10,11 @@ import { importEnvironment } from 'providers/ReduxStore/slices/collections/actio
 import { addGlobalEnvironment } from 'providers/ReduxStore/slices/global-environments';
 import { toastError } from 'utils/common/error';
 import { IconFileImport } from '@tabler/icons';
+import { useTranslation } from 'react-i18next';
 
 const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEnvironmentCreated }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const isGlobal = type === 'global';
@@ -22,7 +24,7 @@ const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEn
     console.error('ImportEnvironmentModal: collection prop is required when type is "collection"');
     return null;
   }
-  const modalTitle = isGlobal ? 'Import Global Environment' : 'Import Environment';
+  const modalTitle = isGlobal ? t('ENVIRONMENTS.IMPORT_MODAL.TITLE_GLOBAL') : t('ENVIRONMENTS.IMPORT_MODAL.TITLE');
   const modalTestId = isGlobal ? 'import-global-environment-modal' : 'import-environment-modal';
   const importTestId = isGlobal ? 'import-global-environment' : 'import-environment';
 
@@ -31,13 +33,13 @@ const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEn
       if (env.name && env.name !== 'undefined') {
         return true;
       } else {
-        toast.error('Failed to import environment: env has no name');
+        toast.error(t('ENVIRONMENTS.IMPORT_MODAL.NO_NAME'));
         return false;
       }
     });
 
     if (validEnvironments.length === 0) {
-      toast.error('No valid environments found to import');
+      toast.error(t('ENVIRONMENTS.IMPORT_MODAL.NO_VALID'));
       return;
     }
 
@@ -53,9 +55,9 @@ const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEn
         importedCount++;
       }
 
-      toast.success(`${importedCount > 1 ? `${importedCount} environments` : 'Environment'} imported successfully`);
+      toast.success(importedCount > 1 ? t('ENVIRONMENTS.IMPORT_MODAL.SUCCESS_PLURAL', { count: importedCount }) : t('ENVIRONMENTS.IMPORT_MODAL.SUCCESS'));
     } catch (error) {
-      toast.error('An error occurred while importing the environment(s)');
+      toast.error(t('ENVIRONMENTS.IMPORT_MODAL.ERROR'));
       console.error(error);
       throw error;
     }
@@ -96,7 +98,7 @@ const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEn
         onEnvironmentCreated();
       }
     } catch (err) {
-      toastError(err, 'Import environment failed');
+      toastError(err, t('ENVIRONMENTS.IMPORT_MODAL.FAILED'));
     }
   };
 
@@ -151,10 +153,10 @@ const ImportEnvironmentModal = ({ type = 'collection', collection, onClose, onEn
           >
             <IconFileImport size={64} />
             <span className="mt-2 block font-medium">
-              {isDragOver ? 'Drop your environment files here' : 'Import your environments'}
+              {isDragOver ? t('ENVIRONMENTS.IMPORT_MODAL.DROP_HERE') : t('ENVIRONMENTS.IMPORT_MODAL.IMPORT_HINT')}
             </span>
             <span className="mt-1 block text-xs text-muted">
-              Drag & drop JSON files/folders or click to browse. Supports both Bruno and Postman formats.
+              {t('ENVIRONMENTS.IMPORT_MODAL.DRAG_HINT')}
             </span>
           </div>
         </div>

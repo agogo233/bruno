@@ -4,6 +4,7 @@ import { IconTrash } from '@tabler/icons';
 import MultiLineEditor from 'components/MultiLineEditor/index';
 import DotEnvErrorMessage from './DotEnvErrorMessage';
 import { MIN_TABLE_HEIGHT } from './utils';
+import { useTranslation } from 'react-i18next';
 
 const TableRow = React.memo(({ children, item }) => (
   <tr key={item.uid} data-testid={`dotenv-var-row-${item.name}`}>{children}</tr>
@@ -27,6 +28,7 @@ const DotEnvTableView = ({
   onReset,
   isSaving
 }) => {
+  const { t } = useTranslation();
   const handleTotalHeightChanged = useCallback((h) => {
     onHeightChange(h);
   }, [onHeightChange]);
@@ -57,7 +59,7 @@ const DotEnvTableView = ({
               id={`${index}.name`}
               name={`${index}.name`}
               value={variable.name}
-              placeholder={isLastEmptyRow ? 'Name' : ''}
+              placeholder={isLastEmptyRow ? t('ENVIRONMENTS.DOT_ENV_TABLE.NAME') : ''}
               onChange={(e) => onNameChange(index, e)}
               onBlur={() => onNameBlur(index)}
               onKeyDown={(e) => onNameKeyDown(index, e)}
@@ -72,7 +74,7 @@ const DotEnvTableView = ({
                 theme={theme}
                 name={`${index}.value`}
                 value={variable.value}
-                placeholder={isLastEmptyRow ? 'Value' : ''}
+                placeholder={isLastEmptyRow ? t('ENVIRONMENTS.DOT_ENV_TABLE.VALUE') : ''}
                 onChange={(newValue) => currentFormik.setFieldValue(`${index}.value`, newValue, true)}
                 onSave={onSave}
               />
@@ -83,7 +85,7 @@ const DotEnvTableView = ({
           {!isLastEmptyRow && (
             <button
               type="button"
-              aria-label="Delete variable"
+              aria-label={t('ENVIRONMENTS.DOT_ENV_TABLE.DELETE_VAR')}
               onClick={() => onRemoveVar(variable.uid)}
             >
               <IconTrash strokeWidth={1.5} size={18} />
@@ -104,8 +106,8 @@ const DotEnvTableView = ({
         totalListHeightChanged={handleTotalHeightChanged}
         fixedHeaderContent={() => (
           <tr>
-            <td>Name</td>
-            {showValueColumn && <td>Value</td>}
+            <td>{t('ENVIRONMENTS.DOT_ENV_TABLE.NAME')}</td>
+            {showValueColumn && <td>{t('ENVIRONMENTS.DOT_ENV_TABLE.VALUE')}</td>}
             <td className="delete-col"></td>
           </tr>
         )}
@@ -116,10 +118,10 @@ const DotEnvTableView = ({
       <div className="button-container">
         <div className="flex items-center">
           <button type="button" className="submit" onClick={onSave} disabled={isSaving} data-testid="save-dotenv">
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? t('ENVIRONMENTS.DOT_ENV_TABLE.SAVING') : t('ENVIRONMENTS.DOT_ENV_TABLE.SAVE')}
           </button>
           <button type="button" className="submit reset ml-2" onClick={onReset} disabled={isSaving} data-testid="reset-dotenv">
-            Reset
+            {t('ENVIRONMENTS.DOT_ENV_TABLE.RESET')}
           </button>
         </div>
       </div>

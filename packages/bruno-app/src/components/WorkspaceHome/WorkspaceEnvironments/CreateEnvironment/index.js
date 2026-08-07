@@ -7,8 +7,10 @@ import Portal from 'components/Portal';
 import Modal from 'components/Modal';
 import { addGlobalEnvironment } from 'providers/ReduxStore/slices/global-environments';
 import { validateName, validateNameError } from 'utils/common/regex';
+import { useTranslation } from 'react-i18next';
 
 const CreateEnvironment = ({ onClose, onEnvironmentCreated }) => {
+  const { t } = useTranslation();
   const globalEnvs = useSelector((state) => state?.globalEnvironments?.globalEnvironments);
 
   const validateEnvironmentName = (name) => {
@@ -25,26 +27,25 @@ const CreateEnvironment = ({ onClose, onEnvironmentCreated }) => {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .min(1, 'Must be at least 1 character')
-        .max(255, 'Must be 255 characters or less')
+        .min(1, t('ENVIRONMENTS.CREATE.MIN_LENGTH'))
+        .max(255, t('ENVIRONMENTS.CREATE.MAX_LENGTH'))
         .test('is-valid-filename', function (value) {
           const isValid = validateName(value);
           return isValid ? true : this.createError({ message: validateNameError(value) });
         })
-        .required('Name is required')
-        .test('duplicate-name', 'Global environment already exists', validateEnvironmentName)
+        .required(t('ENVIRONMENTS.CREATE.NAME_REQUIRED'))
+        .test('duplicate-name', t('ENVIRONMENTS.CREATE.GLOBAL_ENV_EXISTS'), validateEnvironmentName)
     }),
     onSubmit: (values) => {
       dispatch(addGlobalEnvironment({ name: values.name }))
         .then(() => {
-          toast.success('Global environment created!');
+          toast.success(t('ENVIRONMENTS.CREATE.GLOBAL_SUCCESS'));
           onClose();
-          // Call the callback if provided
           if (onEnvironmentCreated) {
             onEnvironmentCreated();
           }
         })
-        .catch(() => toast.error('An error occurred while creating the environment'));
+        .catch(() => toast.error(t('ENVIRONMENTS.CREATE.ERROR')));
     }
   });
 
@@ -62,15 +63,15 @@ const CreateEnvironment = ({ onClose, onEnvironmentCreated }) => {
     <Portal>
       <Modal
         size="md"
-        title="Create Global Environment"
-        confirmText="Create"
+        title={t('ENVIRONMENTS.CREATE.GLOBAL_TITLE')}
+        confirmText={t('ENVIRONMENTS.CREATE.CONFIRM')}
         handleConfirm={onSubmit}
         handleCancel={onClose}
       >
         <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
           <div>
             <label htmlFor="environment-name" className="block font-semibold">
-              Environment Name
+              {t('ENVIRONMENTS.CREATE.NAME_LABEL')}
             </label>
             <div className="flex items-center mt-2">
               <input

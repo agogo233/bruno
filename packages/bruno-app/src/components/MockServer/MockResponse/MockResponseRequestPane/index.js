@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconPlayerPlay } from '@tabler/icons';
 import Tab from 'components/Tab';
 import HeightBoundContainer from 'ui/HeightBoundContainer';
@@ -25,12 +26,13 @@ const MockResponseRequestPane = ({
   onStartServer,
   isStartingServer
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('request');
   const ruleCount = rules?.conditions?.length || 0;
 
   const tabConfig = [
-    { name: 'request', label: 'Request' },
-    { name: 'rules', label: 'Rules', count: ruleCount }
+    { name: 'request', label: t('MOCK_SERVER.REQUEST_PANE.REQUEST') },
+    { name: 'rules', label: t('MOCK_SERVER.REQUEST_PANE.RULES'), count: ruleCount }
   ];
 
   const getTabPanel = (tab) => {
@@ -92,7 +94,7 @@ const MockResponseRequestPane = ({
               disabled={isTrying}
               data-testid="mock-response-try-btn"
             >
-              {isTrying ? 'Trying...' : 'Try'}
+              {isTrying ? t('MOCK_SERVER.REQUEST_PANE.TRYING') : t('MOCK_SERVER.REQUEST_PANE.TRY')}
             </Button>
           ) : (
             <Button
@@ -100,10 +102,10 @@ const MockResponseRequestPane = ({
               icon={<IconPlayerPlay size={14} stroke={1.5} />}
               onClick={onStartServer}
               disabled={isStartingServer}
-              title="Start the mock server to try this response"
+              title={t('MOCK_SERVER.REQUEST_PANE.START_SERVER_TITLE')}
               data-testid="mock-response-start-server-btn"
             >
-              {isStartingServer ? 'Starting...' : 'Start Server'}
+              {isStartingServer ? t('MOCK_SERVER.REQUEST_PANE.STARTING') : t('MOCK_SERVER.REQUEST_PANE.START_SERVER')}
             </Button>
           )}
         </div>

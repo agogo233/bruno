@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
 import { IconServer2 } from '@tabler/icons';
@@ -9,7 +10,8 @@ import StyledWrapper from '../../../RequestTabs/RequestTab/StyledWrapper';
 
 const MockResponseTab = ({ tab }) => {
   const dispatch = useDispatch();
-  const tabLabel = tab.responseName || tab.tabName || 'Mock Response';
+  const { t } = useTranslation();
+  const tabLabel = tab.responseName || tab.tabName || t('MOCK_SERVER.REQUEST_TABS.MOCK_RESPONSE');
   const editor = useSelector((state) => state.collections.mockResponseEditors[tab.uid]);
 
   const hasUnsavedChanges = () => {
@@ -24,7 +26,7 @@ const MockResponseTab = ({ tab }) => {
 
   const handleCloseClick = (event) => {
     event.stopPropagation();
-    if (hasUnsavedChanges() && !window.confirm('This mock response has unsaved changes. Close without saving?')) {
+    if (hasUnsavedChanges() && !window.confirm(t('MOCK_SERVER.REQUEST_TABS.UNSAVED_CHANGES_CONFIRM'))) {
       return;
     }
     dispatch(closeTabs({ tabUids: [tab.uid] }));

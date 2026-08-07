@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import IconEdit from 'components/Icons/IconEdit';
 import { IconDeviceFloppy } from '@tabler/icons';
@@ -23,6 +24,7 @@ const MockResponseTopBar = ({
   copiedFrom
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const example = useMemo(() => {
     return item.draft
@@ -65,7 +67,7 @@ const MockResponseTopBar = ({
                     value={example?.name || ''}
                     onChange={handleNameChange}
                     className="example-input example-input-name"
-                    placeholder="Mock response name"
+                    placeholder={t('MOCK_SERVER.TOPBAR.NAME_PLACEHOLDER')}
                     autoFocus
                     data-testid="mock-response-name-input"
                   />
@@ -75,14 +77,14 @@ const MockResponseTopBar = ({
                     value={example?.description || ''}
                     onChange={handleDescriptionChange}
                     className="example-input example-input-description"
-                    placeholder="Description"
+                    placeholder={t('MOCK_SERVER.TOPBAR.DESCRIPTION_PLACEHOLDER')}
                     rows={3}
                     data-testid="mock-response-description-input"
                   />
                 </div>
                 {copiedFrom?.exampleName ? (
                   <div className="text-xs opacity-60">
-                    Copied from example: {copiedFrom.exampleName}
+                    {t('MOCK_SERVER.TOPBAR.COPIED_FROM', { exampleName: copiedFrom.exampleName })}
                   </div>
                 ) : null}
               </div>
@@ -95,7 +97,7 @@ const MockResponseTopBar = ({
                 onClick={onCancel}
                 data-testid="mock-response-cancel-btn"
               >
-                Cancel
+                {t('MOCK_SERVER.TOPBAR.CANCEL')}
               </Button>
               <Button
                 color="primary"
@@ -104,7 +106,7 @@ const MockResponseTopBar = ({
                 onClick={onSave}
                 data-testid="mock-response-save-btn"
               >
-                Save
+                {t('MOCK_SERVER.TOPBAR.SAVE')}
               </Button>
             </div>
           </div>
@@ -128,14 +130,14 @@ const MockResponseTopBar = ({
                 className="response-example-description-container"
                 textClassName="response-example-description leading-relaxed max-w-fit"
                 buttonClassName="text-blue-600 hover:text-blue-800 font-medium"
-                viewMoreText="View More"
-                viewLessText="View Less"
+                viewMoreText={t('MOCK_SERVER.TOPBAR.VIEW_MORE')}
+                viewLessText={t('MOCK_SERVER.TOPBAR.VIEW_LESS')}
                 dataTestId="mock-response-description"
               />
             ) : null}
             {copiedFrom?.exampleName ? (
               <div className="text-xs opacity-60 mt-1">
-                Copied from example: {copiedFrom.exampleName}
+                {t('MOCK_SERVER.TOPBAR.COPIED_FROM', { exampleName: copiedFrom.exampleName })}
               </div>
             ) : null}
           </div>
@@ -148,7 +150,7 @@ const MockResponseTopBar = ({
               onClick={onEditToggle}
               data-testid="mock-response-edit-btn"
             >
-              Edit
+              {t('MOCK_SERVER.TOPBAR.EDIT')}
             </Button>
             <Button
               variant="outline"
@@ -157,7 +159,7 @@ const MockResponseTopBar = ({
               onClick={onDelete}
               data-testid="mock-response-delete-btn"
             >
-              Delete
+              {t('MOCK_SERVER.TOPBAR.DELETE')}
             </Button>
           </div>
         </div>

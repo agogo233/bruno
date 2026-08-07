@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconInfoCircle, IconTrash } from '@tabler/icons';
 import { clearMockLog, syncMockServerState } from 'providers/ReduxStore/slices/mock-server/index';
@@ -27,9 +28,9 @@ const formatTimestamp = (iso) => {
   }
 };
 
-const formatConditionValue = (value) => {
+const formatConditionValue = (value, t) => {
   if (value === null || value === undefined) {
-    return '(missing)';
+    return t('MOCK_SERVER.REQUEST_LOG.MISSING');
   }
 
   if (typeof value === 'string') {
@@ -39,22 +40,22 @@ const formatConditionValue = (value) => {
   return String(value);
 };
 
-const formatCondition = (condition) => {
+const formatCondition = (condition, t) => {
   if (!condition?.target) {
-    return 'No rules (fallback)';
+    return t('MOCK_SERVER.REQUEST_LOG.NO_RULES_FALLBACK');
   }
 
   const key = condition.key ? ` ${condition.key}` : '';
-  return `${condition.target}${key} ${condition.operator} ${formatConditionValue(condition.expected)}`;
+  return `${condition.target}${key} ${condition.operator} ${formatConditionValue(condition.expected, t)}`;
 };
 
-const getSelectionReasonLabel = (selectionReason) => {
+const getSelectionReasonLabel = (selectionReason, t) => {
   if (selectionReason === 'specific_rules') {
-    return 'Selected because specific rules matched';
+    return t('MOCK_SERVER.REQUEST_LOG.SELECTED_SPECIFIC_RULES');
   }
 
   if (selectionReason === 'fallback') {
-    return 'Selected as fallback response';
+    return t('MOCK_SERVER.REQUEST_LOG.SELECTED_FALLBACK');
   }
 
   return null;
@@ -67,31 +68,32 @@ const getMatchedMockResponseName = (entry) => (
   || null
 );
 
-const getFailureLabel = (failureReason) => {
+const getFailureLabel = (failureReason, t) => {
   if (failureReason === 'no_route') {
-    return 'No route matched this request';
+    return t('MOCK_SERVER.REQUEST_LOG.NO_ROUTE');
   }
 
   if (failureReason === 'no_rule_match') {
-    return 'Route matched, but no response rules passed';
+    return t('MOCK_SERVER.REQUEST_LOG.NO_RULE_MATCH');
   }
 
   return null;
 };
 
 const MatchTracePanel = ({ entry }) => {
+  const { t } = useTranslation();
   const trace = entry?.matchTrace;
 
   if (!trace) {
     return (
       <div className="match-trace-panel" data-testid="mock-server-match-trace">
-        <div className="match-trace-empty">No match trace for this entry.</div>
+        <div className="match-trace-empty">{t('MOCK_SERVER.REQUEST_LOG.NO_MATCH_TRACE')}</div>
       </div>
     );
   }
 
-  const failureLabel = getFailureLabel(trace.failureReason);
-  const selectionReasonLabel = getSelectionReasonLabel(trace.selectionReason);
+  const failureLabel = getFailureLabel(trace.failureReason, t);
+  const selectionReasonLabel = getSelectionReasonLabel(trace.selectionReason, t);
 
   return (
     <div className="match-trace-panel" data-testid="mock-server-match-trace">
@@ -100,16 +102,16 @@ const MatchTracePanel = ({ entry }) => {
         {entry.matched
           ? (
               <span className="match-trace-result match-trace-result-success">
-                Matched: {trace.selectedResponseName || getMatchedMockResponseName(entry)}
+                {t('MOCK_SERVER.REQUEST_LOG.MATCHED_LABEL')}: {trace.selectedResponseName || getMatchedMockResponseName(entry)}
                 {selectionReasonLabel ? ` (${selectionReasonLabel})` : ''}
               </span>
             )
-          : <span className="match-trace-result match-trace-result-fail">{failureLabel || 'No match'}</span>}
+          : <span className="match-trace-result match-trace-result-fail">{failureLabel || t('MOCK_SERVER.REQUEST_LOG.NO_MATCH')}</span>}
       </div>
 
       {trace.availableRoutes?.length ? (
         <div className="match-trace-section">
-          <div className="match-trace-section-title">Available routes</div>
+          <div className="match-trace-section-title">{t('MOCK_SERVER.REQUEST_LOG.AVAILABLE_ROUTES')}</div>
           <ul className="match-trace-list">
             {trace.availableRoutes.map((route) => (
               <li key={route}>{route}</li>
@@ -120,7 +122,7 @@ const MatchTracePanel = ({ entry }) => {
 
       {trace.candidates?.length ? (
         <div className="match-trace-section">
-          <div className="match-trace-section-title">Responses considered</div>
+          <div className="match-trace-section-title">{t('MOCK_SERVER.REQUEST_LOG.RESPONSES_CONSIDERED')}</div>
           {trace.candidates.map((candidate) => (
             <div
               key={candidate.responseUid || candidate.responseName}
@@ -128,10 +130,10 @@ const MatchTracePanel = ({ entry }) => {
             >
               <div className="match-trace-candidate-header">
                 <span>{candidate.responseName}</span>
-                {candidate.isFallback ? <span className="match-trace-badge">fallback</span> : null}
-                {candidate.selected ? <span className="match-trace-badge selected">selected</span> : null}
+                {candidate.isFallback ? <span className="match-trace-badge">{t('MOCK_SERVER.REQUEST_LOG.FALLBACK_BADGE')}</span> : null}
+                {candidate.selected ? <span className="match-trace-badge selected">{t('MOCK_SERVER.REQUEST_LOG.SELECTED_BADGE')}</span> : null}
                 {candidate.matched && !candidate.selected ? (
-                  <span className="match-trace-badge skipped">matched, not selected</span>
+                  <span className="match-trace-badge skipped">{t('MOCK_SERVER.REQUEST_LOG.MATCHED_NOT_SELECTED')}</span>
                 ) : null}
               </div>
 
@@ -143,20 +145,20 @@ const MatchTracePanel = ({ entry }) => {
                       className={condition.pass ? 'pass' : 'fail'}
                     >
                       <span className="match-trace-condition-status">{condition.pass ? 'pass' : 'fail'}</span>
-                      <span>{formatCondition(condition)}</span>
+                      <span>{formatCondition(condition, t)}</span>
                       {!condition.pass ? (
-                        <span className="match-trace-actual">got {formatConditionValue(condition.actual)}</span>
+                        <span className="match-trace-actual">{t('MOCK_SERVER.REQUEST_LOG.GOT_LABEL')} {formatConditionValue(condition.actual, t)}</span>
                       ) : null}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <div className="match-trace-fallback-note">Matches any request on this route</div>
+                <div className="match-trace-fallback-note">{t('MOCK_SERVER.REQUEST_LOG.MATCHES_ANY_REQUEST')}</div>
               )}
 
               {!candidate.matched && candidate.ruleOperator && candidate.conditions?.length ? (
                 <div className="match-trace-operator">
-                  Rule group: {candidate.ruleOperator}
+                  {t('MOCK_SERVER.REQUEST_LOG.RULE_GROUP')}: {candidate.ruleOperator}
                 </div>
               ) : null}
             </div>
@@ -168,19 +170,20 @@ const MatchTracePanel = ({ entry }) => {
 };
 
 const MATCH_FILTER_OPTIONS = [
-  { value: 'matched', label: 'Matched' },
-  { value: 'unmatched', label: 'Unmatched' }
+  { value: 'matched', label: 'matched' },
+  { value: 'unmatched', label: 'unmatched' }
 ];
 
 const STATUS_FILTER_OPTIONS = [
-  { value: '2xx', label: '2xx Success' },
-  { value: '3xx', label: '3xx Redirect' },
-  { value: '4xx', label: '4xx Client Error' },
-  { value: '5xx', label: '5xx Server Error' }
+  { value: '2xx', label: '2xx' },
+  { value: '3xx', label: '3xx' },
+  { value: '4xx', label: '4xx' },
+  { value: '5xx', label: '5xx' }
 ];
 
 const RequestLog = ({ mockServerUid, location }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const logs = useSelector((state) => state.mockServer.requestLogs[mockServerUid]) || [];
   const [matchFilter, setMatchFilter] = useState(null);
   const [statusFilter, setStatusFilter] = useState(null);
@@ -235,7 +238,7 @@ const RequestLog = ({ mockServerUid, location }) => {
     return (
       <StyledWrapper className="h-full w-full">
         <div className="text-xs text-muted empty-state">
-          No requests logged yet. Send requests to the mock server to see them here.
+          {t('MOCK_SERVER.REQUEST_LOG.EMPTY')}
         </div>
       </StyledWrapper>
     );
@@ -245,23 +248,29 @@ const RequestLog = ({ mockServerUid, location }) => {
     <StyledWrapper className="h-full w-full">
       <div className="flex items-center gap-2 mb-4">
         <FilterDropdown
-          label="Match"
-          options={MATCH_FILTER_OPTIONS}
+          label={t('MOCK_SERVER.REQUEST_LOG.FILTER_MATCH')}
+          options={MATCH_FILTER_OPTIONS.map((option) => ({
+            value: option.value,
+            label: t(`MOCK_SERVER.REQUEST_LOG.MATCH_${option.value.toUpperCase()}`)
+          }))}
           value={matchFilter}
           onChange={setMatchFilter}
-          allLabel="All Requests"
+          allLabel={t('MOCK_SERVER.REQUEST_LOG.ALL_REQUESTS')}
           testId="mock-server-match-filter"
         />
         <FilterDropdown
-          label="Status"
-          options={STATUS_FILTER_OPTIONS}
+          label={t('MOCK_SERVER.REQUEST_LOG.FILTER_STATUS')}
+          options={STATUS_FILTER_OPTIONS.map((option) => ({
+            value: option.value,
+            label: t(`MOCK_SERVER.REQUEST_LOG.STATUS_${option.value}_LABEL`)
+          }))}
           value={statusFilter}
           onChange={setStatusFilter}
-          allLabel="All Status"
+          allLabel={t('MOCK_SERVER.REQUEST_LOG.ALL_STATUS')}
           testId="mock-server-status-filter"
         />
         <div className="flex-grow" />
-        <span className="text-xs text-muted" data-testid="mock-server-log-count">{logs.length} requests</span>
+        <span className="text-xs text-muted" data-testid="mock-server-log-count">{t('MOCK_SERVER.REQUEST_LOG.REQUESTS_COUNT', { count: logs.length })}</span>
         <Button
           variant="ghost"
           color="secondary"
@@ -270,7 +279,7 @@ const RequestLog = ({ mockServerUid, location }) => {
           onClick={handleClear}
           data-testid="mock-server-log-clear"
         >
-          Clear
+          {t('MOCK_SERVER.REQUEST_LOG.CLEAR')}
         </Button>
       </div>
 
@@ -288,14 +297,14 @@ const RequestLog = ({ mockServerUid, location }) => {
           </colgroup>
           <thead>
             <tr>
-              <th aria-label="Match trace" />
-              <th>Time</th>
-              <th>Method</th>
-              <th>Path</th>
-              <th>Mock Response</th>
-              <th>Status</th>
-              <th>Delay</th>
-              <th>Duration</th>
+              <th aria-label={t('MOCK_SERVER.REQUEST_LOG.MATCH_TRACE')} />
+              <th>{t('MOCK_SERVER.REQUEST_LOG.TIME')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.METHOD')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.PATH')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.MOCK_RESPONSE')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.STATUS')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.DELAY')}</th>
+              <th>{t('MOCK_SERVER.REQUEST_LOG.DURATION')}</th>
             </tr>
           </thead>
           <tbody>
@@ -310,7 +319,7 @@ const RequestLog = ({ mockServerUid, location }) => {
                         type="button"
                         className={`inspect-btn ${isExpanded ? 'is-active' : ''}`}
                         onClick={() => toggleTrace(entry.uid)}
-                        aria-label="Show match trace"
+                        aria-label={t('MOCK_SERVER.REQUEST_LOG.SHOW_MATCH_TRACE')}
                         aria-expanded={isExpanded}
                         data-testid={`mock-server-log-inspect-${entry.uid}`}
                       >
@@ -323,7 +332,7 @@ const RequestLog = ({ mockServerUid, location }) => {
                     <td>
                       {entry.matched
                         ? <span>{getMatchedMockResponseName(entry) || '-'}</span>
-                        : <span className="no-match-label">No Match</span>}
+                        : <span className="no-match-label">{t('MOCK_SERVER.REQUEST_LOG.NO_MATCH')}</span>}
                     </td>
                     <td>
                       <span className={`status-code ${getStatusClass(entry.statusCode, entry.matched)}`}>

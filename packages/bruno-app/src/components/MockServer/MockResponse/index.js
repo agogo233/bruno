@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { updateRequestPaneTabWidth } from 'providers/ReduxStore/slices/tabs';
@@ -30,6 +31,7 @@ const MIN_BOTTOM_PANE_HEIGHT = 150;
 
 const MockResponse = ({ instance, collection, responseUid }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const collections = useSelector((state) => state.collections.collections);
   const workspaces = useSelector((state) => state.workspaces.workspaces);
   const activeWorkspaceUid = useSelector((state) => state.workspaces.activeWorkspaceUid);
@@ -106,7 +108,7 @@ const MockResponse = ({ instance, collection, responseUid }) => {
         await dispatch(loadMockResponses(location)).unwrap();
       } catch (err) {
         if (!cancelled) {
-          toast.error(err.message || 'Failed to load mock response');
+          toast.error(err.message || t('MOCK_SERVER.RESPONSE.LOAD_FAILED'));
         }
       } finally {
         if (!cancelled) {
@@ -226,7 +228,7 @@ const MockResponse = ({ instance, collection, responseUid }) => {
       );
 
       if (!mockResponse.name?.trim()) {
-        toast.error('Mock response name is required');
+        toast.error(t('MOCK_SERVER.RESPONSE.NAME_REQUIRED'));
         return;
       }
 
@@ -246,9 +248,9 @@ const MockResponse = ({ instance, collection, responseUid }) => {
         responseName: result.response.name
       }));
       setEditMode(false);
-      toast.success('Mock response saved');
+      toast.success(t('MOCK_SERVER.RESPONSE.SAVED'));
     } catch (err) {
-      toast.error(err.message || 'Failed to save mock response');
+      toast.error(err.message || t('MOCK_SERVER.RESPONSE.SAVE_FAILED'));
     } finally {
       setIsSaving(false);
     }
@@ -266,9 +268,9 @@ const MockResponse = ({ instance, collection, responseUid }) => {
         responseUid
       })).unwrap();
       dispatch(closeTabs({ tabUids: [responseUid] }));
-      toast.success('Mock response deleted');
+      toast.success(t('MOCK_SERVER.RESPONSE.DELETED'));
     } catch (err) {
-      toast.error(err.message || 'Failed to delete mock response');
+      toast.error(err.message || t('MOCK_SERVER.RESPONSE.DELETE_FAILED'));
     }
   };
 
@@ -296,15 +298,15 @@ const MockResponse = ({ instance, collection, responseUid }) => {
         workspacePath: resolveMockServerWorkspacePath(storedInstance, workspaces, activeWorkspace)
       }))).unwrap();
       await dispatch(syncMockServerState(location));
-      toast.success(`Mock server started at ${result.baseUrl}`);
+      toast.success(t('MOCK_SERVER.RESPONSE.STARTED_AT', { baseUrl: result.baseUrl }));
     } catch (err) {
-      toast.error(err.message || 'Failed to start mock server');
+      toast.error(err.message || t('MOCK_SERVER.RESPONSE.START_FAILED'));
     }
   };
 
   const handleTry = async () => {
     if (!isServerRunning || !mockServerPort) {
-      toast.error('Start the mock server before trying this response');
+      toast.error(t('MOCK_SERVER.RESPONSE.START_BEFORE_TRY'));
       return;
     }
 
@@ -312,7 +314,7 @@ const MockResponse = ({ instance, collection, responseUid }) => {
       || item?.examples?.find((entry) => entry.uid === responseUid);
 
     if (!example?.request?.url) {
-      toast.error('Set a request URL before trying this response');
+      toast.error(t('MOCK_SERVER.RESPONSE.SET_URL_BEFORE_TRY'));
       return;
     }
 
@@ -328,31 +330,31 @@ const MockResponse = ({ instance, collection, responseUid }) => {
         uid: responseUid,
         responsePaneTab: 'try-result'
       }));
-      toast.success(`Mock returned ${result.status} ${result.statusText || ''}`.trim());
+      toast.success(t('MOCK_SERVER.RESPONSE.MOCK_RETURNED', { status: result.status, statusText: result.statusText || '' }).trim());
     } catch (err) {
-      toast.error(err.message || 'Could not reach the mock server');
+      toast.error(err.message || t('MOCK_SERVER.RESPONSE.COULD_NOT_REACH'));
     } finally {
       setIsTrying(false);
     }
   };
 
   if (isLoading) {
-    return <div className="p-4 text-sm opacity-70">Loading mock response...</div>;
+    return <div className="p-4 text-sm opacity-70">{t('MOCK_SERVER.RESPONSE.LOADING')}</div>;
   }
 
   if (!storedResponse) {
     return (
       <div className="p-4">
-        <div className="font-medium">Mock response not found</div>
+        <div className="font-medium">{t('MOCK_SERVER.RESPONSE.NOT_FOUND')}</div>
         <div className="text-sm mt-2 opacity-70">
-          It may have been deleted. Return to the mock server dashboard and refresh responses.
+          {t('MOCK_SERVER.RESPONSE.NOT_FOUND_HINT')}
         </div>
       </div>
     );
   }
 
   if (!item || !editorCollection) {
-    return <div className="p-4 text-sm opacity-70">Loading mock response...</div>;
+    return <div className="p-4 text-sm opacity-70">{t('MOCK_SERVER.RESPONSE.LOADING')}</div>;
   }
 
   return (
@@ -410,7 +412,7 @@ const MockResponse = ({ instance, collection, responseUid }) => {
             editMode={editMode}
             exampleUid={exampleUid}
             onSave={handleSave}
-            expectedResponseLabel="Expected"
+            expectedResponseLabel={t('MOCK_SERVER.RESPONSE.EXPECTED')}
             tryResult={tryResult}
           />
         </section>

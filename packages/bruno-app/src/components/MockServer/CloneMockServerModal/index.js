@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -27,6 +28,7 @@ const CloneMockServerModal = ({
   onClose
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const inputRef = useRef();
   const activeWorkspaceUid = useSelector((state) => state.workspaces.activeWorkspaceUid);
   const configuredInstances = useSelector((state) => getMockServerInstances(state));
@@ -40,27 +42,27 @@ const CloneMockServerModal = ({
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .min(1, 'Must be at least 1 character')
-        .max(255, 'Must be 255 characters or less')
+        .min(1, () => t('MOCK_SERVER.CLONE_MODAL.MIN_CHAR'))
+        .max(255, () => t('MOCK_SERVER.CLONE_MODAL.MAX_CHAR'))
         .test('is-valid-name', function (value) {
           const isValid = validateName(value);
           return isValid ? true : this.createError({ message: validateNameError(value) });
         })
-        .required('Name is required')
-        .test('duplicate-name', 'A mock server with this name already exists', (value) => (
+        .required(() => t('MOCK_SERVER.CLONE_MODAL.NAME_REQUIRED'))
+        .test('duplicate-name', () => t('MOCK_SERVER.CLONE_MODAL.DUPLICATE_NAME'), (value) => (
           !isMockServerNameTaken(existingInstances, value)
         )),
       port: Yup.number()
-        .min(1, 'Port must be at least 1')
-        .max(65535, 'Port must be 65535 or less')
-        .required('Port is required')
-        .test('duplicate-port', 'This port is already used by another mock server', (value) => (
+        .min(1, () => t('MOCK_SERVER.CLONE_MODAL.PORT_MIN'))
+        .max(65535, () => t('MOCK_SERVER.CLONE_MODAL.PORT_MAX'))
+        .required(() => t('MOCK_SERVER.CLONE_MODAL.PORT_REQUIRED'))
+        .test('duplicate-port', () => t('MOCK_SERVER.CLONE_MODAL.DUPLICATE_PORT'), (value) => (
           !isMockServerPortTaken(configuredInstances, value)
         ))
     }),
     onSubmit: async (values) => {
       if (!workspacePath) {
-        toast.error('Workspace path is required to clone mock responses');
+        toast.error(t('MOCK_SERVER.CLONE_MODAL.NO_WORKSPACE_PATH'));
         return;
       }
 
@@ -96,10 +98,10 @@ const CloneMockServerModal = ({
         });
 
         dispatch(openMockServerDashboard(newInstance, tabCollectionUid));
-        toast.success('Mock server cloned');
+        toast.success(t('MOCK_SERVER.CLONE_MODAL.CLONED'));
         onClose();
       } catch (err) {
-        toast.error(err.message || 'Failed to clone mock server');
+        toast.error(err.message || t('MOCK_SERVER.CLONE_MODAL.CLONE_FAILED'));
       }
     }
   });
@@ -129,8 +131,8 @@ const CloneMockServerModal = ({
     <Portal>
       <Modal
         size="md"
-        title="Clone Mock Server"
-        confirmText="Clone"
+        title={t('MOCK_SERVER.CLONE_MODAL.TITLE')}
+        confirmText={t('MOCK_SERVER.CLONE_MODAL.CONFIRM')}
         handleConfirm={() => formik.handleSubmit()}
         handleCancel={onClose}
         dataTestId="mock-server-clone-modal"
@@ -138,7 +140,7 @@ const CloneMockServerModal = ({
         <form className="bruno-form" onSubmit={(event) => event.preventDefault()}>
           <div>
             <label htmlFor="mock-server-clone-name" className="block font-medium">
-              Name
+              {t('MOCK_SERVER.CLONE_MODAL.NAME')}
             </label>
             <input
               id="mock-server-clone-name"
@@ -162,7 +164,7 @@ const CloneMockServerModal = ({
 
           <div className="mt-4">
             <label htmlFor="mock-server-clone-port" className="block font-medium">
-              Port
+              {t('MOCK_SERVER.CLONE_MODAL.PORT')}
             </label>
             <input
               id="mock-server-clone-port"
@@ -182,7 +184,7 @@ const CloneMockServerModal = ({
           </div>
 
           <p className="text-xs opacity-70 mt-4">
-            Clones mock responses and server settings. The clone starts stopped.
+            {t('MOCK_SERVER.CLONE_MODAL.HINT')}
           </p>
         </form>
       </Modal>
