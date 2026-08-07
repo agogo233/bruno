@@ -1,19 +1,19 @@
 const inputsConfig = [
   {
     key: 'authorizationUrl',
-    label: 'Authorization URL'
+    labelKey: 'AUTHORIZATION_URL'
   },
   {
     key: 'clientId',
-    label: 'Client ID'
+    labelKey: 'CLIENT_ID'
   },
   {
     key: 'scope',
-    label: 'Scope'
+    labelKey: 'SCOPE'
   },
   {
     key: 'state',
-    label: 'State'
+    labelKey: 'STATE'
   }
 ];
 

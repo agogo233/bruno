@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { useTheme } from 'providers/Theme';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,7 @@ import { savePreferences } from 'providers/ReduxStore/slices/app';
 import toast from 'react-hot-toast';
 
 const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, collection, folder }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const preferences = useSelector((state) => state.app.preferences);
   const useSystemBrowser = get(preferences, 'request.oauth2.useSystemBrowser', false);
@@ -86,11 +88,11 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
       })
     )
       .then(() => {
-        toast.success('Preference updated successfully');
+        toast.success(t('REQUEST_PANE.OAUTH2.PREFERENCE_UPDATED'));
       })
       .catch((err) => {
         console.error(err);
-        toast.error('Failed to update preference');
+        toast.error(t('REQUEST_PANE.OAUTH2.PREFERENCE_UPDATE_FAILED'));
       });
   };
 
@@ -102,11 +104,11 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
           <IconSettings size={14} className="oauth2-icon" />
         </div>
         <span className="oauth2-section-label">
-          Configuration
+          {t('REQUEST_PANE.OAUTH2.CONFIGURATION')}
         </span>
       </div>
       <div className="flex items-center gap-4 w-full" key="input-callbackUrl">
-        <label className="block min-w-[140px]">Callback URL</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.CALLBACK_URL')}</label>
         <div className="flex flex-col gap-1 w-full">
           <div className="oauth2-input-wrapper flex-1 flex items-center">
             <SingleLineEditor
@@ -139,15 +141,15 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
               handleUseSystemBrowserToggle({ target: { checked: !useSystemBrowser } });
             }}
           >
-            Use system browser for OAuth
+            {t('REQUEST_PANE.OAUTH2.USE_SYSTEM_BROWSER')}
           </label>
         </div>
       </div>
       {inputsConfig.map((input) => {
-        const { key, label, isSecret } = input;
+        const { key, labelKey, isSecret } = input;
         return (
           <div className="flex items-center gap-4 w-full" key={`input-${key}`}>
-            <label className="block min-w-[140px]">{label}</label>
+            <label className="block min-w-[140px]">{t(`REQUEST_PANE.OAUTH2.${labelKey}`)}</label>
             <div className="oauth2-input-wrapper flex-1">
               <SingleLineEditor
                 value={oAuth[key] || ''}
@@ -170,23 +172,23 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
           <IconKey size={14} className="oauth2-icon" />
         </div>
         <span className="oauth2-section-label">
-          Token
+          {t('REQUEST_PANE.OAUTH2.TOKEN')}
         </span>
       </div>
 
       <div className="flex items-center gap-4 w-full" key="input-token-type">
-        <label className="block min-w-[140px]">Token Source</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.TOKEN_SOURCE')}</label>
         <div className="inline-flex items-center cursor-pointer token-placement-selector">
           <MenuDropdown
             items={[
-              { id: 'access_token', label: 'Access Token', onClick: () => handleChange('tokenSource', 'access_token') },
-              { id: 'id_token', label: 'ID Token', onClick: () => handleChange('tokenSource', 'id_token') }
+              { id: 'access_token', label: t('REQUEST_PANE.OAUTH2.ACCESS_TOKEN'), onClick: () => handleChange('tokenSource', 'access_token') },
+              { id: 'id_token', label: t('REQUEST_PANE.OAUTH2.ID_TOKEN'), onClick: () => handleChange('tokenSource', 'id_token') }
             ]}
             selectedItemId={tokenSource}
             placement="bottom-end"
           >
             <div className="flex items-center justify-end token-placement-label select-none">
-              {tokenSource === 'id_token' ? 'ID Token' : 'Access Token'}
+              {tokenSource === 'id_token' ? t('REQUEST_PANE.OAUTH2.ID_TOKEN') : t('REQUEST_PANE.OAUTH2.ACCESS_TOKEN')}
               <IconCaretDown className="caret ml-1 mr-1" size={14} strokeWidth={2} />
             </div>
           </MenuDropdown>
@@ -194,7 +196,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
       </div>
 
       <div className="flex items-center gap-4 w-full" key="input-token-name">
-        <label className="block min-w-[140px]">Token ID</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.TOKEN_ID')}</label>
         <div className="oauth2-input-wrapper flex-1">
           <SingleLineEditor
             value={oAuth['credentialsId'] || 'credentials'}
@@ -210,18 +212,18 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
       </div>
 
       <div className="flex items-center gap-4 w-full" key="input-token-placement">
-        <label className="block min-w-[140px]">Add Token to</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.ADD_TOKEN_TO')}</label>
         <div className="inline-flex items-center cursor-pointer token-placement-selector">
           <MenuDropdown
             items={[
-              { id: 'header', label: 'Headers', onClick: () => handleChange('tokenPlacement', 'header') },
-              { id: 'url', label: 'URL', onClick: () => handleChange('tokenPlacement', 'url') }
+              { id: 'header', label: t('REQUEST_PANE.OAUTH2.HEADER'), onClick: () => handleChange('tokenPlacement', 'header') },
+              { id: 'url', label: t('REQUEST_PANE.OAUTH2.URL'), onClick: () => handleChange('tokenPlacement', 'url') }
             ]}
             selectedItemId={tokenPlacement}
             placement="bottom-end"
           >
             <div className="flex items-center justify-end token-placement-label select-none">
-              {tokenPlacement == 'url' ? 'URL' : 'Headers'}
+              {tokenPlacement == 'url' ? t('REQUEST_PANE.OAUTH2.URL') : t('REQUEST_PANE.OAUTH2.HEADER')}
               <IconCaretDown className="caret ml-1 mr-1" size={14} strokeWidth={2} />
             </div>
           </MenuDropdown>
@@ -230,7 +232,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
 
       {tokenPlacement == 'header' ? (
         <div className="flex items-center gap-4 w-full" key="input-token-header-prefix" data-testid="token-header-prefix">
-          <label className="block min-w-[140px]">Header Prefix</label>
+          <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.HEADER_PREFIX')}</label>
           <div className="oauth2-input-wrapper flex-1">
             <SingleLineEditor
               value={oAuth.tokenHeaderPrefix || 'Bearer'}
@@ -246,7 +248,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
         </div>
       ) : (
         <div className="flex items-center gap-4 w-full" key="input-token-query-key" data-testid="token-query-param-key">
-          <label className="block min-w-[140px]">URL Query Key</label>
+          <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.URL_QUERY_KEY')}</label>
           <div className="oauth2-input-wrapper flex-1">
             <SingleLineEditor
               value={oAuth.tokenQueryKey || 'access_token'}
@@ -267,7 +269,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
           <IconAdjustmentsHorizontal size={14} className="oauth2-icon" />
         </div>
         <span className="oauth2-section-label">
-          Advanced Options
+          {t('REQUEST_PANE.OAUTH2.ADVANCED_OPTIONS')}
         </span>
       </div>
 
@@ -278,7 +280,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
           onChange={handleAutoFetchTokenToggle}
           className="cursor-pointer ml-1"
         />
-        <label className="block min-w-[140px]">Auto fetch token</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.AUTO_FETCH')}</label>
         <div className="flex items-center gap-2">
           <div className="relative group cursor-pointer">
             <IconHelp size={16} className="text-gray-500" />

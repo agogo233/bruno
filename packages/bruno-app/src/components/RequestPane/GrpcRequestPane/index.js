@@ -16,9 +16,11 @@ import StyledWrapper from './StyledWrapper';
 import TabBarAiAssist from '../TabBarAiAssist';
 import { hasEffectiveAuth } from 'utils/auth';
 import { AUTH_MODES_GRPC } from 'utils/common/constants';
+import { useTranslation } from 'react-i18next';
 
 const GrpcRequestPane = ({ item, collection, handleRun }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
   const rightContentRef = useRef(null);
@@ -40,7 +42,7 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
         return <GrpcBody item={item} collection={collection} hideModeSelector={true} hidePrettifyButton={true} handleRun={handleRun} />;
       }
       case 'headers': {
-        return <RequestHeaders item={item} collection={collection} addHeaderText="Add Metadata" />;
+        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.ADD_METADATA')} />;
       }
       case 'auth': {
         return <GrpcAuth item={item} collection={collection} />;
@@ -49,7 +51,7 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
         return <Documentation item={item} collection={collection} />;
       }
       default: {
-        return <div className="mt-4">404 | Not found</div>;
+        return <div className="mt-4">{t('REQUEST_PANE.NOT_FOUND')}</div>;
       }
     }
   }, [requestPaneTab, item, collection, handleRun]);
@@ -84,26 +86,26 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
     return [
       {
         key: 'body',
-        label: 'Message',
+        label: t('REQUEST_PANE.MESSAGE'),
         indicator: getMessageIndicator()
       },
       {
         key: 'headers',
-        label: 'Metadata',
+        label: t('REQUEST_PANE.METADATA'),
         indicator: activeHeadersLength > 0 ? <sup className="ml-[.125rem] font-medium">{activeHeadersLength}</sup> : null
       },
       {
         key: 'auth',
-        label: 'Auth',
+        label: t('REQUEST_PANE.AUTH'),
         indicator: hasAuth ? <StatusDot type="default" dataTestId="auth" /> : null
       },
       {
         key: 'docs',
-        label: 'Docs',
+        label: t('REQUEST_PANE.DOCS'),
         indicator: docs && docs.length > 0 ? <StatusDot type="default" /> : null
       }
     ];
-  }, [grpcMessagesCount, isClientStreaming, activeHeadersLength, hasAuth, docs]);
+  }, [grpcMessagesCount, isClientStreaming, activeHeadersLength, hasAuth, docs, t]);
 
   // Initialize tab to 'body' if no tab is currently set
   useEffect(() => {
@@ -114,7 +116,7 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
 
   // Return error for truly missing active/focused tabs
   if (!activeTabUid || !focusedTab?.uid) {
-    return <div className="pb-4 px-4">An error occurred!</div>;
+    return <div className="pb-4 px-4">{t('REQUEST_PANE.ERROR_OCCURRED')}</div>;
   }
 
   // Return null during initialization while requestPaneTab is being set by useEffect

@@ -14,9 +14,11 @@ import { createDescriptionColumn } from 'components/EditableTable/descriptionCol
 import StyledWrapper from './StyledWrapper';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useTrackScroll } from 'hooks/useTrackScroll';
+import { useTranslation } from 'react-i18next';
 
 const FormUrlEncodedParams = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const wrapperRef = useRef(null);
   const [scroll, setScroll] = usePersistedState({ key: `request-body-formUrlEncoded-scroll-${item.uid}`, default: 0 });
@@ -63,15 +65,15 @@ const FormUrlEncodedParams = ({ item, collection }) => {
   const columns = [
     {
       key: 'name',
-      name: 'Key',
+      name: t('REQUEST_PANE.KEY'),
       isKeyField: true,
-      placeholder: 'Key',
+      placeholder: t('REQUEST_PANE.KEY'),
       width: '20%'
     },
     {
       key: 'value',
-      name: 'Value',
-      placeholder: 'Value',
+      name: t('REQUEST_PANE.VALUE'),
+      placeholder: t('REQUEST_PANE.VALUE'),
       render: ({ value, onChange }) => (
         <MultiLineEditor
           value={value || ''}

@@ -32,21 +32,23 @@ import ResponsiveTabs from 'ui/ResponsiveTabs';
 import AuthMode from '../Auth/AuthMode/index';
 import TabBarAiAssist from '../TabBarAiAssist';
 import StatusDot from 'components/StatusDot';
+import { useTranslation } from 'react-i18next';
 
-const TAB_CONFIG = [
-  { key: 'query', label: 'Query' },
-  { key: 'headers', label: 'Headers' },
-  { key: 'auth', label: 'Auth' },
-  { key: 'vars', label: 'Vars' },
-  { key: 'script', label: 'Script' },
-  { key: 'assert', label: 'Assert' },
-  { key: 'tests', label: 'Tests' },
-  { key: 'docs', label: 'Docs' },
-  { key: 'settings', label: 'Settings' }
+const useTabConfig = (t) => [
+  { key: 'query', label: t('REQUEST_PANE.QUERY') },
+  { key: 'headers', label: t('REQUEST_PANE.HEADERS') },
+  { key: 'auth', label: t('REQUEST_PANE.AUTH') },
+  { key: 'vars', label: t('REQUEST_PANE.VARS') },
+  { key: 'script', label: t('REQUEST_PANE.SCRIPT') },
+  { key: 'assert', label: t('REQUEST_PANE.ASSERT') },
+  { key: 'tests', label: t('REQUEST_PANE.TESTS') },
+  { key: 'docs', label: t('REQUEST_PANE.DOCS') },
+  { key: 'settings', label: t('REQUEST_PANE.SETTINGS') }
 ];
 
 const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handleGqlClickReference }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
   const preferences = useSelector((state) => state.app.preferences);
@@ -182,6 +184,8 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
     [item, itemAuthMode, collection]
   );
 
+  const TAB_CONFIG = useTabConfig(t);
+
   const allTabs = useMemo(
     () => TAB_CONFIG.map(({ key, label }) => ({
       key,
@@ -252,7 +256,7 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
                     <IconChevronRight size={14} strokeWidth={2} />
                   )}
                 </span>
-                <span>Variables</span>
+                <span>{t('REQUEST_PANE.VARIABLES')}</span>
               </button>
               {variablesOpen && (
                 <div className="flex-1 min-h-0 relative">
@@ -279,35 +283,35 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
       case 'settings':
         return <Settings item={item} collection={collection} />;
       default:
-        return <div className="mt-4">404 | Not found</div>;
+        return <div className="mt-4">{t('REQUEST_PANE.NOT_FOUND')}</div>;
     }
   }, [requestPaneTab, item, collection, displayedTheme, schema, onSave, query, onRun, onQueryChange, handleGqlClickReference, handlePrettify, preferences, variables, variablesOpen, variablesHeight, dispatch]);
 
   const queryMenuItems = useMemo(() => [
     {
       id: 'docs',
-      label: 'Docs',
+      label: t('REQUEST_PANE.DOCS'),
       leftSection: IconBook,
       onClick: toggleDocs
     },
     {
       id: 'schema-introspection',
-      label: schema && schemaSource === 'introspection' ? 'Refresh from Introspection' : 'Load from Introspection',
+      label: schema && schemaSource === 'introspection' ? t('REQUEST_PANE.REFRESH_FROM_INTROSPECTION') : t('REQUEST_PANE.LOAD_FROM_INTROSPECTION'),
       leftSection: schema && schemaSource === 'introspection' ? IconRefresh : IconDownload,
       onClick: () => loadSchema('introspection'),
       disabled: isSchemaLoading
     },
     {
       id: 'schema-file',
-      label: 'Load from File',
+      label: t('REQUEST_PANE.LOAD_FROM_FILE'),
       leftSection: IconFile,
       onClick: () => loadSchema('file'),
       disabled: isSchemaLoading
     }
-  ], [toggleDocs, schema, schemaSource, loadSchema, isSchemaLoading]);
+  ], [toggleDocs, schema, schemaSource, loadSchema, isSchemaLoading, t]);
 
   if (!activeTabUid || !focusedTab?.uid || !requestPaneTab) {
-    return <div className="pb-4 px-4">An error occurred!</div>;
+    return <div className="pb-4 px-4">{t('REQUEST_PANE.ERROR_OCCURRED')}</div>;
   }
 
   let rightContent = null;
@@ -322,17 +326,17 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
     case 'query':
       rightContent = (
         <div ref={schemaActionsRef} className="flex items-center gap-2">
-          <ActionIcon label="Prettify" onClick={handlePrettify}>
+          <ActionIcon label={t('REQUEST_PANE.PRETTIFY')} onClick={handlePrettify}>
             <IconWand size={14} strokeWidth={1.5} />
           </ActionIcon>
           <ActionIcon
-            label={showQueryBuilder ? 'Hide Query Builder' : 'Show Query Builder'}
+            label={showQueryBuilder ? t('REQUEST_PANE.HIDE_QUERY_BUILDER') : t('REQUEST_PANE.SHOW_QUERY_BUILDER')}
             onClick={toggleQueryBuilder}
           >
             <IconSidebarToggle collapsed={!showQueryBuilder} size={16} strokeWidth={1.5} />
           </ActionIcon>
           <MenuDropdown items={queryMenuItems} placement="bottom-end">
-            <ActionIcon label="More actions">
+            <ActionIcon label={t('REQUEST_PANE.MORE_ACTIONS')}>
               <IconDots size={16} strokeWidth={1.5} />
             </ActionIcon>
           </MenuDropdown>

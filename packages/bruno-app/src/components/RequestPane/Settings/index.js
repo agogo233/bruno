@@ -9,6 +9,7 @@ import { updateItemSettings, toggleAppMode } from 'providers/ReduxStore/slices/c
 import { setTabAppPreview } from 'providers/ReduxStore/slices/tabs';
 import { saveRequest, sendRequest } from 'providers/ReduxStore/slices/collections/actions';
 import Tags from './Tags/index';
+import { useTranslation } from 'react-i18next';
 
 // Default settings configuration
 const DEFAULT_SETTINGS = {
@@ -21,6 +22,7 @@ const DEFAULT_SETTINGS = {
 
 const Settings = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   // Get current settings with defaults applied
   const getPropertyFromDraftOrRequest = (propertyKey) =>
@@ -111,12 +113,12 @@ const Settings = ({ item, collection }) => {
 
   return (
     <div className="h-full w-full">
-      <div className="text-xs mb-4 text-muted">Configure request settings for this item.</div>
+      <div className="text-xs mb-4 text-muted">{t('REQUEST_PANE.CONFIGURE_REQUEST_SETTINGS')}</div>
       <div className="bruno-form">
         <div className="mb-6">
           <h3 className="text-xs font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1 mb-4">
             <IconTag size={16} />
-            Tags
+{t('REQUEST_PANE.TAGS')}
           </h3>
           <Tags item={item} collection={collection} />
         </div>
@@ -127,8 +129,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={encodeUrl}
               onChange={onToggleUrlEncoding}
-              label="URL Encoding"
-              description="Automatically encode query parameters in the URL"
+              label={t('REQUEST_PANE.URL_ENCODING')}
+              description={t('REQUEST_PANE.URL_ENCODING_DESC')}
               size="medium"
               data-testid="encode-url-toggle"
             />
@@ -138,8 +140,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={followRedirects}
               onChange={onToggleFollowRedirects}
-              label="Automatically Follow Redirects"
-              description="Follow HTTP redirects automatically"
+              label={t('REQUEST_PANE.FOLLOW_REDIRECTS')}
+              description={t('REQUEST_PANE.FOLLOW_REDIRECTS_DESC')}
               size="medium"
               data-testid="follow-redirects-toggle"
             />
@@ -149,8 +151,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={forwardAuthorizationHeader}
               onChange={onToggleForwardAuthorizationOnRedirect}
-              label="Forward Authorization on Redirect"
-              description="Send Authorization and Proxy-Authorization headers when a redirect points to a different origin"
+              label={t('REQUEST_PANE.FORWARD_AUTH_ON_REDIRECT')}
+              description={t('REQUEST_PANE.FORWARD_AUTH_ON_REDIRECT_DESC')}
               size="medium"
               data-testid="forward-auth-header-toggle"
             />
@@ -161,8 +163,8 @@ const Settings = ({ item, collection }) => {
               <ToggleSelector
                 checked={enableApp}
                 onChange={onToggleEnableApp}
-                label="Enable App"
-                description="Show the App tab and app view mode for this request"
+                label={t('REQUEST_PANE.ENABLE_APP')}
+                description={t('REQUEST_PANE.ENABLE_APP_DESC')}
                 size="medium"
                 data-testid="enable-app-toggle"
               />
@@ -171,18 +173,18 @@ const Settings = ({ item, collection }) => {
 
           <SettingsInput
             id="maxRedirects"
-            label="Max Redirects"
+            label={t('REQUEST_PANE.MAX_REDIRECTS')}
             value={maxRedirects}
             onChange={onMaxRedirectsChange}
-            description="Set a limit for the number of redirects to follow"
+            description={t('REQUEST_PANE.MAX_REDIRECTS_DESC')}
             onKeyDown={handleKeyDown}
           />
 
           <InheritableSettingsInput
             id="timeout"
-            label="Timeout (ms)"
+            label={t('REQUEST_PANE.TIMEOUT')}
             value={timeout}
-            description="Set maximum time to wait before aborting the request"
+            description={t('REQUEST_PANE.TIMEOUT_DESC')}
             onKeyDown={handleKeyDown}
             isInherited={isTimeoutInherited}
             onDropdownSelect={handleTimeoutDropdownSelect}

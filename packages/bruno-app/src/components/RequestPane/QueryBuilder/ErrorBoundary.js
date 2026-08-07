@@ -2,6 +2,7 @@ import React from 'react';
 import { IconAlertTriangle } from '@tabler/icons';
 import StyledWrapper from './StyledWrapper';
 import Button from 'ui/Button/index';
+import { withTranslation } from 'react-i18next';
 
 class QueryBuilderErrorBoundary extends React.Component {
   constructor(props) {
@@ -23,17 +24,18 @@ class QueryBuilderErrorBoundary extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     if (this.state.hasError) {
       return (
         <StyledWrapper>
           <div className="schema-empty-state">
             <IconAlertTriangle size={32} strokeWidth={1.5} className="empty-state-icon warning" />
-            <div className="empty-state-title">Something went wrong</div>
+            <div className="empty-state-title">{t('REQUEST_PANE.SOMETHING_WENT_WRONG')}</div>
             <div className="empty-state-description">
-              The Query Builder encountered an unexpected error. Try reloading the schema or manually using the editor.
+              {t('REQUEST_PANE.QUERY_BUILDER_ERROR')}
             </div>
             <Button color="secondary" onClick={this.reset}>
-              Try Again
+              {t('REQUEST_PANE.TRY_AGAIN')}
             </Button>
           </div>
         </StyledWrapper>
@@ -43,4 +45,4 @@ class QueryBuilderErrorBoundary extends React.Component {
   }
 }
 
-export default QueryBuilderErrorBoundary;
+export default withTranslation()(QueryBuilderErrorBoundary);

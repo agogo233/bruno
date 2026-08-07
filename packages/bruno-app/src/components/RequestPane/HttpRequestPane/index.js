@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useMemo } from 'react';
 import classnames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { find, get } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { updateRequestPaneTab } from 'providers/ReduxStore/slices/tabs';
 import QueryParams from 'components/RequestPane/QueryParams';
 import RequestHeaders from 'components/RequestPane/RequestHeaders';
@@ -23,20 +24,6 @@ import AuthMode from '../Auth/AuthMode/index';
 import TabBarAiAssist from '../TabBarAiAssist';
 import { hasEffectiveAuth } from 'utils/auth';
 
-const TAB_CONFIG = [
-  { key: 'params', label: 'Params' },
-  { key: 'body', label: 'Body' },
-  { key: 'headers', label: 'Headers' },
-  { key: 'auth', label: 'Auth' },
-  { key: 'vars', label: 'Vars' },
-  { key: 'script', label: 'Script' },
-  { key: 'assert', label: 'Assert' },
-  { key: 'tests', label: 'Tests' },
-  { key: 'docs', label: 'Docs' },
-  { key: 'app', label: 'App' },
-  { key: 'settings', label: 'Settings' }
-];
-
 const TAB_PANELS = {
   params: QueryParams,
   body: RequestBody,
@@ -53,6 +40,7 @@ const TAB_PANELS = {
 
 const HttpRequestPane = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
 
@@ -60,6 +48,20 @@ const HttpRequestPane = ({ item, collection }) => {
 
   const focusedTab = find(tabs, (t) => t.uid === activeTabUid);
   const requestPaneTab = focusedTab?.requestPaneTab;
+
+  const TAB_CONFIG = useMemo(() => [
+    { key: 'params', label: t('REQUEST_PANE.PARAMS') },
+    { key: 'body', label: t('REQUEST_PANE.BODY') },
+    { key: 'headers', label: t('REQUEST_PANE.HEADERS') },
+    { key: 'auth', label: t('REQUEST_PANE.AUTH') },
+    { key: 'vars', label: t('REQUEST_PANE.VARS') },
+    { key: 'script', label: t('REQUEST_PANE.SCRIPT') },
+    { key: 'assert', label: t('REQUEST_PANE.ASSERT') },
+    { key: 'tests', label: t('REQUEST_PANE.TESTS') },
+    { key: 'docs', label: t('REQUEST_PANE.DOCS') },
+    { key: 'app', label: t('REQUEST_PANE.APP') },
+    { key: 'settings', label: t('REQUEST_PANE.SETTINGS') }
+  ], [t]);
   const getProperty = useCallback(
     (key, defaultValue = []) => (item.draft ? get(item, `draft.${key}`, defaultValue) : get(item, key, defaultValue)),
     [item.draft, item]
@@ -129,11 +131,11 @@ const HttpRequestPane = ({ item, collection }) => {
 
   const tabPanel = useMemo(() => {
     const Component = TAB_PANELS[effectiveTab];
-    return Component ? <Component key={item.uid} item={item} collection={collection} /> : <div className="mt-4">404 | Not found</div>;
+    return Component ? <Component key={item.uid} item={item} collection={collection} /> : <div className="mt-4">{t('REQUEST_PANE.NOT_FOUND')}</div>;
   }, [effectiveTab, item, collection]);
 
   if (!activeTabUid || !focusedTab?.uid || !requestPaneTab) {
-    return <div className="pb-4 px-4">An error occurred!</div>;
+    return <div className="pb-4 px-4">{t('REQUEST_PANE.ERROR_OCCURRED')}</div>;
   }
 
   let rightContent = null;

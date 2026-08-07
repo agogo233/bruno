@@ -1,4 +1,5 @@
 import { IconTrash, IconSend, IconChevronRight, IconChevronDown } from '@tabler/icons';
+import { useTranslation } from 'react-i18next';
 import CodeEditor from 'components/CodeEditor/index';
 import ToolHint from 'components/ToolHint/index';
 import { get } from 'lodash';
@@ -42,6 +43,7 @@ export const SingleWSMessage = ({
   onSelect,
   paneHeight
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { displayedTheme } = useTheme();
   const preferences = useSelector((state) => state.app.preferences);
@@ -169,10 +171,10 @@ export const SingleWSMessage = ({
 
       const result = await queueWsMessage(item, col, environment, col?.runtimeVariables, index);
       if (!result.success) {
-        toast.error(result.error || 'Failed to send message');
+        toast.error(result.error || t('REQUEST_PANE.WS_BODY.SEND_FAILED'));
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to send message');
+      toast.error(err.message || t('REQUEST_PANE.WS_BODY.SEND_FAILED'));
     }
   }, [collections]);
 
@@ -239,13 +241,13 @@ export const SingleWSMessage = ({
         </div>
         <div className="accordion-actions" onClick={(e) => e.stopPropagation()}>
           <div className="hover-actions">
-            <ToolHint text="Send" toolhintId={`send-msg-${index}`} place="bottom">
+            <ToolHint text={t('REQUEST_PANE.WS_BODY.SEND')} toolhintId={`send-msg-${index}`} place="bottom">
               <button onClick={onSendMessage} className="hover-action-btn" data-testid={`ws-send-msg-${index}`}>
                 <IconSend size={14} strokeWidth={1.5} />
               </button>
             </ToolHint>
             {(body.ws || []).length > 1 && (
-              <ToolHint text="Delete" toolhintId={`delete-msg-${index}`} place="bottom">
+              <ToolHint text={t('REQUEST_PANE.WS_BODY.DELETE')} toolhintId={`delete-msg-${index}`} place="bottom">
                 <button onClick={onDeleteMessage} className="hover-action-btn delete" data-testid={`ws-delete-msg-${index}`}>
                   <IconTrash size={14} strokeWidth={1.5} />
                 </button>

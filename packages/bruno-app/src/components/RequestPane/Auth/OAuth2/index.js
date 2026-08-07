@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import StyledWrapper from './StyledWrapper';
 import GrantTypeSelector from './GrantTypeSelector/index';
@@ -11,6 +12,7 @@ import { saveRequest, sendRequest } from 'providers/ReduxStore/slices/collection
 import { useDispatch } from 'react-redux';
 
 const GrantTypeComponentMap = ({ item, collection }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const save = () => {
@@ -38,7 +40,7 @@ const GrantTypeComponentMap = ({ item, collection }) => {
       return <OAuth2ClientCredentials item={item} save={save} request={request} handleRun={handleRun} updateAuth={updateAuth} collection={collection} />;
       break;
     default:
-      return <div>TBD</div>;
+      return <div>{t('REQUEST_PANE.OAUTH2.TBD')}</div>;
       break;
   }
 };

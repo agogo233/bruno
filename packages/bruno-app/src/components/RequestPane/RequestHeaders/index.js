@@ -15,11 +15,13 @@ import BulkEditor from '../../BulkEditor';
 import { headerNameRegex, headerValueRegex } from 'utils/common/regex';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useTrackScroll } from 'hooks/useTrackScroll';
+import { useTranslation } from 'react-i18next';
 
 const headerAutoCompleteList = StandardHTTPHeaders.map((e) => e.header);
 
 const RequestHeaders = ({ item, collection, addHeaderText }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
@@ -60,17 +62,17 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
     if (key === 'name') {
       if (!row.name || row.name.trim() === '') return null;
       if (!headerNameRegex.test(row.name)) {
-        return 'Header name cannot contain spaces or newlines';
+        return t('REQUEST_PANE.HEADER_NAME_INVALID');
       }
     }
     if (key === 'value') {
       if (!row.value) return null;
       if (!headerValueRegex.test(row.value)) {
-        return 'Header value cannot contain newlines';
+        return t('REQUEST_PANE.HEADER_VALUE_INVALID');
       }
     }
     return null;
-  }, []);
+  }, [t]);
 
   const toggleBulkEditMode = () => {
     setIsBulkEditMode(!isBulkEditMode);
@@ -87,9 +89,9 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
   const columns = [
     {
       key: 'name',
-      name: 'Name',
+      name: t('REQUEST_PANE.NAME'),
       isKeyField: true,
-      placeholder: 'Name',
+      placeholder: t('REQUEST_PANE.NAME'),
       width: '20%',
       render: ({ value, onChange }) => (
         <SingleLineEditor
@@ -101,14 +103,14 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
           onRun={handleRun}
           collection={collection}
           item={item}
-          placeholder={!value ? 'Name' : ''}
+          placeholder={!value ? t('REQUEST_PANE.NAME') : ''}
         />
       )
     },
     {
       key: 'value',
-      name: 'Value',
-      placeholder: 'Value',
+      name: t('REQUEST_PANE.VALUE'),
+      placeholder: t('REQUEST_PANE.VALUE'),
       render: ({ value, onChange }) => (
         <SingleLineEditor
           value={value || ''}
@@ -119,7 +121,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
           autocomplete={MimeTypes}
           collection={collection}
           item={item}
-          placeholder={!value ? 'Value' : ''}
+          placeholder={!value ? t('REQUEST_PANE.VALUE') : ''}
         />
       )
     },
@@ -164,7 +166,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
       />
       <div className="bulk-edit-bar flex justify-end mt-2">
         <button className="btn-action text-link select-none" data-testid="bulk-edit-toggle" onClick={toggleBulkEditMode}>
-          Bulk Edit
+          {t('REQUEST_PANE.BULK_EDIT')}
         </button>
       </div>
     </StyledWrapper>

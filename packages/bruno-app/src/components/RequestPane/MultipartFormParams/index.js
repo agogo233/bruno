@@ -21,12 +21,14 @@ import path, { getRelativePathWithinBasePath, normalizePath } from 'utils/common
 import { getMultipartAutoContentType } from 'utils/common/multipartContentType';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useTrackScroll } from 'hooks/useTrackScroll';
+import { useTranslation } from 'react-i18next';
 
 const fileBasename = (filePath) =>
   filePath ? path.basename(normalizePath(String(filePath))) : '';
 
 const MultipartFormParams = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const wrapperRef = useRef(null);
   const [scroll, setScroll] = usePersistedState({ key: `request-body-multipartForm-scroll-${item.uid}`, default: 0 });
@@ -91,9 +93,9 @@ const MultipartFormParams = ({ item, collection }) => {
         }
 
         if (skipped.length === 1) {
-          toast(`"${fileBasename(skipped[0])}" is already added`);
+          toast(t('REQUEST_PANE.ALREADY_ADDED', { fileName: fileBasename(skipped[0]) }));
         } else if (skipped.length > 1) {
-          toast(`${skipped.length} files are already added — skipped`);
+          toast(t('REQUEST_PANE.FILES_ALREADY_ADDED', { count: skipped.length }));
         }
 
         const autoContentType = getMultipartAutoContentType(merged);
@@ -165,15 +167,15 @@ const MultipartFormParams = ({ item, collection }) => {
   const columns = [
     {
       key: 'name',
-      name: 'Key',
+      name: t('REQUEST_PANE.KEY'),
       isKeyField: true,
-      placeholder: 'Key',
+      placeholder: t('REQUEST_PANE.KEY'),
       width: '20%'
     },
     {
       key: 'value',
-      name: 'Value',
-      placeholder: 'Value',
+      name: t('REQUEST_PANE.VALUE'),
+      placeholder: t('REQUEST_PANE.VALUE'),
       width: '35%',
       render: ({ row, value, onChange }) => {
         const files = row.type === 'file' ? getFileList(value) : [];
@@ -199,14 +201,14 @@ const MultipartFormParams = ({ item, collection }) => {
                 allowNewlines={true}
                 collection={collection}
                 item={item}
-                placeholder={!value ? 'Value' : ''}
+                placeholder={!value ? t('REQUEST_PANE.VALUE') : ''}
               />
             </div>
             <button
               data-testid="multipart-file-upload"
               className="upload-btn ml-1"
               onClick={() => handleBrowseFiles(row, onChange)}
-              title="Select File"
+              title={t('REQUEST_PANE.SELECT_FILE')}
             >
               <IconUpload size={16} />
             </button>
@@ -216,14 +218,14 @@ const MultipartFormParams = ({ item, collection }) => {
     },
     {
       key: 'contentType',
-      name: 'Content-Type',
-      placeholder: 'Auto',
+      name: t('REQUEST_PANE.CONTENT_TYPE'),
+      placeholder: t('REQUEST_PANE.AUTO'),
       width: '20%',
       render: ({ value, onChange }) => (
         <SingleLineEditor
           onSave={onSave}
           theme={storedTheme}
-          placeholder={!value ? 'Auto' : ''}
+          placeholder={!value ? t('REQUEST_PANE.AUTO') : ''}
           value={value || ''}
           onChange={onChange}
           onRun={handleRun}

@@ -1,4 +1,5 @@
 import { IconChevronDown } from '@tabler/icons';
+import { useTranslation } from 'react-i18next';
 import Dropdown from 'components/Dropdown/index';
 import {
   IconGrpcBidiStreaming,
@@ -18,6 +19,7 @@ const MethodDropdown = ({
   onMethodSelect,
   onMethodDropdownCreate
 }) => {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const [searchText, setSearchText] = useState('');
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -78,7 +80,7 @@ const MethodDropdown = ({
       <div ref={ref} className="method-dropdown-trigger" data-testid="grpc-method-dropdown-trigger">
         {selectedGrpcMethod && <div className="method-dropdown-trigger-icon">{getIconForMethodType(selectedGrpcMethod.type)}</div>}
         <span className="method-dropdown-trigger-text" data-testid="selected-grpc-method-name">
-          {selectedGrpcMethod ? (selectedGrpcMethod.path.split('.').at(-1) || selectedGrpcMethod.path) : 'Select Method'}
+          {selectedGrpcMethod ? (selectedGrpcMethod.path.split('.').at(-1) || selectedGrpcMethod.path) : t('REQUEST_PANE.GRPC_QUERY_URL.SELECT_METHOD')}
         </span>
         <IconChevronDown className="method-dropdown-caret" size={14} strokeWidth={2} />
       </div>
@@ -148,7 +150,7 @@ const MethodDropdown = ({
           <SearchInput
             searchText={searchText}
             setSearchText={setSearchText}
-            placeholder="Search"
+            placeholder={t('REQUEST_PANE.GRPC_QUERY_URL.SEARCH')}
             ref={searchInputRef}
             onKeyDown={handleKeyDown}
             onBlur={focusSearchInput}
@@ -160,7 +162,7 @@ const MethodDropdown = ({
             {Object.entries(groupedMethods).map(([serviceName, methods], serviceIndex) => (
               <div key={serviceIndex} className="method-dropdown-service-group" onKeyDown={handleKeyDown} tabIndex={0}>
                 <div className="method-dropdown-service-header">
-                  {serviceName || 'Default Service'}
+                  {serviceName || t('REQUEST_PANE.GRPC_QUERY_URL.DEFAULT_SERVICE')}
                 </div>
                 <div>
                   {methods.map((method, methodIndex) => {
@@ -203,7 +205,7 @@ const MethodDropdown = ({
             {filteredMethods.length === 0 && (
               <div className="method-dropdown-empty-state">
                 <div className="method-dropdown-empty-state-text">
-                  No methods found for the search term
+                  {t('REQUEST_PANE.GRPC_QUERY_URL.NO_METHODS_SEARCH')}
                 </div>
               </div>
             )}

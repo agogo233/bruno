@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { useTheme } from 'providers/Theme';
 import { useDispatch } from 'react-redux';
@@ -23,17 +24,18 @@ const signatureMethodLabels = {
   'PLAINTEXT': 'PLAINTEXT'
 };
 
-const placementLabels = {
-  header: 'Header',
-  query: 'Query Params',
-  body: 'Body'
-};
-
 const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { storedTheme } = useTheme();
   const oauth1 = get(request, 'auth.oauth1', {});
   const [advancedOpen, setAdvancedOpen] = useState(false);
+
+  const placementLabels = {
+    header: t('REQUEST_PANE.AUTH.HEADER'),
+    query: t('REQUEST_PANE.AUTH.QUERY_PARAMS'),
+    body: t('REQUEST_PANE.AUTH.BODY')
+  };
 
   const { isSensitive } = useDetectSensitiveField(collection);
   const consumerSecretSensitive = isSensitive(oauth1.consumerSecret);
@@ -59,7 +61,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
 
   const handlePrivateKeyChange = (val) => {
     if (val && /^@file\(/.test(val.trim())) {
-      toast.error('File references should be added using the "Upload File" button below');
+      toast.error(t('REQUEST_PANE.AUTH.FILE_REFERENCE_HINT'));
       return;
     }
     handleChange('privateKey', val);
@@ -116,12 +118,12 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           <IconSettings size={14} className="oauth1-icon" />
         </div>
         <span className="oauth1-section-label">
-          Configuration
+          {t('REQUEST_PANE.AUTH.CONFIGURATION')}
         </span>
       </div>
 
       <div className="flex items-center gap-4 w-full">
-        <label className="block min-w-[140px]">Consumer Key</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.CONSUMER_KEY')}</label>
         <div className="single-line-editor-wrapper flex-1">
           <SingleLineEditor
             value={oauth1.consumerKey || ''}
@@ -138,7 +140,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
 
       {!oauth1.signatureMethod?.startsWith('RSA-') && (
         <div className="flex items-center gap-4 w-full">
-          <label className="block min-w-[140px]">Consumer Secret</label>
+          <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.CONSUMER_SECRET')}</label>
           <div className="single-line-editor-wrapper flex-1 flex items-center">
             <SingleLineEditor
               value={oauth1.consumerSecret || ''}
@@ -157,7 +159,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
       )}
 
       <div className="flex items-center gap-4 w-full">
-        <label className="block min-w-[140px]">Token</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.TOKEN')}</label>
         <div className="single-line-editor-wrapper flex-1">
           <SingleLineEditor
             value={oauth1.accessToken || ''}
@@ -173,7 +175,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
       </div>
 
       <div className="flex items-center gap-4 w-full">
-        <label className="block min-w-[140px]">Token Secret</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.TOKEN_SECRET')}</label>
         <div className="single-line-editor-wrapper flex-1 flex items-center">
           <SingleLineEditor
             value={oauth1.accessTokenSecret || ''}
@@ -196,12 +198,12 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           <IconShieldLock size={14} className="oauth1-icon" />
         </div>
         <span className="oauth1-section-label">
-          Signature
+          {t('REQUEST_PANE.AUTH.SIGNATURE')}
         </span>
       </div>
 
       <div className="flex items-center gap-4 w-full">
-        <label className="block min-w-[140px]">Signature Method</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.SIGNATURE_METHOD')}</label>
         <div className="inline-flex items-center cursor-pointer oauth1-dropdown-selector">
           <MenuDropdown
             items={Object.entries(signatureMethodLabels).map(([value, label]) => ({
@@ -222,7 +224,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
 
       {oauth1.signatureMethod?.startsWith('RSA-') && (
         <div className="flex items-start gap-4 w-full">
-          <label className="block min-w-[140px] mt-1">Private Key</label>
+          <label className="block min-w-[140px] mt-1">{t('REQUEST_PANE.AUTH.PRIVATE_KEY')}</label>
           {isFileRef ? (
             <div className="private-key-editor-wrapper flex-1 flex items-center gap-2">
               <IconFile size={16} className="oauth1-icon flex-shrink-0" />
@@ -260,7 +262,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
                   type="button"
                 >
                   <IconUpload size={14} />
-                  <span className="text-xs">Upload File</span>
+                  <span className="text-xs">{t('REQUEST_PANE.AUTH.UPLOAD_FILE')}</span>
                 </button>
               </div>
             </div>
@@ -269,7 +271,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
       )}
 
       <div className="flex items-center gap-4 w-full">
-        <label className="block min-w-[140px]">Add Params To</label>
+        <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.ADD_PARAMS_TO')}</label>
         <div className="inline-flex items-center cursor-pointer oauth1-dropdown-selector">
           <MenuDropdown
             items={Object.entries(placementLabels).map(([value, label]) => ({
@@ -292,7 +294,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
         <div className="flex items-center gap-4 w-full">
           <label className="block min-w-[140px]"></label>
           <span className="text-xs opacity-60">
-            Body placement requires a form-urlencoded body. Non-form payloads will be replaced with OAuth parameters.
+            {t('REQUEST_PANE.AUTH.BODY_PLACEMENT_HINT')}
           </span>
         </div>
       )}
@@ -311,7 +313,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
               e.preventDefault(); handleChange('includeBodyHash', !oauth1.includeBodyHash);
             }}
           >
-            Include Body Hash
+            {t('REQUEST_PANE.AUTH.INCLUDE_BODY_HASH')}
           </label>
         </div>
       </div>
@@ -325,7 +327,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           <IconAdjustmentsHorizontal size={14} className="oauth1-icon" />
         </div>
         <span className="oauth1-section-label">
-          Advanced
+          {t('REQUEST_PANE.AUTH.ADVANCED')}
         </span>
         <IconChevronRight
           size={14}
@@ -336,7 +338,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
       {advancedOpen && (
         <>
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Callback URL</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.CALLBACK_URL')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.callbackUrl || ''}
@@ -352,7 +354,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           </div>
 
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Verifier</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.VERIFIER')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.verifier || ''}
@@ -368,7 +370,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           </div>
 
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Timestamp</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.TIMESTAMP')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.timestamp || ''}
@@ -384,7 +386,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           </div>
 
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Nonce</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.NONCE')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.nonce || ''}
@@ -400,7 +402,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           </div>
 
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Version</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.VERSION')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.version || ''}
@@ -416,7 +418,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
           </div>
 
           <div className="flex items-center gap-4 w-full">
-            <label className="block min-w-[140px]">Realm</label>
+            <label className="block min-w-[140px]">{t('REQUEST_PANE.AUTH.REALM')}</label>
             <div className="single-line-editor-wrapper flex-1">
               <SingleLineEditor
                 value={oauth1.realm || ''}

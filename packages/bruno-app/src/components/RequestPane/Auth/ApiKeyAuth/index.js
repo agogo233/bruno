@@ -1,4 +1,5 @@
 import React, { useRef, forwardRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import get from 'lodash/get';
 import { IconCaretDown } from '@tabler/icons';
@@ -10,6 +11,7 @@ import StyledWrapper from './StyledWrapper';
 import { humanizeRequestAPIKeyPlacement } from 'utils/collections';
 
 const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { storedTheme } = useTheme();
   const dropdownTippyRef = useRef();
@@ -62,7 +64,7 @@ const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
 
   return (
     <StyledWrapper className="w-full">
-      <label className="block mb-1">Key</label>
+      <label className="block mb-1">{t('REQUEST_PANE.AUTH.KEY')}</label>
       <div className="single-line-editor-wrapper mb-3">
         <SingleLineEditor
           value={apikeyAuth.key || ''}
@@ -75,7 +77,7 @@ const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
         />
       </div>
 
-      <label className="block mb-1">Value</label>
+      <label className="block mb-1">{t('REQUEST_PANE.AUTH.VALUE')}</label>
       <div className="single-line-editor-wrapper mb-3">
         <SingleLineEditor
           value={apikeyAuth.value || ''}
@@ -88,7 +90,7 @@ const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
         />
       </div>
 
-      <label className="block mb-1">Add To</label>
+      <label className="block mb-1">{t('REQUEST_PANE.AUTH.ADD_TO')}</label>
       <div data-testid="auth-placement-selector" className="inline-flex items-center cursor-pointer auth-placement-selector w-fit">
         <Dropdown onCreate={onDropdownCreate} icon={<Icon />} placement="bottom-end">
           <div
@@ -98,7 +100,7 @@ const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
               handleAuthChange('placement', 'header');
             }}
           >
-            Header
+            {t('REQUEST_PANE.AUTH.HEADER')}
           </div>
           <div
             className="dropdown-item"
@@ -107,7 +109,7 @@ const ApiKeyAuth = ({ item, collection, updateAuth, request, save }) => {
               handleAuthChange('placement', 'queryparams');
             }}
           >
-            Query Param
+            {t('REQUEST_PANE.AUTH.QUERY_PARAM')}
           </div>
         </Dropdown>
       </div>

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { buildClientSchema, buildSchema, validateSchema } from 'graphql';
 import { fetchGqlSchema } from 'utils/network';
 import { simpleHash, safeParseJSON } from 'utils/common';
+import { useTranslation } from 'react-i18next';
 
 const buildAndValidateSchema = (data) => {
   let schema;
@@ -26,6 +27,7 @@ const buildAndValidateSchema = (data) => {
 const schemaHashPrefix = 'bruno.graphqlSchema';
 
 const useGraphqlSchema = (endpoint, environment, request, collection) => {
+  const { t } = useTranslation();
   const { ipcRenderer } = window;
   const localStorageKey = `${schemaHashPrefix}.${simpleHash(endpoint)}`;
   const [error, setError] = useState(null);
@@ -50,14 +52,14 @@ const useGraphqlSchema = (endpoint, environment, request, collection) => {
   const loadSchemaFromIntrospection = async () => {
     const response = await fetchGqlSchema(endpoint, environment, request, collection);
     if (!response) {
-      throw new Error('Introspection query failed');
+      throw new Error(t('REQUEST_PANE.INTROSPECTION_QUERY_FAILED'));
     }
     if (response.status !== 200) {
       throw new Error(response.statusText);
     }
     const data = response.data?.data;
     if (!data) {
-      throw new Error('No data returned from introspection query');
+      throw new Error(t('REQUEST_PANE.NO_DATA_FROM_INTROSPECTION'));
     }
     setSchemaSource('introspection');
     return data;
@@ -95,18 +97,18 @@ const useGraphqlSchema = (endpoint, environment, request, collection) => {
 
         if (validationErrors.length > 0) {
           const errorMessages = validationErrors.map((e) => e.message).join('; ');
-          toast(`Schema validation issues: ${errorMessages}`, {
+          toast(`${t('REQUEST_PANE.SCHEMA_VALIDATION_ISSUES')}${errorMessages}`, {
             icon: '⚠️',
             duration: 5000
           });
         } else {
-          toast.success('GraphQL Schema loaded successfully');
+          toast.success(t('REQUEST_PANE.SCHEMA_LOADED_SUCCESSFULLY'));
         }
       }
     } catch (err) {
       setError(err);
       console.error(err);
-      toast.error(`Error occurred while loading GraphQL Schema: ${err.message}`);
+      toast.error(`${t('REQUEST_PANE.ERROR_LOADING_SCHEMA')}${err.message}`);
     }
 
     setIsLoading(false);

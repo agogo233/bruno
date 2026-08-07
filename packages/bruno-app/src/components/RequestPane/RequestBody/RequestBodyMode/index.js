@@ -19,35 +19,37 @@ import { updateRequestBody } from 'providers/ReduxStore/slices/collections/index
 import { toastError } from 'utils/common/error';
 import { prettifyJsonString } from 'utils/common/index';
 import xmlFormat from 'xml-formatter';
+import { useTranslation } from 'react-i18next';
 
-const DEFAULT_MODES = [
+const DEFAULT_MODES = (t) => [
   {
-    name: 'Form',
+    name: t('REQUEST_PANE.FORM'),
     options: [
-      { id: 'multipartForm', label: 'Multipart Form', leftSection: IconForms },
-      { id: 'formUrlEncoded', label: 'Form URL Encoded', leftSection: IconForms }
+      { id: 'multipartForm', label: t('REQUEST_PANE.MULTIPART_FORM'), leftSection: IconForms },
+      { id: 'formUrlEncoded', label: t('REQUEST_PANE.FORM_URL_ENCODED'), leftSection: IconForms }
     ]
   },
   {
-    name: 'Raw',
+    name: t('REQUEST_PANE.RAW'),
     options: [
-      { id: 'json', label: 'JSON', leftSection: IconBraces },
-      { id: 'xml', label: 'XML', leftSection: IconCode },
-      { id: 'text', label: 'TEXT', leftSection: IconFileText },
-      { id: 'sparql', label: 'SPARQL', leftSection: IconDatabase }
+      { id: 'json', label: t('REQUEST_PANE.JSON'), leftSection: IconBraces },
+      { id: 'xml', label: t('REQUEST_PANE.XML'), leftSection: IconCode },
+      { id: 'text', label: t('REQUEST_PANE.TEXT'), leftSection: IconFileText },
+      { id: 'sparql', label: t('REQUEST_PANE.SPARQL'), leftSection: IconDatabase }
     ]
   },
   {
-    name: 'Other',
+    name: t('REQUEST_PANE.OTHER'),
     options: [
-      { id: 'file', label: 'File / Binary', leftSection: IconFile },
-      { id: 'none', label: 'No Body', leftSection: IconX }
+      { id: 'file', label: t('REQUEST_PANE.FILE_BINARY'), leftSection: IconFile },
+      { id: 'none', label: t('REQUEST_PANE.NO_BODY'), leftSection: IconX }
     ]
   }
 ];
 
 const RequestBodyMode = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const body = item.draft ? get(item, 'draft.request.body') : get(item, 'request.body');
   const bodyMode = body?.mode;
 
@@ -73,7 +75,7 @@ const RequestBodyMode = ({ item, collection }) => {
           })
         );
       } catch (e) {
-        toastError(new Error('Unable to prettify. Invalid JSON format.'));
+        toastError(new Error(t('REQUEST_PANE.UNABLE_PRETTIFY_INVALID_JSON')));
       }
     } else if (body?.xml && bodyMode === 'xml') {
       try {
@@ -86,20 +88,20 @@ const RequestBodyMode = ({ item, collection }) => {
           })
         );
       } catch (e) {
-        toastError(new Error('Unable to prettify. Invalid XML format.'));
+        toastError(new Error(t('REQUEST_PANE.UNABLE_PRETTIFY_INVALID_XML')));
       }
     }
   };
 
   const menuItems = useMemo(() => {
-    return DEFAULT_MODES.map((group) => ({
+    return DEFAULT_MODES(t).map((group) => ({
       ...group,
       options: group.options.map((option) => ({
         ...option,
         onClick: () => onModeChange(option.id)
       }))
     }));
-  }, [onModeChange]);
+  }, [onModeChange, t]);
 
   return (
     <StyledWrapper>
@@ -119,7 +121,7 @@ const RequestBodyMode = ({ item, collection }) => {
       </div>
       {(bodyMode === 'json' || bodyMode === 'xml') && (
         <button className="ml-2" onClick={onPrettify}>
-          Prettify
+{t('REQUEST_PANE.PRETTIFY')}
         </button>
       )}
     </StyledWrapper>

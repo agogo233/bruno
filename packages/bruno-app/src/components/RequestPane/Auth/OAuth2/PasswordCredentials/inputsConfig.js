@@ -1,29 +1,29 @@
 const inputsConfig = [
   {
     key: 'accessTokenUrl',
-    label: 'Access Token URL'
+    labelKey: 'ACCESS_TOKEN_URL'
   },
   {
     key: 'username',
-    label: 'Username'
+    labelKey: 'USERNAME'
   },
   {
     key: 'password',
-    label: 'Password',
+    labelKey: 'PASSWORD',
     isSecret: true
   },
   {
     key: 'clientId',
-    label: 'Client ID'
+    labelKey: 'CLIENT_ID'
   },
   {
     key: 'clientSecret',
-    label: 'Client Secret',
+    labelKey: 'CLIENT_SECRET',
     isSecret: true
   },
   {
     key: 'scope',
-    label: 'Scope'
+    labelKey: 'SCOPE'
   }
 ];
 

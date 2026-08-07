@@ -24,9 +24,11 @@ import WSSettingsPane from '../WSSettingsPane/index';
 import TabBarAiAssist from '../TabBarAiAssist';
 import { hasEffectiveAuth } from 'utils/auth';
 import { AUTH_MODES_WS } from 'utils/common/constants';
+import { useTranslation } from 'react-i18next';
 
 const WSRequestPane = ({ item, collection, handleRun }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
 
@@ -100,7 +102,7 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
         collectionUid: collection.uid
       }));
     } else {
-      toast.error('Nothing to prettify');
+      toast.error(t('REQUEST_PANE.NOTHING_TO_PRETTIFY'));
     }
   }, [body, dispatch, item.uid, collection.uid]);
 
@@ -117,31 +119,31 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
     return [
       {
         key: 'body',
-        label: 'Message',
+        label: t('REQUEST_PANE.MESSAGE'),
         indicator: null
       },
       {
         key: 'headers',
-        label: 'Headers',
+        label: t('REQUEST_PANE.HEADERS'),
         indicator: activeHeadersLength > 0 ? <sup className="ml-[.125rem] font-medium">{activeHeadersLength}</sup> : null
       },
       {
         key: 'auth',
-        label: 'Auth',
+        label: t('REQUEST_PANE.AUTH'),
         indicator: hasAuth ? <StatusDot type="default" dataTestId="auth" /> : null
       },
       {
         key: 'settings',
-        label: 'Settings',
+        label: t('REQUEST_PANE.SETTINGS'),
         indicator: null
       },
       {
         key: 'docs',
-        label: 'Docs',
+        label: t('REQUEST_PANE.DOCS'),
         indicator: docs && docs.length > 0 ? <StatusDot type="default" /> : null
       }
     ];
-  }, [activeHeadersLength, hasAuth, docs]);
+  }, [activeHeadersLength, hasAuth, docs, t]);
 
   const tabPanel = useMemo(() => {
     switch (requestPaneTab) {
@@ -156,7 +158,7 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
         );
       }
       case 'headers': {
-        return <RequestHeaders item={item} collection={collection} addHeaderText="Add Headers" />;
+        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.ADD_HEADERS')} />;
       }
       case 'settings': {
         return <WSSettingsPane item={item} collection={collection} />;
@@ -168,13 +170,13 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
         return <Documentation item={item} collection={collection} />;
       }
       default: {
-        return <div className="mt-4">404 | Not found</div>;
+        return <div className="mt-4">{t('REQUEST_PANE.NOT_FOUND')}</div>;
       }
     }
   }, [requestPaneTab, item, collection, handleRun, addNewMessage]);
 
   if (!activeTabUid || !focusedTab?.uid || !requestPaneTab) {
-    return <div className="pb-4 px-4">An error occurred!</div>;
+    return <div className="pb-4 px-4">{t('REQUEST_PANE.ERROR_OCCURRED')}</div>;
   }
 
   let rightContent = null;
@@ -197,12 +199,12 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
     case 'body':
       rightContent = (
         <div ref={rightContentRef} className="flex items-center gap-2">
-          <ToolHint text="Prettify All" toolhintId="prettify-all-ws">
+          <ToolHint text={t('REQUEST_PANE.PRETTIFY_ALL')} toolhintId="prettify-all-ws">
             <ActionIcon data-testid="ws-prettify-all" onClick={onPrettifyAll}>
               <IconWand size={14} strokeWidth={1.5} />
             </ActionIcon>
           </ToolHint>
-          <ToolHint text="Add Message" toolhintId="add-msg-ws">
+          <ToolHint text={t('REQUEST_PANE.ADD_MESSAGE')} toolhintId="add-msg-ws">
             <ActionIcon data-testid="ws-add-message" onClick={addNewMessage}>
               <IconPlus size={15} strokeWidth={1.5} />
             </ActionIcon>

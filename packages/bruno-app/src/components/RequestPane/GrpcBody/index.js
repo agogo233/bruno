@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { get } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from 'providers/Theme';
@@ -28,24 +29,25 @@ const MessageToolbar = ({
   onDeleteMessage,
   showDelete
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="message-toolbar">
       <span className="message-label">Message {index + 1}</span>
       <div className="toolbar-actions mr-2">
-        <ToolHint text="Format JSON" toolhintId={`prettify-msg-${index}`}>
+        <ToolHint text={t('REQUEST_PANE.GRPC_BODY.FORMAT_JSON')} toolhintId={`prettify-msg-${index}`}>
           <button onClick={onPrettify} className="toolbar-btn">
             <IconWand size={16} strokeWidth={1.5} />
           </button>
         </ToolHint>
 
-        <ToolHint text="Generate sample" toolhintId={`regenerate-msg-${index}`}>
+        <ToolHint text={t('REQUEST_PANE.GRPC_BODY.GENERATE_SAMPLE')} toolhintId={`regenerate-msg-${index}`}>
           <button onClick={onRegenerateMessage} className="toolbar-btn" data-testid={`grpc-regenerate-message-${index}`}>
             <IconRefresh size={16} strokeWidth={1.5} />
           </button>
         </ToolHint>
 
         {canClientStream && (
-          <ToolHint text={isConnectionActive ? 'Send message' : 'Connection not active'} toolhintId={`send-msg-${index}`}>
+          <ToolHint text={isConnectionActive ? t('REQUEST_PANE.GRPC_BODY.SEND_MESSAGE') : t('REQUEST_PANE.GRPC_BODY.CONNECTION_NOT_ACTIVE')} toolhintId={`send-msg-${index}`}>
             <button
               onClick={onSend}
               disabled={!isConnectionActive}
@@ -58,7 +60,7 @@ const MessageToolbar = ({
         )}
 
         {showDelete && (
-          <ToolHint text="Delete message" toolhintId={`delete-msg-${index}`}>
+          <ToolHint text={t('REQUEST_PANE.GRPC_BODY.DELETE_MESSAGE')} toolhintId={`delete-msg-${index}`}>
             <button onClick={onDeleteMessage} className="toolbar-btn delete">
               <IconTrash size={16} strokeWidth={1.5} />
             </button>
@@ -70,6 +72,7 @@ const MessageToolbar = ({
 };
 
 const SingleGrpcMessage = ({ message, item, collection, index, methodType, handleRun, canClientSendMultipleMessages, isLast }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const editorRef = useRef(null);
   const { displayedTheme } = useTheme();
@@ -111,7 +114,7 @@ const SingleGrpcMessage = ({ message, item, collection, index, methodType, handl
     try {
       const methodPath = item.draft?.request?.method || item.request?.method;
       if (!methodPath) {
-        toastError(new Error('Method path not found in request'));
+        toastError(new Error(t('REQUEST_PANE.GRPC_BODY.METHOD_PATH_NOT_FOUND')));
         return;
       }
 
@@ -148,9 +151,9 @@ const SingleGrpcMessage = ({ message, item, collection, index, methodType, handl
           itemUid: item.uid,
           collectionUid: collection.uid
         }));
-        toast.success('Sample message generated');
+        toast.success(t('REQUEST_PANE.GRPC_BODY.SAMPLE_GENERATED'));
       } else {
-        toastError(new Error(result.error || 'Failed to generate sample message'));
+        toastError(new Error(result.error || t('REQUEST_PANE.GRPC_BODY.SAMPLE_FAILED')));
       }
     } catch (error) {
       console.error('Error generating sample message:', error);
@@ -182,7 +185,7 @@ const SingleGrpcMessage = ({ message, item, collection, index, methodType, handl
         collectionUid: collection.uid
       }));
     } catch (e) {
-      toastError(new Error('Unable to prettify. Invalid JSON format.'));
+      toastError(new Error(t('REQUEST_PANE.GRPC_BODY.PRETTIFY_FAILED')));
     }
   };
 
@@ -222,6 +225,7 @@ const SingleGrpcMessage = ({ message, item, collection, index, methodType, handl
 };
 
 const GrpcBody = ({ item, collection, handleRun }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const messagesContainerRef = useRef(null);
   const body = item.draft ? get(item, 'draft.request.body') : get(item, 'request.body');
@@ -252,7 +256,7 @@ const GrpcBody = ({ item, collection, handleRun }) => {
     return (
       <StyledWrapper>
         <div className="empty-state">
-          <p>No gRPC messages available</p>
+          <p>{t('REQUEST_PANE.GRPC_BODY.NO_MESSAGES')}</p>
           <Button
             onClick={addNewMessage}
             variant="filled"
@@ -260,7 +264,7 @@ const GrpcBody = ({ item, collection, handleRun }) => {
             size="sm"
             icon={<IconPlus size={14} strokeWidth={1.5} />}
           >
-            Add Message
+            {t('REQUEST_PANE.GRPC_BODY.ADD_MESSAGE')}
           </Button>
         </div>
       </StyledWrapper>
@@ -302,7 +306,7 @@ const GrpcBody = ({ item, collection, handleRun }) => {
             icon={<IconPlus size={14} strokeWidth={1.5} />}
             data-testid="grpc-add-message-button"
           >
-            Add Message
+            {t('REQUEST_PANE.GRPC_BODY.ADD_MESSAGE')}
           </Button>
         </div>
       )}

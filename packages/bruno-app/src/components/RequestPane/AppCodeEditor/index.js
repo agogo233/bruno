@@ -9,9 +9,11 @@ import { saveRequest } from 'providers/ReduxStore/slices/collections/actions';
 import { useTheme } from 'providers/Theme';
 import Button from 'ui/Button';
 import StyledWrapper from './StyledWrapper';
+import { useTranslation } from 'react-i18next';
 
 const AppCodeEditor = ({ item, collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { displayedTheme } = useTheme();
   const preferences = useSelector((state) => state.app.preferences);
 
@@ -29,7 +31,7 @@ const AppCodeEditor = ({ item, collection }) => {
     <StyledWrapper className="w-full h-full flex flex-col">
       <div className="app-toolbar mb-3 pb-3 flex items-center justify-between gap-4">
         <p className="text-xs text-muted min-w-0">
-          The app view replaces the request/response panes for this request.
+          {t('REQUEST_PANE.APP_VIEW_REPLACES_PANES')}
         </p>
         <Button
           size="sm"
@@ -38,7 +40,7 @@ const AppCodeEditor = ({ item, collection }) => {
           className="flex-shrink-0"
           data-testid="app-preview-btn"
         >
-          Preview
+{t('REQUEST_PANE.PREVIEW')}
         </Button>
       </div>
 

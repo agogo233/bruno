@@ -1,28 +1,28 @@
 const inputsConfig = [
   {
     key: 'authorizationUrl',
-    label: 'Authorization URL'
+    labelKey: 'AUTHORIZATION_URL'
   },
   {
     key: 'accessTokenUrl',
-    label: 'Access Token URL'
+    labelKey: 'ACCESS_TOKEN_URL'
   },
   {
     key: 'clientId',
-    label: 'Client ID'
+    labelKey: 'CLIENT_ID'
   },
   {
     key: 'clientSecret',
-    label: 'Client Secret',
+    labelKey: 'CLIENT_SECRET',
     isSecret: true
   },
   {
     key: 'scope',
-    label: 'Scope'
+    labelKey: 'SCOPE'
   },
   {
     key: 'state',
-    label: 'State',
+    labelKey: 'STATE',
     tooltip: 'If left empty, Bruno automatically generates a secure random value to help protect against CSRF attacks.'
   }
 ];

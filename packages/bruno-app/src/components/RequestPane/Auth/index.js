@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import AwsV4Auth from './AwsV4Auth';
 import BearerAuth from './BearerAuth';
@@ -19,6 +20,7 @@ import OAuth2 from './OAuth2/index';
 import { getEffectiveAuthSource } from 'utils/auth';
 
 const Auth = ({ item, collection }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const authMode = item.draft ? get(item, 'draft.request.auth.mode') : get(item, 'request.auth.mode');
 
@@ -40,7 +42,7 @@ const Auth = ({ item, collection }) => {
   const getAuthView = () => {
     switch (authMode) {
       case 'none': {
-        return <div className="mt-2">No Auth</div>;
+        return <div className="mt-2">{t('REQUEST_PANE.AUTH.NO_AUTH')}</div>;
       }
       case 'awsv4': {
         return <AwsV4Auth collection={collection} item={item} request={request} save={save} updateAuth={updateAuth} />;
@@ -76,7 +78,7 @@ const Auth = ({ item, collection }) => {
         return (
           <>
             <div className="flex flex-row w-full gap-2">
-              <div>Auth inherited from {inheritedSource.name}: </div>
+              <div>{t('REQUEST_PANE.AUTH.INHERITED', { name: inheritedSource.name })}</div>
               <div className="inherit-mode-text" data-testid="inherited-auth-mode">{humanizeRequestAuthMode(inheritedSource.auth?.mode)}</div>
             </div>
           </>
