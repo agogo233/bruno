@@ -182,6 +182,7 @@ const ConfirmMoveDrafts = ({ onClose, collection, collectionUid }) => {
                       icon={<IconDeviceFloppy size={14} strokeWidth={1.5} />}
                     >
                       {t('SIDEBAR.CONFIRM_MOVE_DRAFTS.SAVE')}
+                    </Button>
                   </div>
                 );
               })}

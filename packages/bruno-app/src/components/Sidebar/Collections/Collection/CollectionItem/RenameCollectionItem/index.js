@@ -89,7 +89,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
     }
   }, [inputRef]);
 
-  const Advanced{t('SIDEBAR.RENAME_COLLECTION_ITEM.OPTIONS')} = forwardRef((props, ref) => {
+  const AdvancedOptions = forwardRef((props, ref) => {
     return (
       <div ref={ref} className="flex mr-2 text-link cursor-pointer items-center">
         <button
@@ -109,7 +109,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
         <Modal
           size="md"
           title={isFolder ? t('SIDEBAR.RENAME_COLLECTION_ITEM.RENAME_FOLDER') : t('SIDEBAR.RENAME_COLLECTION_ITEM.RENAME_REQUEST')}
-          handle{t('SIDEBAR.RENAME_COLLECTION_ITEM.CANCEL')}={onClose}
+          handleCancel={onClose}
           hideFooter
         >
           <form className="bruno-form" onSubmit={formik.handleSubmit}>
@@ -206,7 +206,7 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
             )}
             <div className="flex justify-between items-center mt-8 bruno-modal-footer">
               <div className="flex advanced-options">
-                <Dropdown onCreate={onDropdownCreate} icon={<Advanced{t('SIDEBAR.RENAME_COLLECTION_ITEM.OPTIONS')} />} placement="bottom-start">
+                <Dropdown onCreate={onDropdownCreate} icon={<AdvancedOptions />} placement="bottom-start">
                   <div
                     className="dropdown-item"
                     key="show-filesystem-name"

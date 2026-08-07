@@ -95,6 +95,7 @@ const Headers = ({ collection, folder }) => {
           autocomplete={headerAutoCompleteList}
           collection={collection}
           placeholder={!value ? t('FOLDER_SETTINGS.HEADERS.NAME') : ''}
+        />
       )
     },
     {
@@ -111,6 +112,7 @@ const Headers = ({ collection, folder }) => {
           item={folder}
           autocomplete={MimeTypes}
           placeholder={!value ? t('FOLDER_SETTINGS.HEADERS.VALUE') : ''}
+        />
       )
     },
     descriptionColumn

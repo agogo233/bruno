@@ -62,7 +62,7 @@ const RunCollectionItem = ({ collectionUid, item, onClose }) => {
 
   return (
     <StyledWrapper>
-      <Modal size="md" title={t('SIDEBAR.RUN_COLLECTION.TITLE')} hideFooter={true} handle{t('SIDEBAR.RUN_COLLECTION.CANCEL')}={onClose}>
+      <Modal size="md" title={t('SIDEBAR.RUN_COLLECTION.TITLE')} hideFooter={true} handleCancel={onClose}>
         <div>
           <div className="mb-1">
             <span className="font-medium">{t('SIDEBAR.RUN_COLLECTION.RUN')}</span>

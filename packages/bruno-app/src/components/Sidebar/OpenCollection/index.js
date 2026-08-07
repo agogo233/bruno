@@ -76,6 +76,7 @@ const OpenCollectionModal = ({ onClose }) => {
         if (items.length === 0) {
           if (failedScans.length) {
             toast.error(t('SIDEBAR.COMMON.ERROR_OPENING'));
+          }
           onClose();
           return;
         }

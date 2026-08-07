@@ -164,7 +164,8 @@
     "FILE_CACHE_CLEARED": "文件缓存已清除",
     "FAILED_CLEAR_FILE": "清除文件缓存失败",
     "SSL_CACHE_CLEARED": "SSL 会话缓存已清除",
-    "FAILED_CLEAR_SSL": "清除 SSL 会话缓存失败"
+    "FAILED_CLEAR_SSL": "清除 SSL 会话缓存失败",
+    "INTERNAL_CACHE_CLEARED": "内部缓存已清除"
   },
   "BETA": {
     "HEADER": "Beta 功能",
@@ -1680,7 +1681,14 @@
       "IMPORT_PATHS": "导入路径（",
       "GENERATE_GRPCURL_TITLE": "生成 gRPCurl 命令",
       "COMMAND_COPIED": "命令已复制到剪贴板",
-      "COMMAND_COPY_FAILED": "复制命令失败"
+      "COMMAND_COPY_FAILED": "复制命令失败",
+      "LOAD_METHODS_FAILED_PLAIN": "加载 gRPC 方法失败",
+      "GENERATE_FAILED": "生成 grpcurl 命令失败",
+      "INVALID_SERVER_URL": "请输入有效的 gRPC 服务器 URL",
+      "SELECT_METHOD_REQUIRED": "请选择 gRPC 方法",
+      "BROWSE_IMPORT_DIR_FAILED": "浏览导入目录失败：{{error}}",
+      "IMPORT_PATH_TOGGLED": "导入路径已{{state}}",
+      "ADD_IMPORT_PATH_FAILED": "添加导入路径失败：{{error}}"
     },
     "GRPC_BODY": {
       "NO_MESSAGES": "无可用 gRPC 消息",

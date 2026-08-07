@@ -19,10 +19,11 @@ const CollectionNotFound = ({ onClose }) => {
           <IconAlertTriangle size={16} className="shrink-0" />
           <span>{t('SIDEBAR.COMMON.COLLECTION_NOT_FOUND')}</span>
         </div>
-      </StyledWrapper>
+</StyledWrapper>
     </Modal>
   </Portal>
 );
+};
 
 const ChangeCollectionVersion = ({ collectionUid, onClose }) => {
   const dispatch = useDispatch();

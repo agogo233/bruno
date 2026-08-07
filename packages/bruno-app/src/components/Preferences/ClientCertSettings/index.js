@@ -413,6 +413,9 @@ title={t('CERT.ADD_MODAL_TITLE')}
             <div className="mb-3 flex items-start">
               <label className="settings-label mt-1" htmlFor="passphrase">
                 {t('CERT.PASSPHRASE')}
+              </label>
+              <div className="flex flex-col gap-1">
+                <div className="textbox flex flex-row items-center w-[300px] h-[1.70rem] relative">
                   <input
                     id="passphrase"
                     type={passphraseVisible ? 'text' : 'password'}

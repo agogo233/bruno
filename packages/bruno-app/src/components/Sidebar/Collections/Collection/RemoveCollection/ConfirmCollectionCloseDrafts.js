@@ -181,6 +181,7 @@ const ConfirmCollectionCloseDrafts = ({ onClose, collection, collectionUid }) =>
                       icon={<IconDeviceFloppy size={14} strokeWidth={1.5} />}
                     >
                       {t('SIDEBAR.CONFIRM_CLOSE_DRAFTS.SAVE')}
+                    </Button>
                   </div>
                 );
               })}

@@ -836,7 +836,7 @@ const AiChatSidebar = ({ collection, variant = 'sidebar' }) => {
           <div className="suggestion-chips">
             {suggestions.map((s, i) => (
               <button key={i} className="suggestion-chip" onClick={() => handleSuggestionClick(s.prompt)}>
-                {s.label}
+                {t(s.label)}
               </button>
             ))}
           </div>

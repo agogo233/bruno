@@ -15,33 +15,33 @@ export const CONTENT_TYPE_LABELS = {
 
 export const SUGGESTIONS_BY_TYPE = {
   'app': [
-    { label: 'Create a form for this request', prompt: 'Create a simple form to send this request' },
-    { label: 'Add a loading spinner', prompt: 'Add a loading spinner while the request is pending' },
-    { label: 'Show response in a table', prompt: 'Display the response data in a table' },
-    { label: 'Add error handling', prompt: 'Add error handling with user-friendly messages' }
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_APP_CREATE_FORM', prompt: 'Create a simple form to send this request' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_APP_LOADING_SPINNER', prompt: 'Add a loading spinner while the request is pending' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_APP_TABLE', prompt: 'Display the response data in a table' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_APP_ERROR_HANDLING', prompt: 'Add error handling with user-friendly messages' }
   ],
   'tests': [
-    { label: 'Generate basic tests', prompt: 'Generate tests for status code, response body, and headers' },
-    { label: 'Test response structure', prompt: 'Write tests to validate the response body structure and data types' },
-    { label: 'Test error cases', prompt: 'Write tests for common error scenarios' },
-    { label: 'Test response time', prompt: 'Add a test to verify response time is acceptable' }
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_TESTS_BASIC_TESTS', prompt: 'Generate tests for status code, response body, and headers' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_TESTS_RESPONSE_STRUCTURE', prompt: 'Write tests to validate the response body structure and data types' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_TESTS_ERROR_CASES', prompt: 'Write tests for common error scenarios' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_TESTS_RESPONSE_TIME_LABEL', prompt: 'Add a test to verify response time is acceptable' }
   ],
   'pre-request': [
-    { label: 'Add authentication', prompt: 'Add authorization header from environment variable' },
-    { label: 'Set dynamic variables', prompt: 'Set dynamic request variables like timestamp or unique ID' },
-    { label: 'Conditional logic', prompt: 'Add conditional logic to modify the request based on environment' }
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_PRE_REQUEST_ADD_AUTH', prompt: 'Add authorization header from environment variable' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_PRE_REQUEST_DYNAMIC_VARS', prompt: 'Set dynamic request variables like timestamp or unique ID' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_PRE_REQUEST_CONDITIONAL', prompt: 'Add conditional logic to modify the request based on environment' }
   ],
   'post-response': [
-    { label: 'Extract to variables', prompt: 'Extract data from response and save to environment variables' },
-    { label: 'Store auth token', prompt: 'Extract auth token from response and save for future requests' },
-    { label: 'Log response', prompt: 'Log response status and body for debugging' },
-    { label: 'Transform response', prompt: 'Transform and process the response data' }
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_POST_RESPONSE_EXTRACT_VARS', prompt: 'Extract data from response and save to environment variables' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_POST_RESPONSE_STORE_TOKEN', prompt: 'Extract auth token from response and save for future requests' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_POST_RESPONSE_LOG_RESPONSE', prompt: 'Log response status and body for debugging' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_POST_RESPONSE_TRANSFORM', prompt: 'Transform and process the response data' }
   ],
   'docs': [
-    { label: 'Generate full docs', prompt: 'Generate comprehensive API documentation for this endpoint' },
-    { label: 'Document parameters', prompt: 'Document all request parameters, headers, and body' },
-    { label: 'Add examples', prompt: 'Add request and response examples' },
-    { label: 'Document errors', prompt: 'Document common error responses and status codes' }
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_DOCS_FULL', prompt: 'Generate comprehensive API documentation for this endpoint' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_DOCS_PARAMS', prompt: 'Document all request parameters, headers, and body' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_DOCS_EXAMPLES_LABEL', prompt: 'Add request and response examples' },
+    { label: 'AI_CHAT_SIDEBAR.SIDEBAR.SUGGESTION_DOCS_ERRORS_LABEL', prompt: 'Document common error responses and status codes' }
   ]
 };
 
