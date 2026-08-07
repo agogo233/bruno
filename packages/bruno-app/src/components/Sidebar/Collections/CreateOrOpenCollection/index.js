@@ -27,6 +27,11 @@ const CreateOrOpenCollection = ({ onCreateClick }) => {
       {t('SIDEBAR.CREATE_OR_OPEN.CREATE')}
     </LinkStyle>
   );
+  const OpenLink = () => (
+    <LinkStyle className="underline text-link cursor-pointer" theme={theme} onClick={() => handleOpenCollection(true)}>
+      {t('SIDEBAR.CREATE_OR_OPEN.OPEN')}
+    </LinkStyle>
+  );
 
   return (
     <StyledWrapper className="px-2 mt-4">

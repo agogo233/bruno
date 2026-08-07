@@ -13,6 +13,7 @@ import GrantTypeSelector from 'components/RequestPane/Auth/OAuth2/GrantTypeSelec
 
 const GrantTypeComponentMap = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const save = () => {
     dispatch(saveCollectionSettings(collection.uid));

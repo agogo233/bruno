@@ -101,6 +101,7 @@ const EnvironmentBadge = ({ environment, icon: Icon }) => {
  */
 const DropdownTrigger = forwardRef(({ collectionEnv, globalEnv }, ref) => {
   const hasAnyEnv = collectionEnv || globalEnv;
+  const { t } = useTranslation();
 
   // Empty state - no environments selected
   if (!hasAnyEnv) {

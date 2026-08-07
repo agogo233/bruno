@@ -136,6 +136,7 @@ const formatRelativeTime = (timestamp) => {
 
 const HistoryPopover = ({ items, activeId, onPick, onDelete, onClose }) => {
   const popoverRef = useRef(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleClick = (e) => {

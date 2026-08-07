@@ -26,6 +26,7 @@ import StyledWrapper from './StyledWrapper';
 
 const GrantTypeComponentMap = ({ collection, folder, updateFolderAuth }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const save = () => {
     dispatch(saveFolderRoot(collection.uid, folder.uid));
