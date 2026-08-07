@@ -43,7 +43,7 @@ const createSafeGraphQLLinter = () => {
   };
 };
 
-class QueryEditor extends React.Component {
+export default class QueryEditor extends React.Component {
   constructor(props) {
     super(props);
 
