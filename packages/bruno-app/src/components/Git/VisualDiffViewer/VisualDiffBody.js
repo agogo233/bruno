@@ -1,26 +1,15 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { computeLineDiffForOld, computeLineDiffForNew } from './utils/diffUtils';
 
-const BODY_TYPE_LABELS = {
-  json: 'JSON',
-  text: 'Text',
-  xml: 'XML',
-  sparql: 'SPARQL',
-  graphql: 'GraphQL',
-  formUrlEncoded: 'Form URL Encoded',
-  multipartForm: 'Multipart Form',
-  file: 'File',
-  grpc: 'gRPC',
-  ws: 'WebSocket'
-};
-
 const TEXT_BODY_TYPES = ['json', 'text', 'xml', 'sparql'];
 const FORM_BODY_TYPES = ['formUrlEncoded', 'multipartForm'];
-const ALL_BODY_TYPES = Object.keys(BODY_TYPE_LABELS);
+const ALL_BODY_TYPES = ['json', 'text', 'xml', 'sparql', 'graphql', 'formUrlEncoded', 'multipartForm', 'file', 'grpc', 'ws'];
 
 const VisualDiffBody = ({ oldData, newData, showSide }) => {
+  const { t } = useTranslation();
   const oldBody = get(oldData, 'request.body', {});
   const newBody = get(newData, 'request.body', {});
 
@@ -80,8 +69,8 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
           <tr>
             <th style={{ width: '30px' }}></th>
             <th className="checkbox-cell"></th>
-            <th style={{ width: '40%' }}>Key</th>
-            <th>Value</th>
+            <th style={{ width: '40%' }}>{t('GIT.DIFF.KEY')}</th>
+            <th>{t('GIT.DIFF.VALUE')}</th>
           </tr>
         </thead>
         <tbody>
@@ -135,8 +124,8 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
           <tr>
             <th style={{ width: '30px' }}></th>
             <th className="checkbox-cell"></th>
-            <th>File Path</th>
-            <th style={{ width: '100px' }}>Content Type</th>
+            <th>{t('GIT.DIFF.FILE_PATH')}</th>
+            <th style={{ width: '100px' }}>{t('GIT.DIFF.CONTENT_TYPE')}</th>
           </tr>
         </thead>
         <tbody>
@@ -190,7 +179,7 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
       return (
         <div key={index}>
           <div className="diff-section-header">
-            <span>{typeLabel}: {msg.name || `Message ${index + 1}`}{msg.type ? ` (${msg.type})` : ''}</span>
+            <span>{typeLabel}: {msg.name || t('GIT.DIFF.MESSAGE', { index: index + 1 })}{msg.type ? ` (${msg.type})` : ''}</span>
             {msgStatus !== 'unchanged' && (
               <span className={`status-badge ${msgStatus}`}>
                 {msgStatus === 'added' ? 'A' : msgStatus === 'deleted' ? 'D' : 'M'}
@@ -221,13 +210,13 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
       <>
         {(currentQuery || otherQuery) && (
           <div>
-            <div className="diff-section-header">Query</div>
+            <div className="diff-section-header">{t('GIT.DIFF.QUERY')}</div>
             <div className="code-diff-content">{renderLineDiff(queryDiff)}</div>
           </div>
         )}
         {(currentVariables || otherVariables) && (
           <div>
-            <div className="diff-section-header">Variables</div>
+            <div className="diff-section-header">{t('GIT.DIFF.VARIABLES')}</div>
             <div className="code-diff-content">{renderLineDiff(variablesDiff)}</div>
           </div>
         )}
@@ -276,12 +265,12 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
 
     // gRPC
     if (type === 'grpc') {
-      return renderMessageBody(currentVal, otherVal, 'gRPC');
+      return renderMessageBody(currentVal, otherVal, t('GIT.DIFF.GRPC'));
     }
 
     // WebSocket
     if (type === 'ws') {
-      return renderMessageBody(currentVal, otherVal, 'WebSocket');
+      return renderMessageBody(currentVal, otherVal, t('GIT.DIFF.WS'));
     }
 
     return null;
@@ -304,8 +293,8 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
             <thead>
               <tr>
                 <th style={{ width: '30px' }}></th>
-                <th style={{ width: '40%' }}>Field</th>
-                <th>Value</th>
+                <th style={{ width: '40%' }}>{t('GIT.DIFF.FIELD')}</th>
+                <th>{t('GIT.DIFF.VALUE')}</th>
               </tr>
             </thead>
             <tbody>
@@ -317,8 +306,8 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
                     </span>
                   )}
                 </td>
-                <td className="key-cell">Body Mode</td>
-                <td className="value-cell">{BODY_TYPE_LABELS[currentMode] || currentMode}</td>
+                <td className="key-cell">{t('GIT.DIFF.BODY_MODE')}</td>
+                <td className="value-cell">{t(`GIT.DIFF.BODY_TYPE.${currentMode}`, currentMode)}</td>
               </tr>
             </tbody>
           </table>
@@ -335,7 +324,7 @@ const VisualDiffBody = ({ oldData, newData, showSide }) => {
         return (
           <div key={type} className="diff-section">
             <div className="diff-section-header">
-              <span>{BODY_TYPE_LABELS[type] || type}</span>
+              <span>{t(`GIT.DIFF.BODY_TYPE.${type}`, type)}</span>
               {hasChanges && (
                 <span className={`status-badge ${otherVal === undefined ? (showSide === 'old' ? 'deleted' : 'added') : 'modified'}`}>
                   {otherVal === undefined ? (showSide === 'old' ? 'D' : 'A') : 'M'}

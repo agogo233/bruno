@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import { addTab } from 'providers/ReduxStore/slices/tabs';
@@ -15,6 +16,7 @@ import OverviewSection from './OverviewSection';
 import useOpenAPISync from './hooks/useOpenAPISync';
 
 const OpenAPISyncTab = ({ collection }) => {
+  const { t } = useTranslation();
   const {
     sourceUrl, setSourceUrl,
     isLoading,
@@ -31,7 +33,7 @@ const OpenAPISyncTab = ({ collection }) => {
     handleSaveSettings,
     openEndpointInTab,
     reloadDrift
-  } = useOpenAPISync(collection);
+  } = useOpenAPISync(collection, t);
 
   const dispatch = useDispatch();
   const openApiSyncConfig = collection?.brunoConfig?.openapi?.[0];
@@ -69,18 +71,18 @@ const OpenAPISyncTab = ({ collection }) => {
   })();
 
   const syncTabs = useMemo(() => [
-    { key: 'overview', label: 'Overview' },
+    { key: 'overview', label: t('OPENAPI_SYNC.TAB.OVERVIEW') },
     {
       key: 'collection-changes',
-      label: 'Collection Changes',
+      label: t('OPENAPI_SYNC.TAB.COLLECTION_CHANGES'),
       indicator: collectionChangesCount > 0 ? <span className="tab-count">{collectionChangesCount}</span> : null
     },
     {
       key: 'spec-updates',
-      label: 'Spec Updates',
+      label: t('OPENAPI_SYNC.TAB.SPEC_UPDATES'),
       indicator: specUpdatesCount > 0 ? <span className="tab-count">{specUpdatesCount}</span> : null
     }
-  ], [collectionChangesCount, specUpdatesCount]);
+  ], [collectionChangesCount, specUpdatesCount, t]);
 
   return (
     <StyledWrapper className="flex flex-col h-full relative px-4 pt-4 overflow-auto">

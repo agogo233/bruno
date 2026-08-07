@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { IconCaretDown } from '@tabler/icons';
 import MenuDropdown from 'ui/MenuDropdown';
@@ -10,6 +11,7 @@ import StyledWrapper from './StyledWrapper';
 
 const AuthMode = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const authMode = collection.draft?.root ? get(collection, 'draft.root.request.auth.mode') : get(collection, 'root.request.auth.mode');
 
   const onModeChange = useCallback((value) => {
@@ -24,66 +26,66 @@ const AuthMode = ({ collection }) => {
   const menuItems = useMemo(() => [
     {
       id: 'awsv4',
-      label: 'AWS Sig v4',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.AWS_SIG_V4'),
       onClick: () => onModeChange('awsv4')
     },
     {
       id: 'basic',
-      label: 'Basic Auth',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.BASIC_AUTH'),
       onClick: () => onModeChange('basic')
     },
     {
       id: 'wsse',
-      label: 'WSSE Auth',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.WSSE_AUTH'),
       onClick: () => onModeChange('wsse')
     },
     {
       id: 'bearer',
-      label: 'Bearer Token',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.BEARER_TOKEN'),
       onClick: () => onModeChange('bearer')
     },
     {
       id: 'digest',
-      label: 'Digest Auth',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.DIGEST_AUTH'),
       onClick: () => onModeChange('digest')
     },
     {
       id: 'ntlm',
-      label: 'NTLM Auth',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.NTLM_AUTH'),
       onClick: () => onModeChange('ntlm')
     },
     {
       id: 'oauth1',
-      label: 'OAuth 1.0',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.OAUTH_1'),
       onClick: () => onModeChange('oauth1')
     },
     {
       id: 'oauth2',
-      label: 'OAuth 2.0',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.OAUTH_2'),
       onClick: () => onModeChange('oauth2')
     },
     {
       id: 'apikey',
-      label: 'API Key',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.API_KEY'),
       onClick: () => onModeChange('apikey')
     },
     {
       id: 'akamai-edgegrid',
       label: (
         <span className="flex items-center gap-2">
-          Akamai EdgeGrid
-          <StatusBadge status="info" size="xs">Beta</StatusBadge>
+          {t('COLLECTION_SETTINGS.AUTH_MODE.AKAMAI_EDGEGRID')}
+          <StatusBadge status="info" size="xs">{t('COLLECTION_SETTINGS.AUTH_MODE.BETA')}</StatusBadge>
         </span>
       ),
-      ariaLabel: 'Akamai EdgeGrid (Beta)',
+      ariaLabel: t('COLLECTION_SETTINGS.AUTH_MODE.AKAMAI_EDGEGRID') + ' (' + t('COLLECTION_SETTINGS.AUTH_MODE.BETA') + ')',
       onClick: () => onModeChange('akamai-edgegrid')
     },
     {
       id: 'none',
-      label: 'No Auth',
+      label: t('COLLECTION_SETTINGS.AUTH_MODE.NO_AUTH'),
       onClick: () => onModeChange('none')
     }
-  ], [onModeChange]);
+  ], [onModeChange, t]);
 
   return (
     <StyledWrapper>

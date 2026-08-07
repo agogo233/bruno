@@ -1,8 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal/index';
 import Portal from 'components/Portal/index';
 
-const getOSName = () => {
+const getOSName = (t) => {
   const platform = window.navigator.userAgentData?.platform || '';
   if (platform.startsWith('Win')) {
     return 'Windows';
@@ -11,7 +12,7 @@ const getOSName = () => {
   } else if (platform.startsWith('Linux')) {
     return 'Linux';
   } else {
-    return 'your OS';
+    return t('GIT.NOT_FOUND.YOUR_OS');
   }
 };
 
@@ -29,28 +30,29 @@ const getDownloadUrl = (os) => {
 };
 
 const GitNotFoundModal = ({ onClose }) => {
-  const osName = getOSName();
+  const { t } = useTranslation();
+  const osName = getOSName(t);
   const downloadUrl = getDownloadUrl(osName);
 
   return (
     <Portal>
       <Modal
         size="sm"
-        title="Git Not Found"
+        title={t('GIT.NOT_FOUND.TITLE')}
         handleCancel={onClose}
         hideFooter={true}
       >
         <div>
-          <p>Git was not detected on your system. You need to install Git to proceed.</p>
+          <p>{t('GIT.NOT_FOUND.DESCRIPTION')}</p>
           <p className="mt-2">
-            You can download Git for <strong>{osName}</strong> here:
+            {t('GIT.NOT_FOUND.DOWNLOAD_FOR', { osName })}
           </p>
           <p>
             <span
               className="text-blue-600 cursor-pointer border-b border-blue-600"
               onClick={() => window.open(downloadUrl, '_blank')}
             >
-              Download Git for {osName}
+              {t('GIT.NOT_FOUND.DOWNLOAD', { osName })}
             </span>
           </p>
         </div>

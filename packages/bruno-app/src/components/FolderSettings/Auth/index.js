@@ -16,6 +16,7 @@ import get from 'lodash/get';
 import { updateFolderAuth as _updateFolderAuth } from 'providers/ReduxStore/slices/collections';
 import { saveFolderRoot } from 'providers/ReduxStore/slices/collections/actions';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import Button from 'ui/Button';
 import { getEffectiveAuthSource } from 'utils/auth';
@@ -44,12 +45,13 @@ const GrantTypeComponentMap = ({ collection, folder, updateFolderAuth }) => {
     case 'implicit':
       return <OAuth2Implicit save={save} item={folder} request={request} updateAuth={updateFolderAuth} collection={collection} folder={folder} />;
     default:
-      return <div>TBD</div>;
+      return <div>{t('FOLDER_SETTINGS.AUTH.TBD')}</div>;
   }
 };
 
 const Auth = ({ collection, folder }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const folderRoot = folder?.draft || folder?.root;
   let request = get(folderRoot, 'request', {});
   const authMode = get(folderRoot, 'request.auth.mode');
@@ -177,7 +179,7 @@ const Auth = ({ collection, folder }) => {
         return (
           <>
             <div className="flex flex-row w-full mt-2 gap-2">
-              <div>Auth inherited from {inheritedSource.name}: </div>
+              <div>{t('FOLDER_SETTINGS.AUTH.AUTH_INHERITED_FROM', { name: inheritedSource.name })}</div>
               <div className="inherit-mode-text" data-testid="inherited-auth-mode">{humanizeRequestAuthMode(inheritedSource.auth?.mode)}</div>
             </div>
           </>
@@ -207,17 +209,19 @@ const Auth = ({ collection, folder }) => {
   return (
     <StyledWrapper className="w-full">
       <div className="text-xs mb-4 text-muted">
-        Configures authentication for the entire folder. This applies to all requests using the{' '}
-        <span className="font-medium">Inherit</span> option in the <span className="font-medium">Auth</span> tab.
+        {t('FOLDER_SETTINGS.AUTH.DESCRIPTION', {
+          inherit: t('FOLDER_SETTINGS.AUTH.INHERIT'),
+          auth: t('FOLDER_SETTINGS.AUTH.AUTH')
+        })}
       </div>
       <div className="flex flex-grow justify-start items-center">
         <AuthMode collection={collection} folder={folder} />
       </div>
       {getAuthView()}
       <div className="mt-6">
-        <Button type="submit" size="sm" onClick={handleSave}>
-          Save
-        </Button>
+          <Button type="submit" size="sm" onClick={handleSave}>
+            {t('FOLDER_SETTINGS.AUTH.SAVE')}
+          </Button>
       </div>
     </StyledWrapper>
   );

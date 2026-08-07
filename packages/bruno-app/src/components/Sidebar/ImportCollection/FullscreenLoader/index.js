@@ -1,31 +1,32 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconLoader2 } from '@tabler/icons';
-
-// Messages to cycle through while loading
-const loadingMessages = [
-  'Processing collection...',
-  'Analyzing requests...',
-  'Translating scripts...',
-  'Preparing collection...',
-  'Almost done...'
-];
 
 const FullscreenLoader = ({ isLoading }) => {
   const [loadingMessage, setLoadingMessage] = useState('');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isLoading) return;
 
+    const messages = [
+      t('SIDEBAR.POSTMAN_PACKAGE.LOADING_PROCESSING'),
+      t('SIDEBAR.POSTMAN_PACKAGE.LOADING_ANALYZING'),
+      t('SIDEBAR.POSTMAN_PACKAGE.LOADING_TRANSLATING'),
+      t('SIDEBAR.POSTMAN_PACKAGE.LOADING_PREPARING'),
+      t('SIDEBAR.POSTMAN_PACKAGE.LOADING_ALMOST_DONE')
+    ];
+
     let messageIndex = 0;
     const interval = setInterval(() => {
-      messageIndex = (messageIndex + 1) % loadingMessages.length;
-      setLoadingMessage(loadingMessages[messageIndex]);
+      messageIndex = (messageIndex + 1) % messages.length;
+      setLoadingMessage(messages[messageIndex]);
     }, 2000);
 
-    setLoadingMessage(loadingMessages[0]);
+    setLoadingMessage(messages[0]);
 
     return () => clearInterval(interval);
-  }, [isLoading]);
+  }, [isLoading, t]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm transition-all duration-300">
@@ -33,7 +34,7 @@ const FullscreenLoader = ({ isLoading }) => {
         <IconLoader2 className="animate-spin h-12 w-12 mb-4" strokeWidth={1.5} />
         <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-50 mb-2">{loadingMessage}</h3>
         <p className="text-zinc-500 dark:text-zinc-400">
-          This may take a moment depending on the collection size
+          {t('SIDEBAR.POSTMAN_PACKAGE.LOADING_HINT')}
         </p>
       </div>
     </div>

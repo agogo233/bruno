@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
 import { IconLoader2, IconChevronUp, IconChevronDown } from '@tabler/icons';
 import Modal from 'components/Modal';
@@ -8,6 +9,7 @@ import { createHighlightCache } from './highlightCache';
 import DiffRow from './DiffRow';
 
 const SpecDiffModal = ({ specDrift, onClose }) => {
+  const { t } = useTranslation();
   const virtuosoRef = useRef(null);
 
   const [cache] = useState(createHighlightCache);
@@ -82,25 +84,25 @@ const SpecDiffModal = ({ specDrift, onClose }) => {
   const showNav = !!specDrift?.unifiedDiff && !parseError;
   const changeCount = changeBlocks.length;
   const counterLabel
-    = changeCount === 0 ? 'No changes' : `${currentIndex + 1} of ${changeCount} changes`;
+    = changeCount === 0 ? t('OPENAPI_SYNC.SYNC_DIFF.NO_CHANGES') : t('OPENAPI_SYNC.SYNC_DIFF.CHANGE_COUNTER', { current: currentIndex + 1, total: changeCount });
 
   return (
-    <Modal size="xl" title="Spec Diff" hideFooter handleCancel={onClose}>
+    <Modal size="xl" title={t('OPENAPI_SYNC.SYNC_DIFF.TITLE')} hideFooter handleCancel={onClose}>
       <div className="spec-diff-modal">
         <div className="spec-diff-header">
           <div className="spec-diff-header-left">
             <div className="spec-diff-badges">
-              <div>Endpoint Changes:</div>
-              {modifiedCount > 0 && <StatusBadge status="warning">Updated: {modifiedCount}</StatusBadge>}
-              {addedCount > 0 && <StatusBadge status="success">Added: {addedCount}</StatusBadge>}
-              {removedCount > 0 && <StatusBadge status="danger">Removed: {removedCount}</StatusBadge>}
+              <div>{t('OPENAPI_SYNC.SYNC_DIFF.ENDPOINT_CHANGES')}</div>
+              {modifiedCount > 0 && <StatusBadge status="warning">{t('OPENAPI_SYNC.SYNC_DIFF.UPDATED', { count: modifiedCount })}</StatusBadge>}
+              {addedCount > 0 && <StatusBadge status="success">{t('OPENAPI_SYNC.SYNC_DIFF.ADDED', { count: addedCount })}</StatusBadge>}
+              {removedCount > 0 && <StatusBadge status="danger">{t('OPENAPI_SYNC.SYNC_DIFF.REMOVED', { count: removedCount })}</StatusBadge>}
               {versionLabel && <StatusBadge>{versionLabel}</StatusBadge>}
             </div>
 
             <p className="spec-diff-subtitle">
               {specDrift?.storedSpecMissing
-                ? 'The current spec file is missing. The full remote spec is shown below.'
-                : 'Side-by-side diff of your current spec vs the updated spec from the spec URL.'}
+                ? t('OPENAPI_SYNC.SYNC_DIFF.MISSING_FILE_DESC')
+                : t('OPENAPI_SYNC.SYNC_DIFF.SIDEBYSIDE_DESC')}
             </p>
           </div>
           {showNav && (
@@ -112,18 +114,18 @@ const SpecDiffModal = ({ specDrift, onClose }) => {
                   className="spec-diff-nav-btn"
                   onClick={() => goToChange(currentIndex - 1)}
                   disabled={changeCount === 0}
-                  title="Previous change"
+                  title={t('OPENAPI_SYNC.SYNC_DIFF.PREV_TOOLTIP')}
                 >
-                  <IconChevronUp size={14} strokeWidth={1.75} /> Previous
+                  <IconChevronUp size={14} strokeWidth={1.75} /> {t('OPENAPI_SYNC.SYNC_DIFF.PREVIOUS')}
                 </button>
                 <button
                   type="button"
                   className="spec-diff-nav-btn"
                   onClick={() => goToChange(currentIndex + 1)}
                   disabled={changeCount === 0}
-                  title="Next change"
+                  title={t('OPENAPI_SYNC.SYNC_DIFF.NEXT_TOOLTIP')}
                 >
-                  <IconChevronDown size={14} strokeWidth={1.75} /> Next
+                  <IconChevronDown size={14} strokeWidth={1.75} /> {t('OPENAPI_SYNC.SYNC_DIFF.NEXT')}
                 </button>
               </div>
             </div>
@@ -136,19 +138,19 @@ const SpecDiffModal = ({ specDrift, onClose }) => {
               <>
                 <div className="diff-column-headers">
                   <span className="diff-column-label">
-                    {specDrift?.storedSpecMissing ? 'Current Spec (missing)' : 'Current Spec'}
+                    {specDrift?.storedSpecMissing ? t('OPENAPI_SYNC.SYNC_DIFF.CURRENT_SPEC_MISSING') : t('OPENAPI_SYNC.SYNC_DIFF.CURRENT_SPEC')}
                   </span>
-                  <span className="diff-column-label">Updated Spec</span>
+                  <span className="diff-column-label">{t('OPENAPI_SYNC.SYNC_DIFF.UPDATED_SPEC')}</span>
                 </div>
                 {isRendering && (
                   <div className="text-diff-loading">
                     <IconLoader2 className="animate-spin" size={20} strokeWidth={1.5} />
-                    <span>Loading diff...</span>
+                    <span>{t('OPENAPI_SYNC.SYNC_DIFF.LOADING_DIFF')}</span>
                   </div>
                 )}
                 {!isRendering && parseError && (
                   <div className="text-diff-empty">
-                    Diff couldn&apos;t be rendered. Please file an issue with the spec.
+                    {t('OPENAPI_SYNC.SYNC_DIFF.PARSE_ERROR')}
                   </div>
                 )}
                 {!isRendering && !parseError && rows.length > 0 && (
@@ -156,18 +158,17 @@ const SpecDiffModal = ({ specDrift, onClose }) => {
                     ref={virtuosoRef}
                     totalCount={rows.length}
                     itemContent={renderItem}
-                    // Must match .diff-row min-height in OpenAPISyncTab/StyledWrapper.js
                     fixedItemHeight={18}
                     increaseViewportBy={400}
                     style={{ height: '100%' }}
                   />
                 )}
                 {!isRendering && !parseError && rows.length === 0 && (
-                  <div className="text-diff-empty">No changes to display.</div>
+                  <div className="text-diff-empty">{t('OPENAPI_SYNC.SYNC_DIFF.NO_DISPLAY')}</div>
                 )}
               </>
             ) : (
-              <div className="text-diff-empty">No text diff available.</div>
+              <div className="text-diff-empty">{t('OPENAPI_SYNC.SYNC_DIFF.NO_DIFF')}</div>
             )}
           </div>
         </div>

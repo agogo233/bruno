@@ -1,33 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import CollapsibleDiffRow from '../CollapsibleDiffRow';
 import StyledWrapper from './StyledWrapper';
 
-/**
- * VisualDiffContent - Presentational component for rendering visual diffs
- *
- * This is a reusable component that renders the visual diff UI.
- * It can be used by:
- * - Git VisualDiffViewer (for git diffs)
- * - OpenAPI ChangeSection (for spec diffs)
- *
- * Props:
- * - oldData: The "before" data
- * - newData: The "after" data
- * - sections: Array of section configs { key, title, Component, hasContent }
- * - sectionHasChanges: Function (sectionKey, oldData, newData) => boolean
- * - oldLabel: Label for the left/old pane (default: "Before")
- * - newLabel: Label for the right/new pane (default: "After")
- * - hideUnchanged: Hide sections without changes entirely (default: false)
- */
 const VisualDiffContent = ({
   oldData,
   newData,
   sections,
   sectionHasChanges,
-  oldLabel = 'Before',
-  newLabel = 'After',
+  oldLabel,
+  newLabel,
   hideUnchanged = false
 }) => {
+  const { t } = useTranslation();
+  const resolvedOldLabel = oldLabel || t('GIT.DIFF.BEFORE');
+  const resolvedNewLabel = newLabel || t('GIT.DIFF.AFTER');
   const [collapsedSections, setCollapsedSections] = useState({});
 
   const toggleSection = (sectionKey) => {
@@ -53,9 +40,9 @@ const VisualDiffContent = ({
   if (!oldData && !newData) {
     return (
       <StyledWrapper>
-        <div className="empty-state">
-          No content to display
-        </div>
+<div className="empty-state">
+            {t('GIT.DIFF.NO_CONTENT')}
+          </div>
       </StyledWrapper>
     );
   }
@@ -65,8 +52,8 @@ const VisualDiffContent = ({
 
       <div className="visual-diff-content">
         <div className="diff-header-row">
-          <div className="diff-header-pane old">{oldLabel}</div>
-          <div className="diff-header-pane new">{newLabel}</div>
+          <div className="diff-header-pane old">{resolvedOldLabel}</div>
+          <div className="diff-header-pane new">{resolvedNewLabel}</div>
         </div>
 
         <div className="diff-sections">

@@ -13,6 +13,7 @@ import prettierPluginGraphql from 'prettier/parser-graphql';
 import { getAllVariables } from 'utils/collections';
 import { PLACEHOLDER } from 'utils/graphql/queryBuilder';
 import toast from 'react-hot-toast';
+import { withTranslation } from 'react-i18next';
 import StyledWrapper from './StyledWrapper';
 import onHasCompletion from './onHasCompletion';
 import { setupLinkAware } from 'utils/codemirror/linkAware';
@@ -42,7 +43,7 @@ const createSafeGraphQLLinter = () => {
   };
 };
 
-export default class QueryEditor extends React.Component {
+class QueryEditor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -227,9 +228,9 @@ export default class QueryEditor extends React.Component {
       prettyQuery = prettyQuery.replace(/\{\s*__empty:\s*true\s*\}/g, '{}');
 
       this.editor.setValue(prettyQuery);
-      toast.success('Query prettified');
+      toast.success(this.props.t('REQUEST_PANE.OAUTH2.GRAPHQL_QUERY_PRETTIFIED'));
     } catch (e) {
-      toast.error('Error occurred while prettifying GraphQL query');
+      toast.error(this.props.t('REQUEST_PANE.OAUTH2.GRAPHQL_QUERY_PRETTIFY_ERROR'));
     }
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import StyledWrapper from './StyledWrapper';
 import { saveCollectionSettings } from 'providers/ReduxStore/slices/collections/actions';
@@ -34,12 +35,13 @@ const GrantTypeComponentMap = ({ collection }) => {
       return <OAuth2Implicit save={save} request={request} updateAuth={updateCollectionAuth} collection={collection} />;
       break;
     default:
-      return <div>TBD</div>;
+      return <div>{t('COLLECTION_SETTINGS.AUTH.TBD')}</div>;
       break;
   }
 };
 
 const OAuth2 = ({ collection }) => {
+  const { t } = useTranslation();
   let request = collection.draft?.root ? get(collection, 'draft.root.request', {}) : get(collection, 'root.request', {});
 
   return (

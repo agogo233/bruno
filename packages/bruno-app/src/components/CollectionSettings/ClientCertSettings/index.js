@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconCertificate, IconTrash, IconFile, IconX, IconUpload, IconPlus, IconEye, IconEyeOff } from '@tabler/icons';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -29,7 +30,7 @@ const CertField = ({ label, value, title, action }) => (
   </div>
 );
 
-const CertFileInput = ({ label, name, value, inputRef, onSelect, onClear, error, touched, dangerColor }) => (
+const CertFileInput = ({ label, name, value, inputRef, onSelect, onClear, error, touched, dangerColor, t }) => (
   <div className="mb-3 flex items-start">
     <label className="settings-label mt-1" htmlFor={name}>
       {label}
@@ -50,19 +51,19 @@ const CertFileInput = ({ label, name, value, inputRef, onSelect, onClear, error,
           <span className="truncate max-w-[260px]" title={value}>
             {path.basename(value)}
           </span>
-          <ActionIcon type="button" label="Remove file" size="sm" colorOnHover={dangerColor} onClick={onClear}>
+          <ActionIcon type="button" label={t('COLLECTION_SETTINGS.CLIENT_CERT.REMOVE_FILE')} size="sm" colorOnHover={dangerColor} onClick={onClear}>
             <IconX size={14} strokeWidth={1.5} />
           </ActionIcon>
         </div>
       ) : (
-        <Button
+          <Button
           size="xs"
           variant="outline"
           icon={<IconUpload size={13} strokeWidth={1.5} />}
           onClick={() => inputRef.current?.click()}
           data-testid={`choose-file-${name}`}
         >
-          Choose file
+          {t('COLLECTION_SETTINGS.CLIENT_CERT.CHOOSE_FILE')}
         </Button>
       )}
       {touched && error ? <div className="text-red-500 text-xs">{error}</div> : null}
@@ -72,6 +73,7 @@ const CertFileInput = ({ label, name, value, inputRef, onSelect, onClear, error,
 
 const ClientCertSettings = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [showAddCertModal, setShowAddCertModal] = useState(false);
   const [visiblePassphrases, setVisiblePassphrases] = useState([]);
 
@@ -100,21 +102,21 @@ const ClientCertSettings = ({ collection }) => {
     },
     validationSchema: Yup.object({
       domain: Yup.string()
-        .required()
+        .required(t('COLLECTION_SETTINGS.CLIENT_CERT.ERROR_DOMAIN_REQUIRED'))
         .trim()
-        .test('not-empty-after-trim', 'Domain is required', (value) => value && value.trim().length > 0),
+        .test('not-empty-after-trim', t('COLLECTION_SETTINGS.CLIENT_CERT.ERROR_DOMAIN_REQUIRED'), (value) => value && value.trim().length > 0),
       type: Yup.string().required().oneOf(['cert', 'pfx']),
       certFilePath: Yup.string().when('type', {
         is: (type) => type == 'cert',
-        then: Yup.string().min(1, 'certFilePath is a required field').required()
+        then: Yup.string().min(1, t('COLLECTION_SETTINGS.CLIENT_CERT.ERROR_CERT_REQUIRED')).required()
       }),
       keyFilePath: Yup.string().when('type', {
         is: (type) => type == 'cert',
-        then: Yup.string().min(1, 'keyFilePath is a required field').required()
+        then: Yup.string().min(1, t('COLLECTION_SETTINGS.CLIENT_CERT.ERROR_KEY_REQUIRED')).required()
       }),
       pfxFilePath: Yup.string().when('type', {
         is: (type) => type == 'pfx',
-        then: Yup.string().min(1, 'pfxFilePath is a required field').required()
+        then: Yup.string().min(1, t('COLLECTION_SETTINGS.CLIENT_CERT.ERROR_PFX_REQUIRED')).required()
       }),
       passphrase: Yup.string()
     }),
@@ -245,8 +247,8 @@ const ClientCertSettings = ({ collection }) => {
 
   return (
     <StyledWrapper className="w-full h-full">
-      <h1 className="font-medium text-[0.9375rem]">Client Certificates</h1>
-      <div className="text-xs mt-1 text-muted">Add client certificates to be used for specific domains.</div>
+      <h1 className="font-medium text-[0.9375rem]">{t('COLLECTION_SETTINGS.CLIENT_CERT.TITLE')}</h1>
+      <div className="text-xs mt-1 text-muted">{t('COLLECTION_SETTINGS.CLIENT_CERT.DESCRIPTION')}</div>
 
       <ListGroup
         className="mt-5"
@@ -254,18 +256,18 @@ const ClientCertSettings = ({ collection }) => {
         getKey={(_, index) => `client-cert-${index}`}
         emptyState={{
           icon: <IconCertificate size={24} strokeWidth={1.2} />,
-          title: 'No client certificates',
-          text: 'Certificates added here are sent automatically with requests to their matching domains.'
+          title: t('COLLECTION_SETTINGS.CLIENT_CERT.EMPTY_TITLE'),
+          text: t('COLLECTION_SETTINGS.CLIENT_CERT.EMPTY_TEXT')
         }}
         addButton={{
-          label: 'Add Certificate',
+          label: t('COLLECTION_SETTINGS.CLIENT_CERT.ADD_BUTTON'),
           onClick: openAddCertModal,
           icon: <IconPlus size={15} strokeWidth={1.5} />,
           dataTestId: 'add-client-cert'
         }}
         footerActions={(
           <Button type="button" size="sm" data-testid="client-cert-save-btn" onClick={handleSave}>
-            Save
+            {t('COLLECTION_SETTINGS.CLIENT_CERT.SAVE')}
           </Button>
         )}
         renderItem={(clientCert, index) => (
@@ -278,10 +280,10 @@ const ClientCertSettings = ({ collection }) => {
                   size="2xs"
                   isOn={!clientCert.disabled}
                   handleToggle={() => handleToggleDisabled(index)}
-                  title={clientCert.disabled ? 'Enable certificate' : 'Disable certificate'}
+                  title={clientCert.disabled ? t('COLLECTION_SETTINGS.CLIENT_CERT.ENABLE_CERT') : t('COLLECTION_SETTINGS.CLIENT_CERT.DISABLE_CERT')}
                 />
                 <ActionIcon
-                  label="Remove certificate"
+                  label={t('COLLECTION_SETTINGS.CLIENT_CERT.REMOVE_CERT')}
                   colorOnHover={theme.colors.text.danger}
                   onClick={() => handleRemove(index)}
                 >
@@ -290,24 +292,24 @@ const ClientCertSettings = ({ collection }) => {
               </>
             )}
           >
-            <CertField label="Host" value={clientCert.domain} title={clientCert.domain} />
+            <CertField label={t('COLLECTION_SETTINGS.CLIENT_CERT.HOST')} value={clientCert.domain} title={clientCert.domain} />
             {clientCert.type === 'pfx' ? (
-              <CertField label="PFX File" value={path.basename(clientCert.pfxFilePath || '')} title={clientCert.pfxFilePath} />
+              <CertField label={t('COLLECTION_SETTINGS.CLIENT_CERT.PFX_FILE_LABEL')} value={path.basename(clientCert.pfxFilePath || '')} title={clientCert.pfxFilePath} />
             ) : (
               <>
-                <CertField label="Cert File" value={path.basename(clientCert.certFilePath || '')} title={clientCert.certFilePath} />
-                <CertField label="Key File" value={path.basename(clientCert.keyFilePath || '')} title={clientCert.keyFilePath} />
+                <CertField label={t('COLLECTION_SETTINGS.CLIENT_CERT.CERT_FILE_LABEL')} value={path.basename(clientCert.certFilePath || '')} title={clientCert.certFilePath} />
+                <CertField label={t('COLLECTION_SETTINGS.CLIENT_CERT.KEY_FILE_LABEL')} value={path.basename(clientCert.keyFilePath || '')} title={clientCert.keyFilePath} />
               </>
             )}
             {clientCert.passphrase ? (
               <CertField
-                label="Passphrase"
+                label={t('COLLECTION_SETTINGS.CLIENT_CERT.PASSPHRASE')}
                 value={visiblePassphrases.includes(index) ? clientCert.passphrase : '••••••••'}
                 action={(
                   <ActionIcon
                     size="sm"
                     className={visiblePassphrases.includes(index) ? 'stay-visible' : ''}
-                    label={visiblePassphrases.includes(index) ? 'Hide passphrase' : 'Show passphrase'}
+                    label={visiblePassphrases.includes(index) ? t('COLLECTION_SETTINGS.CLIENT_CERT.HIDE_PASSPHRASE') : t('COLLECTION_SETTINGS.CLIENT_CERT.SHOW_PASSPHRASE')}
                     onClick={() => togglePassphraseVisibility(index)}
                   >
                     {visiblePassphrases.includes(index) ? (
@@ -326,20 +328,19 @@ const ClientCertSettings = ({ collection }) => {
       {showAddCertModal && (
         <Modal
           size="md"
-          title="Add Client Certificate"
-          confirmText="Add"
+          title={t('COLLECTION_SETTINGS.CLIENT_CERT.ADD_MODAL_TITLE')}
+          confirmText={t('COLLECTION_SETTINGS.CLIENT_CERT.ADD_MODAL_CONFIRM')}
           dataTestId="add-client-cert-modal"
           handleConfirm={formik.handleSubmit}
           handleCancel={() => setShowAddCertModal(false)}
         >
           <div className="text-xs mb-4 text-muted">
-            The certificate and key files are stored as paths relative to the collection.
+            {t('COLLECTION_SETTINGS.CLIENT_CERT.ADD_MODAL_DESC')}
           </div>
-          {/* Submission is driven by the Modal's confirm button/Enter (handleConfirm); prevent the form's own submit to avoid firing twice */}
           <form className="bruno-form" onSubmit={(e) => e.preventDefault()}>
             <div className="mb-3 flex items-start">
               <label className="settings-label mt-1" htmlFor="domain">
-                Domain
+                {t('COLLECTION_SETTINGS.CLIENT_CERT.DOMAIN')}
               </label>
               <div className="flex flex-col gap-1">
                 <div className="relative flex items-center">
@@ -350,11 +351,11 @@ const ClientCertSettings = ({ collection }) => {
                       <span className="protocol-wss">wss://</span>
                     </span>
                   </div>
-                  <input
-                    id="domain"
-                    type="text"
-                    name="domain"
-                    placeholder="example.org"
+                      <input
+                        id="domain"
+                        type="text"
+                        name="domain"
+                        placeholder={t('COLLECTION_SETTINGS.CLIENT_CERT.EXAMPLE_DOMAIN')}
                     className="block textbox non-passphrase-input !pl-[60px]"
                     onChange={formik.handleChange}
                     value={formik.values.domain || ''}
@@ -366,72 +367,75 @@ const ClientCertSettings = ({ collection }) => {
               </div>
             </div>
             <div className="mb-3 flex items-center">
-              <label id="type-label" className="settings-label">
-                Type
-              </label>
-              <div className="type-picker" role="radiogroup" aria-labelledby="type-label">
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={formik.values.type === 'cert'}
-                  className={`type-option ${formik.values.type === 'cert' ? 'active' : ''}`}
-                  onClick={() => handleTypeChange('cert')}
-                >
-                  Cert &amp; Key
-                </button>
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={formik.values.type === 'pfx'}
-                  className={`type-option ${formik.values.type === 'pfx' ? 'active' : ''}`}
-                  onClick={() => handleTypeChange('pfx')}
-                >
-                  PFX
-                </button>
-              </div>
+                  <label id="type-label" className="settings-label">
+                    {t('COLLECTION_SETTINGS.CLIENT_CERT.TYPE')}
+                  </label>
+                  <div className="type-picker" role="radiogroup" aria-labelledby="type-label">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={formik.values.type === 'cert'}
+                      className={`type-option ${formik.values.type === 'cert' ? 'active' : ''}`}
+                      onClick={() => handleTypeChange('cert')}
+                    >
+                      {t('COLLECTION_SETTINGS.CLIENT_CERT.CERT_AND_KEY')}
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={formik.values.type === 'pfx'}
+                      className={`type-option ${formik.values.type === 'pfx' ? 'active' : ''}`}
+                      onClick={() => handleTypeChange('pfx')}
+                    >
+                      {t('COLLECTION_SETTINGS.CLIENT_CERT.PFX')}
+                    </button>
+                  </div>
             </div>
             {formik.values.type === 'cert' ? (
               <>
-                <CertFileInput
-                  label="Cert file"
+                  <CertFileInput
+                    label={t('COLLECTION_SETTINGS.CLIENT_CERT.CERT_FILE_LABEL')}
                   name="certFilePath"
                   value={formik.values.certFilePath}
                   inputRef={certFilePathInputRef}
-                  onSelect={getFile}
-                  onClear={() => clearFileField('certFilePath', certFilePathInputRef)}
-                  error={formik.errors.certFilePath}
-                  touched={formik.touched.certFilePath}
-                  dangerColor={theme.colors.text.danger}
-                />
-                <CertFileInput
-                  label="Key file"
-                  name="keyFilePath"
-                  value={formik.values.keyFilePath}
-                  inputRef={keyFilePathInputRef}
-                  onSelect={getFile}
-                  onClear={() => clearFileField('keyFilePath', keyFilePathInputRef)}
-                  error={formik.errors.keyFilePath}
-                  touched={formik.touched.keyFilePath}
-                  dangerColor={theme.colors.text.danger}
-                />
+                    onSelect={getFile}
+                    onClear={() => clearFileField('certFilePath', certFilePathInputRef)}
+                    error={formik.errors.certFilePath}
+                    touched={formik.touched.certFilePath}
+                    dangerColor={theme.colors.text.danger}
+                    t={t}
+                  />
+                  <CertFileInput
+                    label={t('COLLECTION_SETTINGS.CLIENT_CERT.KEY_FILE_LABEL')}
+                    name="keyFilePath"
+                    value={formik.values.keyFilePath}
+                    inputRef={keyFilePathInputRef}
+                    onSelect={getFile}
+                    onClear={() => clearFileField('keyFilePath', keyFilePathInputRef)}
+                    error={formik.errors.keyFilePath}
+                    touched={formik.touched.keyFilePath}
+                    dangerColor={theme.colors.text.danger}
+                    t={t}
+                  />
               </>
             ) : (
-              <CertFileInput
-                label="PFX file"
+                  <CertFileInput
+                    label={t('COLLECTION_SETTINGS.CLIENT_CERT.PFX_FILE_LABEL')}
                 name="pfxFilePath"
                 value={formik.values.pfxFilePath}
                 inputRef={pfxFilePathInputRef}
-                onSelect={getFile}
-                onClear={() => clearFileField('pfxFilePath', pfxFilePathInputRef)}
-                error={formik.errors.pfxFilePath}
-                touched={formik.touched.pfxFilePath}
-                dangerColor={theme.colors.text.danger}
-              />
+                    onSelect={getFile}
+                    onClear={() => clearFileField('pfxFilePath', pfxFilePathInputRef)}
+                    error={formik.errors.pfxFilePath}
+                    touched={formik.touched.pfxFilePath}
+                    dangerColor={theme.colors.text.danger}
+                    t={t}
+                  />
             )}
             <div className="mb-3 flex items-start">
-              <label className="settings-label mt-1" htmlFor="passphrase">
-                Passphrase
-              </label>
+                <label className="settings-label mt-1" htmlFor="passphrase">
+                  {t('COLLECTION_SETTINGS.CLIENT_CERT.PASSPHRASE')}
+                </label>
               <div className="flex flex-col gap-1">
                 <div className="textbox flex flex-row items-center w-[300px] h-[1.70rem] relative">
                   <SingleLineEditor

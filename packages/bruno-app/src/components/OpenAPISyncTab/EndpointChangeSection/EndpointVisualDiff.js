@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
 import VisualDiffUrlBar from 'components/Git/VisualDiffViewer/VisualDiffUrlBar';
@@ -115,13 +116,20 @@ const openAPIDiffSections = [
 const EndpointVisualDiff = ({
   oldData,
   newData,
-  leftLabel = 'Current (in collection)',
-  rightLabel = 'Expected (from spec)',
+  leftLabel,
+  rightLabel,
   swapSides = false
 }) => {
-  const sections = openAPIDiffSections;
+  const { t } = useTranslation();
 
-  // Determine which data goes on which side based on swapSides
+  const sections = [
+    { key: 'url', title: t('OPENAPI_SYNC.SECTION.URL'), Component: VisualDiffUrlBar, hasContent: openAPIDiffHasContent.url },
+    { key: 'params', title: t('OPENAPI_SYNC.SECTION.PARAMETERS'), Component: VisualDiffParams, hasContent: openAPIDiffHasContent.params },
+    { key: 'headers', title: t('OPENAPI_SYNC.SECTION.HEADERS'), Component: VisualDiffHeaders, hasContent: openAPIDiffHasContent.headers },
+    { key: 'auth', title: t('OPENAPI_SYNC.SECTION.AUTHENTICATION'), Component: VisualDiffAuth, hasContent: openAPIDiffHasContent.auth },
+    { key: 'body', title: t('OPENAPI_SYNC.SECTION.BODY'), Component: VisualDiffBody, hasContent: openAPIDiffHasContent.body }
+  ];
+
   const displayOldData = swapSides ? newData : oldData;
   const displayNewData = swapSides ? oldData : newData;
 
@@ -131,8 +139,8 @@ const EndpointVisualDiff = ({
       newData={displayNewData}
       sections={sections}
       sectionHasChanges={openAPISectionHasChanges}
-      oldLabel={leftLabel}
-      newLabel={rightLabel}
+      oldLabel={leftLabel || t('OPENAPI_SYNC.ENDPOINT.DIFF_LEFT')}
+      newLabel={rightLabel || t('OPENAPI_SYNC.ENDPOINT.DIFF_RIGHT')}
       hideUnchanged={true}
     />
   );

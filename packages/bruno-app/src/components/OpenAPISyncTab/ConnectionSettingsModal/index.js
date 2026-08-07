@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import Button from 'ui/Button';
 import Modal from 'components/Modal';
@@ -7,6 +8,7 @@ import { isOpenApiSpec } from 'utils/importers/openapi-collection';
 import { parseFileAsJsonOrYaml } from 'utils/importers/file-reader';
 
 const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, onClose }) => {
+  const { t } = useTranslation();
   const openApiSyncConfig = collection?.brunoConfig?.openapi?.[0];
   const normalizedSourceUrl = (sourceUrl || '').trim();
   const isUrl = isHttpUrl(normalizedSourceUrl);
@@ -35,28 +37,28 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
   return (
     <Modal
       size="md"
-      title="Connection Settings"
+      title={t('OPENAPI_SYNC.SETTINGS.TITLE')}
       hideFooter={true}
       handleCancel={onClose}
     >
       <div className="settings-modal">
         <div className="settings-body">
           <div className="settings-field">
-            <label className="settings-label">Spec Source</label>
+            <label className="settings-label">{t('OPENAPI_SYNC.SETTINGS.SPEC_SOURCE')}</label>
             <div className="setup-mode-toggle" style={{ marginBottom: '8px' }}>
               <button
                 type="button"
                 className={`setup-mode-btn ${mode === 'url' ? 'active' : ''}`}
                 onClick={() => setMode('url')}
               >
-                URL
+                {t('OPENAPI_SYNC.SETTINGS.URL_MODE')}
               </button>
               <button
                 type="button"
                 className={`setup-mode-btn ${mode === 'file' ? 'active' : ''}`}
                 onClick={() => setMode('file')}
               >
-                File
+                {t('OPENAPI_SYNC.SETTINGS.FILE_MODE')}
               </button>
             </div>
 
@@ -66,7 +68,7 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://api.example.com/openapi.json"
+                placeholder={t('OPENAPI_SYNC.SETTINGS.PLACEHOLDER_URL')}
               />
             ) : (
               <>
@@ -81,13 +83,13 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
                       try {
                         const data = await parseFileAsJsonOrYaml(file);
                         if (!isOpenApiSpec(data)) {
-                          toast.error('The selected file is not a valid OpenAPI 3.x specification');
+                          toast.error(t('OPENAPI_SYNC.SETTINGS.ERROR_INVALID_OPENAPI'));
                           return;
                         }
                         const path = window.ipcRenderer.getFilePath(file);
                         if (path) setFilePath(path);
                       } catch (err) {
-                        toast.error(err.message || 'Failed to read the selected file');
+                        toast.error(err.message || t('OPENAPI_SYNC.SETTINGS.ERROR_FILE_READ'));
                       }
                     }
                   }}
@@ -97,7 +99,7 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
                   className="settings-input file-pick-btn"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  {filePath ? filePath.split(/[\\/]/).pop() : 'Select File'}
+                  {filePath ? filePath.split(/[\\/]/).pop() : t('OPENAPI_SYNC.SETTINGS.SELECT_FILE')}
                 </button>
               </>
             )}
@@ -106,11 +108,11 @@ const ConnectionSettingsModal = ({ collection, sourceUrl, onSave, onDisconnect, 
 
         <div className="settings-footer">
           <button className="disconnect-link" onClick={onDisconnect} type="button">
-            Disconnect sync
+            {t('OPENAPI_SYNC.SETTINGS.DISCONNECT')}
           </button>
           <div className="settings-actions">
-            <Button variant="ghost" color="secondary" size="sm" onClick={onClose}>Cancel</Button>
-            <Button size="sm" onClick={handleSave} loading={isSaving} disabled={!canSave || isSaving}>Save</Button>
+            <Button variant="ghost" color="secondary" size="sm" onClick={onClose}>{t('COMMON.CANCEL')}</Button>
+            <Button size="sm" onClick={handleSave} loading={isSaving} disabled={!canSave || isSaving}>{t('COMMON.SAVE')}</Button>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import { updatedFolderSettingsSelectedTab } from 'providers/ReduxStore/slices/collections';
 import { useDispatch } from 'react-redux';
@@ -18,6 +19,7 @@ const AI_TABS = ['script', 'test', 'docs'];
 
 const FolderSettings = ({ collection, folder }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   let tab = 'headers';
   const { folderLevelSettingsSelectedTab } = collection;
   if (folderLevelSettingsSelectedTab?.[folder?.uid]) {
@@ -86,27 +88,27 @@ const FolderSettings = ({ collection, folder }) => {
         <div className="flex items-start justify-between gap-4" data-testid="settings-tab-bar">
           <div className="flex flex-wrap items-center tabs" role="tablist">
             <div className={getTabClassname('headers')} role="tab" data-testid="folder-settings-tab-headers" onClick={() => setTab('headers')}>
-              Headers
+              {t('FOLDER_SETTINGS.TABS.HEADERS')}
               {activeHeadersCount > 0 && <sup className="ml-1 font-medium">{activeHeadersCount}</sup>}
             </div>
             <div className={getTabClassname('script')} role="tab" data-testid="folder-settings-tab-script" onClick={() => setTab('script')}>
-              Script
+              {t('FOLDER_SETTINGS.TABS.SCRIPT')}
               {hasScripts && <StatusDot />}
             </div>
             <div className={getTabClassname('test')} role="tab" data-testid="folder-settings-tab-test" onClick={() => setTab('test')}>
-              Test
+              {t('FOLDER_SETTINGS.TABS.TEST')}
               {hasTests && <StatusDot />}
             </div>
             <div className={getTabClassname('vars')} role="tab" data-testid="folder-settings-tab-vars" onClick={() => setTab('vars')}>
-              Vars
+              {t('FOLDER_SETTINGS.TABS.VARS')}
               {activeVarsCount > 0 && <sup className="ml-1 font-medium">{activeVarsCount}</sup>}
             </div>
             <div className={getTabClassname('auth')} role="tab" data-testid="folder-settings-tab-auth" onClick={() => setTab('auth')}>
-              Auth
+              {t('FOLDER_SETTINGS.TABS.AUTH')}
               {hasAuth && <StatusDot dataTestId="auth" />}
             </div>
             <div className={getTabClassname('docs')} role="tab" data-testid="folder-settings-tab-docs" onClick={() => setTab('docs')}>
-              Docs
+              {t('FOLDER_SETTINGS.TABS.DOCS')}
             </div>
           </div>
           {AI_TABS.includes(tab) && (

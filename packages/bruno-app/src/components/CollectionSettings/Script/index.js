@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,7 @@ import { useFocusErrorLine } from 'hooks/useFocusErrorLine';
 
 const Script = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const preRequestEditorRef = useRef(null);
   const postResponseEditorRef = useRef(null);
   const requestScript = collection.draft?.root ? get(collection, 'draft.root.request.script.req', '') : get(collection, 'root.request.script.req', '');
@@ -103,19 +105,19 @@ const Script = ({ collection }) => {
   return (
     <StyledWrapper className="w-full flex flex-col h-full">
       <div className="text-xs mb-4 text-muted">
-        Write pre and post-request scripts that will run before and after any request in this collection is sent.
+        {t('COLLECTION_SETTINGS.SCRIPT.DESCRIPTION')}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="pre-request">
-            Pre Request
+            {t('COLLECTION_SETTINGS.SCRIPT.PRE_REQUEST')}
             {requestScript && requestScript.trim().length > 0 && (
               <StatusDot type={hasPreRequestScriptError ? 'error' : 'default'} />
             )}
           </TabsTrigger>
           <TabsTrigger value="post-response">
-            Post Response
+            {t('COLLECTION_SETTINGS.SCRIPT.POST_RESPONSE')}
             {responseScript && responseScript.trim().length > 0 && (
               <StatusDot type={hasPostResponseScriptError ? 'error' : 'default'} />
             )}
@@ -167,7 +169,7 @@ const Script = ({ collection }) => {
 
       <div className="mt-12">
         <Button type="submit" size="sm" onClick={handleSave}>
-          Save
+          {t('COLLECTION_SETTINGS.SCRIPT.SAVE')}
         </Button>
       </div>
     </StyledWrapper>

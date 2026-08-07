@@ -1,4 +1,5 @@
 import 'github-markdown-css/github-markdown.css';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { updateCollectionDocs } from 'providers/ReduxStore/slices/collections';
 import { useMemo } from 'react';
@@ -15,6 +16,7 @@ import DocsEditor from 'components/Documentation/DocsEditor';
 
 const Docs = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { isEditing, setEditing } = useDocsEditingState();
   const savedDocs = get(collection, 'root.docs', '');
   const docs = collection.draft?.root ? get(collection, 'draft.root.docs', '') : savedDocs;
@@ -58,16 +60,16 @@ const Docs = ({ collection }) => {
       <div className="flex flex-row w-full justify-between items-center mb-4">
         <div className="text-lg font-medium flex items-center gap-2">
           <IconFileText size={20} strokeWidth={1.5} />
-          Documentation
+          {t('COLLECTION_SETTINGS.DOCS.TITLE')}
         </div>
         <div className="flex flex-row gap-2 items-center justify-center">
           {isEditing ? (
             <>
               <Button type="button" color="secondary" onClick={handleDiscardChanges}>
-                Cancel
+                {t('COLLECTION_SETTINGS.DOCS.CANCEL')}
               </Button>
               <Button type="button" onClick={onSave}>
-                Save
+                {t('COLLECTION_SETTINGS.DOCS.SAVE')}
               </Button>
             </>
           ) : null}
@@ -83,7 +85,12 @@ const Docs = ({ collection }) => {
           collectionPath={collection.pathname}
           docsContext={docsContext}
           variables={aiVariables}
-          emptyPreviewContent={documentationPlaceholder}
+          emptyPreviewContent={
+            t('COLLECTION_SETTINGS.DOCS.PLACEHOLDER_TITLE') + '\n\n' +
+            t('COLLECTION_SETTINGS.DOCS.PLACEHOLDER_OVERVIEW') + '\n\n' +
+            t('COLLECTION_SETTINGS.DOCS.PLACEHOLDER_BEST_PRACTICES') + '\n\n' +
+            t('COLLECTION_SETTINGS.DOCS.PLACEHOLDER_MARKDOWN')
+          }
           onRequestEdit={toggleViewMode}
           initialScroll={scroll}
           onScroll={setScroll}

@@ -4,7 +4,7 @@ import { formatIpcError } from 'utils/common/error';
 
 const useSyncFlow = ({
   collection, specDrift, remoteDrift, collectionDrift,
-  setError, checkForUpdates
+  setError, checkForUpdates, t
 }) => {
 
   const [pendingSyncMode, setPendingSyncMode] = useState(null);
@@ -75,16 +75,16 @@ const useSyncFlow = ({
       setPendingSyncMode(null);
 
       toast.success(
-        mode === 'spec-only' ? 'Spec updated successfully'
-          : mode === 'reset' ? 'Collection reset to spec successfully'
-            : 'Collection synced successfully'
+        mode === 'spec-only' ? t('OPENAPI_SYNC.TOAST.SPEC_UPDATED')
+          : mode === 'reset' ? t('OPENAPI_SYNC.TOAST.RESET_SUCCESS')
+            : t('OPENAPI_SYNC.TOAST.SYNC_SUCCESS')
       );
 
       // Re-check to show "up to date" state
       await checkForUpdates();
     } catch (err) {
       console.error('Error syncing collection:', err);
-      setError(formatIpcError(err) || 'Failed to sync collection');
+      setError(formatIpcError(err) || t('OPENAPI_SYNC.TOAST.SYNC_FAILED'));
     } finally {
       setIsSyncing(false);
     }
@@ -139,14 +139,14 @@ const useSyncFlow = ({
     const groups = [];
     const actuallyAdded = (remoteDrift.missing || []).filter((ep) => specAddedIds.has(ep.id));
     if (actuallyAdded.length > 0) {
-      groups.push({ label: 'New endpoints to add', type: 'add', endpoints: actuallyAdded });
+      groups.push({ label: t('OPENAPI_SYNC.REVIEW.NEW_IN_SPEC'), type: 'add', endpoints: actuallyAdded });
     }
     if (remoteDrift.modified?.length > 0) {
-      groups.push({ label: 'Endpoints to update', type: 'update', endpoints: remoteDrift.modified });
+      groups.push({ label: t('OPENAPI_SYNC.REVIEW.UPDATED_IN_SPEC'), type: 'update', endpoints: remoteDrift.modified });
     }
     const actuallyRemoved = (remoteDrift.localOnly || []).filter((ep) => specRemovedIds.has(ep.id));
     if (actuallyRemoved.length > 0) {
-      groups.push({ label: 'Endpoints to delete', type: 'remove', endpoints: actuallyRemoved });
+      groups.push({ label: t('OPENAPI_SYNC.REVIEW.REMOVED_FROM_SPEC'), type: 'remove', endpoints: actuallyRemoved });
     }
     return groups;
   }, [remoteDrift, specAddedIds, specRemovedIds]);

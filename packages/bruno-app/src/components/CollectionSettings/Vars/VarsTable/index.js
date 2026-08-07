@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from 'providers/Theme';
 import { saveCollectionSettings } from 'providers/ReduxStore/slices/collections/actions';
@@ -17,6 +18,7 @@ import { setCollectionVars, moveCollectionVar } from 'providers/ReduxStore/slice
 
 const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
@@ -43,7 +45,7 @@ const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) =>
     if (key !== 'name') return null;
     if (!row.name || row.name.trim() === '') return null;
     if (!variableNameRegex.test(row.name)) {
-      return 'Variable contains invalid characters. Must only contain alphanumeric characters, "-", "_", "."';
+      return t('COLLECTION_SETTINGS.VARS.ERROR_INVALID_CHARS');
     }
     return null;
   }, []);
@@ -58,21 +60,21 @@ const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) =>
   const columns = [
     {
       key: 'name',
-      name: 'Name',
+      name: t('COLLECTION_SETTINGS.VARS.NAME'),
       isKeyField: true,
       sortable: true,
-      placeholder: 'Name',
+      placeholder: t('COLLECTION_SETTINGS.VARS.NAME'),
       width: '25%'
     },
     {
       key: 'value',
-      name: varType === 'request' ? 'Value' : (
+      name: varType === 'request' ? t('COLLECTION_SETTINGS.VARS.VALUE') : (
         <div className="flex items-center">
-          <span>Expr</span>
-          <InfoTip content="You can write any valid JS Template Literal here" infotipId={`collection-${varType}-var`} />
+          <span>{t('COLLECTION_SETTINGS.VARS.EXPR')}</span>
+          <InfoTip content={t('COLLECTION_SETTINGS.VARS.INFO_EXPR')} infotipId={`collection-${varType}-var`} />
         </div>
       ),
-      placeholder: varType === 'request' ? 'Value' : 'Expr',
+      placeholder: varType === 'request' ? t('COLLECTION_SETTINGS.VARS.VALUE') : t('COLLECTION_SETTINGS.VARS.EXPR'),
       render: ({ row, value, onChange, isLastEmptyRow, rowIndex }) => (
         <VarValueCell
           editor={(
@@ -83,7 +85,7 @@ const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) =>
               onSave={onSave}
               onChange={onChange}
               collection={collection}
-              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? 'Value' : 'Expr') : ''}
+              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? t('COLLECTION_SETTINGS.VARS.VALUE') : t('COLLECTION_SETTINGS.VARS.EXPR')) : ''}
             />
           )}
           renderTypeSelector={!isLastEmptyRow && varType === 'request'

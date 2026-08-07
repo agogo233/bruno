@@ -30,12 +30,12 @@ class QueryBuilderErrorBoundary extends React.Component {
         <StyledWrapper>
           <div className="schema-empty-state">
             <IconAlertTriangle size={32} strokeWidth={1.5} className="empty-state-icon warning" />
-            <div className="empty-state-title">{t('REQUEST_PANE.SOMETHING_WENT_WRONG')}</div>
+            <div className="empty-state-title">{t('REQUEST_PANE.QUERY_BUILDER.SOMETHING_WRONG')}</div>
             <div className="empty-state-description">
-              {t('REQUEST_PANE.QUERY_BUILDER_ERROR')}
+              {t('REQUEST_PANE.QUERY_BUILDER.ERROR_DESC')}
             </div>
             <Button color="secondary" onClick={this.reset}>
-              {t('REQUEST_PANE.TRY_AGAIN')}
+              {t('REQUEST_PANE.QUERY_BUILDER.TRY_AGAIN')}
             </Button>
           </div>
         </StyledWrapper>

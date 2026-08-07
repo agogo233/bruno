@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconChevronRight,
@@ -16,6 +17,7 @@ import EndpointVisualDiff from './EndpointVisualDiff';
 
 // Expandable row - can be used with or without decision buttons
 const ExpandableEndpointRow = ({ endpoint, decision, onDecisionChange, collectionPath, newSpec, showDecisions = true, decisionLabels, diffLeftLabel, diffRightLabel, swapDiffSides, collectionUid, actions, preserveValues = true }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const rowKey = endpoint.id || `${endpoint.method}-${endpoint.path}`;
   const isExpanded = useSelector((state) => {
@@ -54,7 +56,7 @@ const ExpandableEndpointRow = ({ endpoint, decision, onDecisionChange, collectio
       }
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
-      setError(formatIpcError(err) || 'Failed to load diff data');
+      setError(formatIpcError(err) || t('OPENAPI_SYNC.ENDPOINT.ERROR_LOADING_DIFF'));
     } finally {
       if (requestId === requestIdRef.current) setIsLoading(false);
     }
@@ -125,11 +127,11 @@ const ExpandableEndpointRow = ({ endpoint, decision, onDecisionChange, collectio
             status="danger"
             rightSection={(
               <Help icon="info" size={11} placement="top" width={250}>
-                This endpoint was modified in both the spec and your collection. Choose which version to keep.
+                {t('OPENAPI_SYNC.ENDPOINT.CONFLICT_TOOLTIP')}
               </Help>
             )}
           >
-            Conflict
+            {t('OPENAPI_SYNC.ENDPOINT.CONFLICT')}
           </StatusBadge>
         )}
 
@@ -140,16 +142,16 @@ const ExpandableEndpointRow = ({ endpoint, decision, onDecisionChange, collectio
             <button
               className={`decision-btn keep ${decision === 'keep-mine' ? 'selected' : ''}`}
               onClick={() => onDecisionChange('keep-mine')}
-              title="Keep your local version"
+              title={t('OPENAPI_SYNC.ENDPOINT.KEEP_TOOLTIP')}
             >
-              <IconX size={12} /> {decisionLabels?.keep || 'Keep Mine'}
+              <IconX size={12} /> {decisionLabels?.keep || t('OPENAPI_SYNC.ENDPOINT.KEEP_MINE')}
             </button>
             <button
               className={`decision-btn accept ${decision === 'accept-incoming' ? 'selected' : ''}`}
               onClick={() => onDecisionChange('accept-incoming')}
-              title="Accept the spec version"
+              title={t('OPENAPI_SYNC.ENDPOINT.ACCEPT_TOOLTIP')}
             >
-              <IconCheck size={12} /> {decisionLabels?.accept || 'Accept Spec'}
+              <IconCheck size={12} /> {decisionLabels?.accept || t('OPENAPI_SYNC.ENDPOINT.ACCEPT_SPEC')}
             </button>
           </div>
         )}
@@ -163,20 +165,20 @@ const ExpandableEndpointRow = ({ endpoint, decision, onDecisionChange, collectio
           {isLoading && !diffData && !error && (
             <div className="diff-loading">
               <IconLoader2 size={16} className="spinning" />
-              <span>Loading diff...</span>
+              <span>{t('OPENAPI_SYNC.ENDPOINT.LOADING_DIFF')}</span>
             </div>
           )}
-          {error && !diffData && (
-            <div className="diff-error">
-              Error: {error}
-            </div>
-          )}
+            {error && !diffData && (
+              <div className="diff-error">
+                {error}
+              </div>
+            )}
           {diffData && !error && (
             <EndpointVisualDiff
               oldData={diffData.oldData}
               newData={diffData.newData}
-              leftLabel={diffLeftLabel || 'Current (in collection)'}
-              rightLabel={diffRightLabel || 'Expected (from spec)'}
+                leftLabel={diffLeftLabel || t('OPENAPI_SYNC.ENDPOINT.DIFF_LEFT')}
+                rightLabel={diffRightLabel || t('OPENAPI_SYNC.ENDPOINT.DIFF_RIGHT')}
               swapSides={swapDiffSides}
             />
           )}

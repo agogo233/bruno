@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconChevronRight } from '@tabler/icons';
 import Modal from 'components/Modal';
 import Button from 'ui/Button';
@@ -11,7 +12,7 @@ const handleKeyDown = (toggle) => (e) => {
   }
 };
 
-const ConfirmGroup = ({ group }) => {
+const ConfirmGroup = ({ group, t }) => {
   const [expanded, setExpanded] = useState(false);
   const toggle = () => setExpanded((prev) => !prev);
   return (
@@ -45,29 +46,30 @@ const ConfirmGroup = ({ group }) => {
 };
 
 const ConfirmSyncModal = ({ groups, onCancel, onSync, isSyncing }) => {
+  const { t } = useTranslation();
   const hasNoChanges = groups.length === 0;
 
   return (
     <Modal
       size="md"
-      title="Confirm Sync"
+      title={t('OPENAPI_SYNC.CONFIRM_SYNC.TITLE')}
       handleCancel={onCancel}
       hideFooter={true}
     >
       <div className="sync-confirm-modal">
         {hasNoChanges ? (
           <p className="sync-confirm-description">
-            Your collection is already in sync with the remote spec. Syncing will update the local spec file to match the latest remote version.
+            {t('OPENAPI_SYNC.CONFIRM_SYNC.ALREADY_SYNC')}
           </p>
         ) : (
           <>
             <p className="sync-confirm-description">
-              The following changes will be applied to your collection. This action cannot be undone. Are you sure you want to proceed?
+              {t('OPENAPI_SYNC.CONFIRM_SYNC.CHANGES_WARNING')}
             </p>
 
             <div className="sync-confirm-groups">
               {groups.map((group, idx) => (
-                <ConfirmGroup key={idx} group={group} />
+                <ConfirmGroup key={idx} group={group} t={t} />
               ))}
             </div>
           </>
@@ -75,10 +77,10 @@ const ConfirmSyncModal = ({ groups, onCancel, onSync, isSyncing }) => {
 
         <div className="sync-confirm-actions">
           <Button variant="ghost" color="secondary" onClick={onCancel}>
-            Cancel
+            {t('COMMON.CANCEL')}
           </Button>
           <Button onClick={onSync} loading={isSyncing} disabled={isSyncing}>
-            {hasNoChanges ? 'Restore Spec File' : 'Confirm & Sync Collection'}
+            {hasNoChanges ? t('OPENAPI_SYNC.CONFIRM_SYNC.RESTORE_SPEC_FILE') : t('OPENAPI_SYNC.CONFIRM_SYNC.CONFIRM_SYNC')}
           </Button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   IconCheck,
@@ -87,6 +88,7 @@ const SyncReviewPage = ({
   onApplySync
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const tabUiState = useSelector((state) => state.openapiSync?.tabUiState?.[collectionUid] || {});
   const [preserveValues, setPreserveValues] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -174,16 +176,16 @@ const SyncReviewPage = ({
     const isAccepted = (ep) => decisions[ep.id] === 'accept-incoming';
     const isSkipped = (ep) => decisions[ep.id] === 'keep-mine';
 
-    // Accepted — changes that will be applied
-    addGroup('New endpoints to add', 'add', specAddedEndpoints.filter(isAccepted));
-    addGroup('Endpoints to update', 'update', specUpdatedEndpoints.filter(isAccepted));
-    addGroup('Endpoints to delete', 'remove', specRemovedEndpoints.filter(isAccepted));
+    // Accepted
+    addGroup(t('OPENAPI_SYNC.REVIEW.NEW_IN_SPEC'), 'add', specAddedEndpoints.filter(isAccepted));
+    addGroup(t('OPENAPI_SYNC.REVIEW.UPDATED_IN_SPEC'), 'update', specUpdatedEndpoints.filter(isAccepted));
+    addGroup(t('OPENAPI_SYNC.REVIEW.REMOVED_FROM_SPEC'), 'remove', specRemovedEndpoints.filter(isAccepted));
 
-    // Skipped — changes that will be preserved as-is
-    addGroup('Keeping local version', 'keep', specUpdatedEndpoints.filter((ep) => ep.conflict && isSkipped(ep)));
-    addGroup('Retaining removed endpoints', 'keep', specRemovedEndpoints.filter(isSkipped));
-    addGroup('Skipped new endpoints', 'keep', specAddedEndpoints.filter(isSkipped));
-    addGroup('Keeping current version (skipped updates)', 'keep', specUpdatedEndpoints.filter((ep) => !ep.conflict && isSkipped(ep)));
+    // Skipped
+    addGroup(t('OPENAPI_SYNC.ENDPOINT.KEEP_CURRENT'), 'keep', specUpdatedEndpoints.filter((ep) => ep.conflict && isSkipped(ep)));
+    addGroup(t('OPENAPI_SYNC.REVIEW.REMOVED_FROM_SPEC'), 'keep', specRemovedEndpoints.filter(isSkipped));
+    addGroup(t('OPENAPI_SYNC.REVIEW.NEW_IN_SPEC'), 'keep', specAddedEndpoints.filter(isSkipped));
+    addGroup(t('OPENAPI_SYNC.REVIEW.KEEPING_CURRENT_VERSION'), 'keep', specUpdatedEndpoints.filter((ep) => !ep.conflict && isSkipped(ep)));
 
     return groups;
   }, [specAddedEndpoints, specUpdatedEndpoints, specRemovedEndpoints, decisions]);
@@ -220,10 +222,10 @@ const SyncReviewPage = ({
   const hasRemoteUpdates = specAddedEndpoints.length + specUpdatedEndpoints.length + specRemovedEndpoints.length > 0;
 
   const buttonLabel = unresolvedConflicts > 0
-    ? `Resolve ${unresolvedConflicts} conflict${unresolvedConflicts !== 1 ? 's and sync' : ' and sync'}`
+    ? t(unresolvedConflicts === 1 ? 'OPENAPI_SYNC.REVIEW.RESOLVE_CONFLICT_SYNC' : 'OPENAPI_SYNC.REVIEW.RESOLVE_CONFLICTS_SYNC', { count: unresolvedConflicts })
     : !hasRemoteUpdates && specDrift?.storedSpecMissing
-        ? 'Restore Spec File'
-        : 'Sync Collection';
+        ? t('OPENAPI_SYNC.REVIEW.RESTORE_SPEC_FILE')
+        : t('OPENAPI_SYNC.REVIEW.SYNC_COLLECTION');
 
   return (
     <div className="sync-review-page sync-mode">
@@ -231,10 +233,10 @@ const SyncReviewPage = ({
         <div className="sync-review-header">
           <div className="title-row">
             <div className="title-left">
-              <h3 className="review-title">Review Changes</h3>
+              <h3 className="review-title">{t('OPENAPI_SYNC.REVIEW.REVIEW_CHANGES')}</h3>
               {totalChanges > 0 && (
                 <p className="review-subtitle">
-                  Choose to keep the current version or accept the updated one.
+                  {t('OPENAPI_SYNC.REVIEW.CHOOSE_VERSION')}
                 </p>
               )}
             </div>
@@ -250,10 +252,10 @@ const SyncReviewPage = ({
                   >
                     <span className="preserve-toggle-knob" />
                   </button>
-                  <span className="preserve-values-label">Preserve values</span>
-                  <Help icon="info" size={12} placement="top" width={260}>
-                    When enabled, your edited values are preserved during sync. When disabled, all values are updated to match the OpenAPI spec.
-                  </Help>
+                    <span className="preserve-values-label">{t('OPENAPI_SYNC.REVIEW.PRESERVE_VALUES')}</span>
+                    <Help icon="info" size={12} placement="top" width={260}>
+                      {t('OPENAPI_SYNC.REVIEW.PRESERVE_TOOLTIP')}
+                    </Help>
                 </div>
                 {specDrift?.unifiedDiff && (
                   <button
@@ -266,7 +268,7 @@ const SyncReviewPage = ({
                     ) : (
                       <IconArrowsDiff size={12} />
                     )}{' '}
-                    View Spec Diff
+                    {t('OPENAPI_SYNC.REVIEW.VIEW_SPEC_DIFF')}
                   </button>
                 )}
                 {decidableEndpoints.length > 0 && (
@@ -275,13 +277,13 @@ const SyncReviewPage = ({
                       className={`bulk-btn ${allSkipped ? 'active' : ''}`}
                       onClick={() => setBulkDecision('keep-mine')}
                     >
-                      <IconX size={12} /> Skip All
+                      <IconX size={12} /> {t('OPENAPI_SYNC.REVIEW.SKIP_ALL')}
                     </button>
                     <button
                       className={`bulk-btn ${allAccepted ? 'active' : ''}`}
                       onClick={() => setBulkDecision('accept-incoming')}
                     >
-                      <IconCheck size={12} /> Accept All
+                      <IconCheck size={12} /> {t('OPENAPI_SYNC.REVIEW.ACCEPT_ALL')}
                     </button>
                   </>
                 )}
@@ -297,14 +299,14 @@ const SyncReviewPage = ({
             {isLoading ? (
               <>
                 <IconLoader2 size={40} className="empty-state-icon animate-spin" />
-                <h4>Checking for updates</h4>
-                <p>Comparing your last synced spec with the latest spec...</p>
+                <h4>{t('OPENAPI_SYNC.REVIEW.CHECKING_UPDATES')}</h4>
+                <p>{t('OPENAPI_SYNC.REVIEW.COMPARING_SPEC')}</p>
               </>
             ) : (
               <>
                 <IconCheck size={40} className="empty-state-icon" />
-                <h4>No updates from the spec</h4>
-                <p>The spec endpoints have not been updated since the last sync.</p>
+                <h4>{t('OPENAPI_SYNC.REVIEW.NO_UPDATES')}</h4>
+                <p>{t('OPENAPI_SYNC.REVIEW.SPEC_NOT_UPDATED')}</p>
               </>
             )}
           </div>
@@ -315,22 +317,22 @@ const SyncReviewPage = ({
               <div className="review-group">
 
                 <EndpointChangeSection
-                  title="Updated in Spec"
+                  title={t('OPENAPI_SYNC.REVIEW.UPDATED_IN_SPEC')}
                   type="spec-modified"
                   endpoints={specUpdatedEndpoints}
                   defaultExpanded={true}
                   expandableLayout
-                  subtitle="The spec has updates for these endpoints"
+                  subtitle={t('OPENAPI_SYNC.REVIEW.UPDATED_SUBTITLE')}
                   headerExtra={conflictCount > 0 ? (
                     <StatusBadge
                       status="danger"
                       rightSection={(
                         <Help icon="info" size={11} placement="top" width={250}>
-                          {`This section has ${conflictCount} endpoint${conflictCount === 1 ? '' : 's'} modified in both the spec and your collection. Expand to review and resolve.`}
+                          {t('OPENAPI_SYNC.REVIEW.CONFLICT_TOOLTIP', { count: conflictCount, plural: conflictCount !== 1 ? 'plural' : 'singular' })}
                         </Help>
                       )}
                     >
-                      {conflictCount} {conflictCount === 1 ? 'Conflict' : 'Conflicts'}
+                      {conflictCount} {t(conflictCount === 1 ? 'OPENAPI_SYNC.REVIEW.CONFLICT' : 'OPENAPI_SYNC.REVIEW.CONFLICTS', { count: conflictCount })}
                     </StatusBadge>
                   ) : null}
                   collectionUid={collectionUid}
@@ -352,12 +354,12 @@ const SyncReviewPage = ({
                 />
 
                 <EndpointChangeSection
-                  title="New in Spec"
+                  title={t('OPENAPI_SYNC.REVIEW.NEW_IN_SPEC')}
                   type="added"
                   endpoints={specAddedEndpoints}
                   defaultExpanded={true}
                   expandableLayout
-                  subtitle="New endpoints from the spec"
+                  subtitle={t('OPENAPI_SYNC.REVIEW.NEW_SUBTITLE')}
                   collectionUid={collectionUid}
                   sectionKey="review-added"
                   renderItem={(endpoint, idx) => (
@@ -377,12 +379,12 @@ const SyncReviewPage = ({
                 />
 
                 <EndpointChangeSection
-                  title="Removed from Spec"
+                  title={t('OPENAPI_SYNC.REVIEW.REMOVED_FROM_SPEC')}
                   type="removed"
                   endpoints={specRemovedEndpoints}
                   defaultExpanded={true}
                   expandableLayout
-                  subtitle="These endpoints are in your collection but not in the spec"
+                  subtitle={t('OPENAPI_SYNC.REVIEW.REMOVED_SUBTITLE')}
                   collectionUid={collectionUid}
                   sectionKey="review-removed"
                   renderItem={(endpoint, idx) => (
@@ -410,7 +412,7 @@ const SyncReviewPage = ({
       {hasRemoteUpdates && (
         <div className="sync-info-notice mt-4">
           <IconInfoCircle size={14} className="sync-info-icon" />
-          <span><span className="whats-updated-title">What gets updated:</span> Parameters, headers, body and auth will be updated. Tests, scripts, and assertions are always preserved.</span>
+          <span><span className="whats-updated-title">{t('OPENAPI_SYNC.REVIEW.WHATS_UPDATED_TITLE')}</span>{t('OPENAPI_SYNC.REVIEW.WHATS_UPDATED_DESC')}</span>
         </div>
       )}
 
@@ -419,7 +421,7 @@ const SyncReviewPage = ({
           <div className="bar-stats">
             {totalChanges === 0 && (
               <span className="stats-prefix">
-                {specDrift?.storedSpecMissing ? 'Sync will update the spec file' : 'No endpoint changes to apply'}
+                {specDrift?.storedSpecMissing ? t('OPENAPI_SYNC.REVIEW.SYNC_WILL_UPDATE') : t('OPENAPI_SYNC.REVIEW.NO_ENDPOINT_CHANGES')}
               </span>
             )}
           </div>

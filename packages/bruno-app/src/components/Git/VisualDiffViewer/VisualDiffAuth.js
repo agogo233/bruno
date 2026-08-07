@@ -1,57 +1,10 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
-const AUTH_TYPE_LABELS = {
-  awsv4: 'AWS Signature v4',
-  basic: 'Basic Auth',
-  bearer: 'Bearer Token',
-  digest: 'Digest Auth',
-  ntlm: 'NTLM',
-  oauth2: 'OAuth 2.0',
-  wsse: 'WSSE',
-  apikey: 'API Key'
-};
-
-const AUTH_FIELD_LABELS = {
-  // AWS v4
-  accessKeyId: 'Access Key ID',
-  secretAccessKey: 'Secret Access Key',
-  sessionToken: 'Session Token',
-  service: 'Service',
-  region: 'Region',
-  profileName: 'Profile Name',
-  // Basic/Digest/NTLM/WSSE
-  username: 'Username',
-  password: 'Password',
-  domain: 'Domain',
-  // Bearer
-  token: 'Token',
-  // API Key
-  key: 'Key',
-  value: 'Value',
-  placement: 'Placement',
-  // OAuth2
-  grantType: 'Grant Type',
-  callbackUrl: 'Callback URL',
-  authorizationUrl: 'Authorization URL',
-  accessTokenUrl: 'Access Token URL',
-  refreshTokenUrl: 'Refresh Token URL',
-  clientId: 'Client ID',
-  clientSecret: 'Client Secret',
-  scope: 'Scope',
-  state: 'State',
-  pkce: 'PKCE',
-  credentialsPlacement: 'Credentials Placement',
-  credentialsId: 'Credentials ID',
-  tokenPlacement: 'Token Placement',
-  tokenHeaderPrefix: 'Token Header Prefix',
-  tokenQueryKey: 'Token Query Key',
-  autoFetchToken: 'Auto Fetch Token',
-  autoRefreshToken: 'Auto Refresh Token'
-};
-
 const VisualDiffAuth = ({ oldData, newData, showSide }) => {
+  const { t } = useTranslation();
   const oldAuth = get(oldData, 'request.auth', {});
   const newAuth = get(newData, 'request.auth', {});
 
@@ -105,7 +58,7 @@ const VisualDiffAuth = ({ oldData, newData, showSide }) => {
         }
 
         return {
-          key: AUTH_FIELD_LABELS[field] || field,
+          key: t(`GIT.DIFF.AUTH_FIELD.${field}`, field),
           value: String(displayValue),
           status
         };
@@ -113,12 +66,12 @@ const VisualDiffAuth = ({ oldData, newData, showSide }) => {
 
       return {
         type: authType,
-        label: AUTH_TYPE_LABELS[authType] || authType,
+        label: t(`GIT.DIFF.AUTH_TYPE.${authType}`, authType),
         status: sectionStatus,
         fields
       };
     }).filter(Boolean);
-  }, [authTypes, currentAuth, otherAuth, showSide]);
+  }, [authTypes, currentAuth, otherAuth, showSide, t]);
 
   const currentMode = currentAuth.mode;
   const otherMode = otherAuth.mode;
@@ -136,8 +89,8 @@ const VisualDiffAuth = ({ oldData, newData, showSide }) => {
             <thead>
               <tr>
                 <th style={{ width: '30px' }}></th>
-                <th style={{ width: '40%' }}>Field</th>
-                <th>Value</th>
+                <th style={{ width: '40%' }}>{t('GIT.DIFF.FIELD')}</th>
+                <th>{t('GIT.DIFF.VALUE')}</th>
               </tr>
             </thead>
             <tbody>
@@ -149,8 +102,8 @@ const VisualDiffAuth = ({ oldData, newData, showSide }) => {
                     </span>
                   )}
                 </td>
-                <td className="key-cell">Auth Mode</td>
-                <td className="value-cell">{AUTH_TYPE_LABELS[currentMode] || currentMode}</td>
+                <td className="key-cell">{t('GIT.DIFF.AUTH_MODE')}</td>
+                <td className="value-cell">{t(`GIT.DIFF.AUTH_TYPE.${currentMode}`, currentMode)}</td>
               </tr>
             </tbody>
           </table>
@@ -170,8 +123,8 @@ const VisualDiffAuth = ({ oldData, newData, showSide }) => {
             <thead>
               <tr>
                 <th style={{ width: '30px' }}></th>
-                <th style={{ width: '40%' }}>Field</th>
-                <th>Value</th>
+                <th style={{ width: '40%' }}>{t('GIT.DIFF.FIELD')}</th>
+                <th>{t('GIT.DIFF.VALUE')}</th>
               </tr>
             </thead>
             <tbody>

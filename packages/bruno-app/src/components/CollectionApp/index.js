@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { sendNetworkRequest } from 'utils/network/index';
 import {
   findEnvironmentInCollection,
@@ -169,6 +170,7 @@ const listRequestSummaries = (collection) =>
     }));
 
 const CollectionApp = ({ item, collection }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { displayedTheme, theme, themeVariantLight, themeVariantDark } = useTheme();
   const preferences = useSelector((state) => state.app.preferences);
@@ -221,10 +223,10 @@ const CollectionApp = ({ item, collection }) => {
     async (pathname, options) => {
       const target = findItemInCollectionByPathname(collection, pathname);
       if (!target) {
-        throw new Error(`Request not found: ${pathname}`);
+        throw new Error(t('COLLECTION_APP.ERROR.REQUEST_NOT_FOUND', { pathname }));
       }
       if (!isItemARequest(target)) {
-        throw new Error(`Item is not a request: ${pathname}`);
+        throw new Error(t('COLLECTION_APP.ERROR.ITEM_NOT_REQUEST', { pathname }));
       }
 
       const requestUid = uuid();
@@ -248,7 +250,7 @@ const CollectionApp = ({ item, collection }) => {
       if (result?.error) {
         const errorMessage = typeof result.error === 'string'
           ? result.error
-          : result.error?.message || 'Request failed';
+          : result.error?.message || t('COLLECTION_APP.ERROR.REQUEST_FAILED');
         throw new Error(errorMessage);
       }
 
@@ -307,7 +309,7 @@ const CollectionApp = ({ item, collection }) => {
             const res = await runRequestByPath(data.pathname, data.options);
             push({ type: 'reply', replyId: data.replyId, result: res });
           } catch (err) {
-            push({ type: 'reply', replyId: data.replyId, error: err?.message || 'runRequest failed' });
+            push({ type: 'reply', replyId: data.replyId, error: err?.message || t('COLLECTION_APP.ERROR.RUN_REQUEST_FAILED') });
           }
           break;
         }
@@ -343,7 +345,7 @@ const CollectionApp = ({ item, collection }) => {
   return (
     <StyledWrapper data-testid="collection-app">
       <div className="app-toolbar">
-        <span>App - {item.name}</span>
+        <span>{t('COLLECTION_APP.VIEW.TITLE_PREFIX')}{item.name}</span>
         <div className="flex items-center gap-2">
           {view === 'code' && (
             <AIAssist
@@ -361,7 +363,7 @@ const CollectionApp = ({ item, collection }) => {
               className={classnames('view-btn', { active: view === 'code' })}
               onClick={() => setView('code')}
             >
-              Code
+              {t('COLLECTION_APP.VIEW.CODE')}
             </button>
             <button
               type="button"
@@ -369,7 +371,7 @@ const CollectionApp = ({ item, collection }) => {
               className={classnames('view-btn', { active: view === 'preview' })}
               onClick={() => setView('preview')}
             >
-              Preview
+              {t('COLLECTION_APP.VIEW.PREVIEW')}
             </button>
           </div>
         </div>
@@ -401,8 +403,8 @@ const CollectionApp = ({ item, collection }) => {
       ) : (
         <div className="app-pane" data-testid="collection-app-preview">
           <EmptyAppState
-            title="No app yet"
-            hint="Switch to Code and write some HTML/JS"
+            title={t('COLLECTION_APP.VIEW.NO_APP_TITLE')}
+            hint={t('COLLECTION_APP.VIEW.NO_APP_HINT')}
           />
         </div>
       )}

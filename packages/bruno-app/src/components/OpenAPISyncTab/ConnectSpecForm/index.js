@@ -1,27 +1,22 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconCheck } from '@tabler/icons';
 import Button from 'ui/Button';
 import { isHttpUrl } from 'utils/url/index';
 import { isOpenApiSpec } from 'utils/importers/openapi-collection';
 import { parseFileAsJsonOrYaml } from 'utils/importers/file-reader';
 
-const FEATURES = [
-  'Detect new, modified, and removed endpoints',
-  'Track local changes against the spec',
-  'Sync collection with a single click',
-  'Your tests, assertions, and scripts are preserved during sync'
-];
-
 const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, onConnect }) => {
+  const { t } = useTranslation();
   const [mode, setMode] = useState('url');
   const fileInputRef = useRef(null);
 
   return (
     <div className="setup-section">
       <div className="setup-header">
-        <h2 className="setup-title">Connect to OpenAPI Spec</h2>
+        <h2 className="setup-title">{t('OPENAPI_SYNC.CONNECT.TITLE')}</h2>
         <p className="setup-description">
-          Keep your collection synchronized with an OpenAPI specification. Changes in the spec will be detected automatically.
+          {t('OPENAPI_SYNC.CONNECT.DESCRIPTION')}
         </p>
       </div>
 
@@ -31,7 +26,7 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
           e.preventDefault(); onConnect();
         }}
       >
-        <label className="url-label">OpenAPI Specification</label>
+        <label className="url-label">{t('OPENAPI_SYNC.CONNECT.LABEL')}</label>
         <div className="url-row">
           <div className="setup-mode-toggle">
             <button
@@ -41,16 +36,16 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
                 setMode('url'); setSourceUrl('');
               }}
             >
-              URL
+              {t('OPENAPI_SYNC.CONNECT.URL_MODE')}
             </button>
             <button
               type="button"
               className={`setup-mode-btn ${mode === 'file' ? 'active' : ''}`}
               onClick={() => {
                 setMode('file'); setSourceUrl('');
-              }}
+             }}
             >
-              File
+              {t('OPENAPI_SYNC.CONNECT.FILE_MODE')}
             </button>
           </div>
 
@@ -60,7 +55,7 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
               className="url-input"
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
-              placeholder="https://api.example.com/openapi.json"
+              placeholder={t('OPENAPI_SYNC.CONNECT.URL_MODE') + ': https://api.example.com/openapi.json'}
             />
           ) : (
             <>
@@ -77,17 +72,17 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
                   try {
                     const data = await parseFileAsJsonOrYaml(file);
                     if (!isOpenApiSpec(data)) {
-                      setError('The selected file is not a valid OpenAPI 3.x specification');
+                      setError(t('OPENAPI_SYNC.CONNECT.ERROR_INVALID_OPENAPI'));
                       return;
                     }
                     if (data.swagger && String(data.swagger).startsWith('2')) {
-                      setError('Swagger 2.0 is not supported. Please convert your spec to OpenAPI 3.x.');
+                      setError(t('OPENAPI_SYNC.CONNECT.ERROR_SWAGGER_NOT_SUPPORTED'));
                       return;
                     }
                     const filePath = window.ipcRenderer.getFilePath(file);
                     if (filePath) setSourceUrl(filePath);
                   } catch (err) {
-                    setError(err.message || 'Failed to read the selected file');
+                    setError(err.message || t('OPENAPI_SYNC.CONNECT.ERROR_FILE_READ'));
                   }
                 }}
               />
@@ -96,7 +91,7 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
                 className="url-input file-pick-btn"
                 onClick={() => fileInputRef.current?.click()}
               >
-                {sourceUrl ? sourceUrl.split(/[\\/]/).pop() : 'Select File'}
+                {sourceUrl ? sourceUrl.split(/[\\/]/).pop() : t('OPENAPI_SYNC.CONNECT.SELECT_FILE')}
               </button>
             </>
           )}
@@ -107,13 +102,13 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
             disabled={mode === 'url' ? !isHttpUrl(sourceUrl.trim()) : !sourceUrl.trim()}
             loading={isLoading}
           >
-            Connect
+            {t('OPENAPI_SYNC.CONNECT.CONNECT')}
           </Button>
         </div>
         <p className="setup-hint">
           {mode === 'url'
-            ? 'Supports OpenAPI 3.x specifications in JSON or YAML format'
-            : 'Select a local OpenAPI/Swagger JSON or YAML file'}
+            ? t('OPENAPI_SYNC.CONNECT.HINT_URL')
+            : t('OPENAPI_SYNC.CONNECT.HINT_FILE')}
         </p>
         {error && (
           <p className="setup-error">{error}</p>
@@ -121,8 +116,8 @@ const ConnectSpecForm = ({ sourceUrl, setSourceUrl, isLoading, error, setError, 
       </form>
 
       <div className="setup-features">
-        {FEATURES.map((text) => (
-          <div className="setup-feature" key={text}>
+        {t('OPENAPI_SYNC.CONNECT.FEATURES', { returnObjects: true }).map((text, idx) => (
+          <div className="setup-feature" key={idx}>
             <IconCheck size={16} />
             <span>{text}</span>
           </div>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { getTotalRequestCountInCollection } from 'utils/collections/';
 import { countEndpoints } from '../utils';
@@ -9,10 +10,36 @@ import Help from 'components/Help';
 
 const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 
+const OVERVIEW_KEYS = {
+  total: 'OVERVIEW.TOTAL_IN_COLLECTION',
+  inSync: 'OVERVIEW.IN_SYNC_WITH_SPEC',
+  changed: 'OVERVIEW.CHANGED_IN_COLLECTION',
+  pending: 'OVERVIEW.SPEC_UPDATES_PENDING'
+};
+
+const OVERVIEW_TOOLTIPS = {
+  total: 'OVERVIEW.TOTAL_TOOLTIP',
+  inSync: 'OVERVIEW.IN_SYNC_TOOLTIP',
+  changed: 'OVERVIEW.CHANGED_TOOLTIP',
+  pending: 'OVERVIEW.PENDING_TOOLTIP'
+};
+
+const OVERVIEW_TABS = {
+  changed: 'collection-changes',
+  pending: 'spec-updates'
+};
+
+const OVERVIEW_COLORS = {
+  total: 'blue',
+  inSync: 'green',
+  changed: 'muted',
+  pending: 'amber'
+};
+
 const SUMMARY_CARDS = [
   {
     key: 'total',
-    label: 'Total in Collection',
+    label: 'OVERVIEW_TOTAL',
     color: 'blue',
     tooltip: 'Total endpoints in your collection'
   },
@@ -39,6 +66,7 @@ const SUMMARY_CARDS = [
 ];
 
 const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, remoteDrift, onTabSelect, error, onOpenSettings }) => {
+  const { t } = useTranslation();
   const openApiSyncConfig = collection?.brunoConfig?.openapi?.[0];
 
   const specMeta = useSelector((state) => state.openapiSync?.storedSpecMeta?.[collection.uid] || null);
@@ -84,10 +112,10 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
   };
 
   const details = [
-    { label: 'Spec Version', value: version ? `v${version}` : '–' },
-    { label: 'Endpoints in Spec', value: endpointCount != null ? endpointCount : '–' },
-    { label: 'Last Synced At', value: lastSyncDate ? moment(lastSyncDate).fromNow() : '–', tooltip: lastSyncDate ? moment(lastSyncDate).format('MMMM D, YYYY [at] h:mm A') : undefined },
-    { label: 'Folder Grouping', value: capitalize(groupBy) }
+    { label: t('OPENAPI_SYNC.OVERVIEW.SPEC_VERSION'), value: version ? `v${version}` : '–' },
+    { label: t('OPENAPI_SYNC.OVERVIEW.ENDPOINTS_IN_SPEC'), value: endpointCount != null ? endpointCount : '–' },
+    { label: t('OPENAPI_SYNC.OVERVIEW.LAST_SYNCED_AT'), value: lastSyncDate ? moment(lastSyncDate).fromNow() : '–', tooltip: lastSyncDate ? moment(lastSyncDate).format('MMMM D, YYYY [at] h:mm A') : undefined },
+    { label: t('OPENAPI_SYNC.OVERVIEW.FOLDER_GROUPING'), value: capitalize(groupBy) }
   ];
 
   const hasCollectionChanges = changedInCollection > 0;
@@ -101,7 +129,7 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
     if (activeError) {
       return {
         variant: 'danger',
-        title: 'Failed to check for spec updates',
+        title: t('OPENAPI_SYNC.OVERVIEW.FAILED_CHECK'),
         subtitle: activeError,
         buttons: ['open-settings']
       };
@@ -109,32 +137,32 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
     if (specDrift?.storedSpecMissing && !lastSyncDate) {
       return {
         variant: 'warning',
-        title: 'Initial sync required — your collection differs from the spec',
-        subtitle: 'Review the changes and sync to bring your collection up to date.',
+        title: t('OPENAPI_SYNC.OVERVIEW.INITIAL_SYNC_REQUIRED'),
+        subtitle: t('OPENAPI_SYNC.OVERVIEW.INITIAL_SYNC_SUBTITLE'),
         buttons: ['review']
       };
     }
     if (hasSpecUpdates && hasCollectionChanges) {
       return {
         variant: 'warning',
-        title: `OpenAPI spec has new updates${versionInfo} and the collection has changes`,
-        subtitle: 'New or changed requests are available. Some collection changes may be overwritten.',
+        title: t('OPENAPI_SYNC.OVERVIEW.SPEC_COLLECTION_CHANGES', { version: versionInfo }),
+        subtitle: t('OPENAPI_SYNC.OVERVIEW.SPEC_COLLECTION_SUBTITLE'),
         buttons: ['sync', 'changes']
       };
     }
     if (hasSpecUpdates) {
       return {
         variant: 'warning',
-        title: `OpenAPI spec has new updates${versionInfo}`,
-        subtitle: 'New or changed requests are available.',
+        title: t('OPENAPI_SYNC.OVERVIEW.SPEC_NEW_UPDATES', { version: versionInfo }),
+        subtitle: t('OPENAPI_SYNC.OVERVIEW.NEW_REQUESTS_AVAILABLE'),
         buttons: ['sync']
       };
     }
     if (specDrift?.storedSpecMissing && lastSyncDate) {
       return {
         variant: 'warning',
-        title: 'Last synced spec not found',
-        subtitle: 'The last synced spec is missing in the storage. Restore the latest spec from the source to track collection changes.',
+        title: t('OPENAPI_SYNC.OVERVIEW.LAST_SYNCED_MISSING'),
+        subtitle: t('OPENAPI_SYNC.OVERVIEW.LAST_SYNCED_MISSING_SUBTITLE'),
         buttons: ['spec-details']
       };
     }
@@ -142,8 +170,8 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
     if (hasCollectionChanges) {
       return {
         variant: 'muted',
-        title: 'Collection has changes not in the spec',
-        subtitle: 'Some requests have been modified or removed and no longer match the spec.',
+        title: t('OPENAPI_SYNC.OVERVIEW.COLLECTION_CHANGES_TITLE'),
+        subtitle: t('OPENAPI_SYNC.OVERVIEW.COLLECTION_CHANGES_SUBTITLE'),
         buttons: ['changes']
       };
     }
@@ -174,22 +202,22 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
                   color={bannerState.buttons.includes('sync') ? 'secondary' : 'primary'}
                   onClick={() => onTabSelect('collection-changes')}
                 >
-                  View Collection Changes
+                    {t('OPENAPI_SYNC.OVERVIEW.VIEW_COLLECTION_CHANGES')}
                 </Button>
               )}
               {(bannerState.buttons.includes('sync') || bannerState.buttons.includes('review')) && (
                 <Button size="sm" onClick={() => onTabSelect('spec-updates')}>
-                  Review and Sync Collection
+                    {t('OPENAPI_SYNC.OVERVIEW.REVIEW_AND_SYNC')}
                 </Button>
               )}
               {bannerState.buttons.includes('spec-details') && (
                 <Button variant="outline" size="sm" onClick={() => onTabSelect('spec-updates')}>
-                  Go to Spec Updates
+                    {t('OPENAPI_SYNC.OVERVIEW.GO_TO_SPEC_UPDATES')}
                 </Button>
               )}
               {bannerState.buttons.includes('open-settings') && (
                 <Button variant="outline" size="sm" onClick={onOpenSettings}>
-                  Update connection settings
+                    {t('OPENAPI_SYNC.OVERVIEW.UPDATE_CONNECTION_SETTINGS')}
                 </Button>
               )}
             </div>
@@ -197,11 +225,12 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
         </div>
       )}
 
-      <h4 className="overview-section-title mt-5">Endpoint Summary</h4>
+      <h4 className="overview-section-title mt-5">{t('OPENAPI_SYNC.OVERVIEW.ENDPOINT_SUMMARY')}</h4>
       <div className="sync-summary-cards">
-        {SUMMARY_CARDS.map(({ key, label, tooltip, tab, color }) => {
+        {Object.entries(OVERVIEW_KEYS).map(([key, labelKey]) => {
           const count = summaryValues[key];
-          const resolvedColor = count > 0 ? color : 'muted';
+          const resolvedColor = count > 0 ? OVERVIEW_COLORS[key] : 'muted';
+          const tab = OVERVIEW_TABS[key];
           const isClickable = tab && count > 0;
           return (
             <div
@@ -210,23 +239,23 @@ const OverviewSection = ({ collection, storedSpec, collectionDrift, specDrift, r
               onClick={isClickable ? () => onTabSelect(tab) : undefined}
             >
               <span className="card-info-icon">
-                <Help icon="info" size={12} placement="top" width={220}>{tooltip}</Help>
+                <Help icon="info" size={12} placement="top" width={220}>{t('OPENAPI_SYNC.' + OVERVIEW_TOOLTIPS[key])}</Help>
               </span>
               <div className="summary-count-row">
                 <span className={`summary-count ${resolvedColor}`}>{count != null ? count : '–'}</span>
                 {key === 'pending' && conflictCount > 0 && (
-                  <span className="conflict-annotation">({conflictCount} {conflictCount === 1 ? 'conflict' : 'conflicts'})</span>
+                  <span className="conflict-annotation">({conflictCount} {conflictCount === 1 ? t('OPENAPI_SYNC.REVIEW.CONFLICT') : t('OPENAPI_SYNC.REVIEW.CONFLICTS', { count: conflictCount })})</span>
                 )}
               </div>
               <div className="summary-label">
-                {label}
+                {t('OPENAPI_SYNC.' + labelKey)}
               </div>
             </div>
           );
         })}
       </div>
 
-      <h4 className="overview-section-title mt-7">Last Synced Spec Details</h4>
+      <h4 className="overview-section-title mt-7">{t('OPENAPI_SYNC.OVERVIEW.LAST_SYNCED_SPEC_DETAILS')}</h4>
       <div className="spec-details-grid">
         {details.map(({ label, value, tooltip }) => (
           <div className="spec-detail-item" key={label}>

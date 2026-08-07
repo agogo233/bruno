@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getTotalRequestCountInCollection } from 'utils/collections/';
 import { IconFolder, IconWorld, IconApi, IconShare, IconBook, IconTag } from '@tabler/icons';
 import { areItemsLoading, getItemsLoadStats, getCollectionVersion } from 'utils/collections/index';
@@ -14,6 +15,7 @@ import Migration from '../Migration';
 
 const Info = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const totalRequestsInCollection = getTotalRequestCountInCollection(collection);
 
   const isCollectionLoading = areItemsLoading(collection);
@@ -51,7 +53,7 @@ const Info = ({ collection }) => {
               <IconFolder className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4">
-              <div className="font-medium">Location</div>
+              <div className="font-medium">{t('COLLECTION_SETTINGS.OVERVIEW.LOCATION')}</div>
               <div className="mt-1 text-muted break-all">
                 {collection.pathname}
               </div>
@@ -63,7 +65,7 @@ const Info = ({ collection }) => {
               <IconTag className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4 h-full flex flex-col justify-start">
-              <div className="font-medium h-fit my-auto">Version</div>
+              <div className="font-medium h-fit my-auto">{t('COLLECTION_SETTINGS.OVERVIEW.VERSION')}</div>
               <div className="flex flex-wrap items-center gap-2">
                 {collectionVersion ? (
                   <ToolHint
@@ -84,9 +86,9 @@ const Info = ({ collection }) => {
                     </span>
                   </ToolHint>
                 ) : (
-                  <span className="text-muted italic" data-testid="info-version-value">Not Set</span>
+                  <span className="text-muted italic" data-testid="info-version-value">{t('COLLECTION_SETTINGS.OVERVIEW.NOT_SET')}</span>
                 )}
-                <span className="group-hover:underline text-link" data-testid="info-version-change">change</span>
+                <span className="group-hover:underline text-link" data-testid="info-version-change">{t('COLLECTION_SETTINGS.OVERVIEW.CHANGE')}</span>
               </div>
             </div>
           </div>
@@ -98,7 +100,7 @@ const Info = ({ collection }) => {
               <IconWorld className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4">
-              <div className="font-medium">Environments</div>
+              <div className="font-medium">{t('COLLECTION_SETTINGS.OVERVIEW.ENVIRONMENTS')}</div>
               <div className="mt-1 flex flex-col gap-1">
                 <button
                   type="button"
@@ -113,7 +115,7 @@ const Info = ({ collection }) => {
                     );
                   }}
                 >
-                  {collectionEnvironmentCount} collection environment{collectionEnvironmentCount !== 1 ? 's' : ''}
+                  {collectionEnvironmentCount} {t('COLLECTION_SETTINGS.OVERVIEW.COLLECTION_ENVIRONMENT')}{collectionEnvironmentCount !== 1 ? 's' : ''}
                 </button>
                 <button
                   type="button"
@@ -128,7 +130,7 @@ const Info = ({ collection }) => {
                     );
                   }}
                 >
-                  {globalEnvironmentCount} global environment{globalEnvironmentCount !== 1 ? 's' : ''}
+                  {globalEnvironmentCount} {t('COLLECTION_SETTINGS.OVERVIEW.GLOBAL_ENVIRONMENT')}{globalEnvironmentCount !== 1 ? 's' : ''}
                 </button>
               </div>
             </div>
@@ -140,10 +142,10 @@ const Info = ({ collection }) => {
               <IconApi className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4">
-              <div className="font-medium">Requests</div>
+              <div className="font-medium">{t('COLLECTION_SETTINGS.OVERVIEW.REQUESTS')}</div>
               <div className="mt-1 text-muted">
                 {
-                  isCollectionLoading ? `${totalItems - itemsLoadingCount} out of ${totalItems} requests in the collection loaded` : `${totalRequestsInCollection} request${totalRequestsInCollection !== 1 ? 's' : ''} in collection`
+                  isCollectionLoading ? t('COLLECTION_SETTINGS.OVERVIEW.LOADING_REQUESTS', { loaded: totalItems - itemsLoadingCount, total: totalItems }) : t(totalRequestsInCollection !== 1 ? 'COLLECTION_SETTINGS.OVERVIEW.REQUESTS_IN_COLLECTION_PLURAL' : 'COLLECTION_SETTINGS.OVERVIEW.REQUESTS_IN_COLLECTION', { count: totalRequestsInCollection })
                 }
               </div>
             </div>
@@ -154,9 +156,9 @@ const Info = ({ collection }) => {
               <IconShare className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4 h-full flex flex-col justify-start">
-              <div className="font-medium h-fit my-auto">Share</div>
+              <div className="font-medium h-fit my-auto">{t('COLLECTION_SETTINGS.OVERVIEW.SHARE')}</div>
               <div className="group-hover:underline text-link">
-                Share Collection
+                {t('COLLECTION_SETTINGS.OVERVIEW.SHARE_COLLECTION')}
               </div>
             </div>
           </div>
@@ -167,9 +169,9 @@ const Info = ({ collection }) => {
               <IconBook className="w-5 h-5" stroke={1.5} />
             </div>
             <div className="ml-4 h-full flex flex-col justify-start">
-              <div className="font-medium h-fit my-auto">Documentation</div>
+              <div className="font-medium h-fit my-auto">{t('COLLECTION_SETTINGS.OVERVIEW.DOCUMENTATION')}</div>
               <div className="group-hover:underline text-link">
-                Generate Docs
+                {t('COLLECTION_SETTINGS.OVERVIEW.GENERATE_DOCS')}
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from 'providers/Theme';
 import { saveFolderRoot } from 'providers/ReduxStore/slices/collections/actions';
@@ -17,6 +18,7 @@ import { setFolderVars, moveFolderVar } from 'providers/ReduxStore/slices/collec
 
 const VarsTable = ({ folder, collection, vars, varType, initialScroll = 0, isDraft }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
@@ -48,7 +50,7 @@ const VarsTable = ({ folder, collection, vars, varType, initialScroll = 0, isDra
     if (key !== 'name') return null;
     if (!row.name || row.name.trim() === '') return null;
     if (!variableNameRegex.test(row.name)) {
-      return 'Variable contains invalid characters. Must only contain alphanumeric characters, "-", "_", "."';
+      return t('FOLDER_SETTINGS.VARS.ERROR_INVALID_CHARS');
     }
     return null;
   }, []);
@@ -64,21 +66,21 @@ const VarsTable = ({ folder, collection, vars, varType, initialScroll = 0, isDra
   const columns = [
     {
       key: 'name',
-      name: 'Name',
+      name: t('FOLDER_SETTINGS.VARS.NAME'),
       isKeyField: true,
       sortable: true,
-      placeholder: 'Name',
+      placeholder: t('FOLDER_SETTINGS.VARS.NAME'),
       width: '25%'
     },
     {
       key: 'value',
-      name: varType === 'request' ? 'Value' : (
+      name: varType === 'request' ? t('FOLDER_SETTINGS.VARS.VALUE') : (
         <div className="flex items-center">
-          <span>Expr</span>
-          <InfoTip content="You can write any valid JS expression here" infotipId={`folder-${varType}-var`} />
+          <span>{t('FOLDER_SETTINGS.VARS.EXPR')}</span>
+          <InfoTip content={t('FOLDER_SETTINGS.VARS.INFO_EXPR')} infotipId={`folder-${varType}-var`} />
         </div>
       ),
-      placeholder: varType === 'request' ? 'Value' : 'Expr',
+      placeholder: varType === 'request' ? t('FOLDER_SETTINGS.VARS.VALUE') : t('FOLDER_SETTINGS.VARS.EXPR'),
       render: ({ row, value, onChange, isLastEmptyRow, rowIndex }) => (
         <VarValueCell
           editor={(
@@ -90,7 +92,7 @@ const VarsTable = ({ folder, collection, vars, varType, initialScroll = 0, isDra
               onChange={onChange}
               collection={collection}
               item={folder}
-              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? 'Value' : 'Expr') : ''}
+              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? t('FOLDER_SETTINGS.VARS.VALUE') : t('FOLDER_SETTINGS.VARS.EXPR')) : ''}
             />
           )}
           renderTypeSelector={!isLastEmptyRow && varType === 'request'

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from 'providers/Theme';
@@ -21,6 +22,7 @@ const headerAutoCompleteList = StandardHTTPHeaders.map((e) => e.header);
 
 const Headers = ({ collection }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { storedTheme } = useTheme();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
@@ -54,13 +56,13 @@ const Headers = ({ collection }) => {
     if (key === 'name') {
       if (!row.name || row.name.trim() === '') return null;
       if (!headerNameRegex.test(row.name)) {
-        return 'Header name cannot contain spaces or newlines';
+        return t('COLLECTION_SETTINGS.HEADERS.ERROR_NAME_SPACES');
       }
     }
     if (key === 'value') {
       if (!row.value) return null;
       if (!headerValueRegex.test(row.value)) {
-        return 'Header value cannot contain newlines';
+        return t('COLLECTION_SETTINGS.HEADERS.ERROR_VALUE_NEWLINES');
       }
     }
     return null;
@@ -76,9 +78,9 @@ const Headers = ({ collection }) => {
   const columns = [
     {
       key: 'name',
-      name: 'Name',
+      name: t('COLLECTION_SETTINGS.HEADERS.NAME'),
       isKeyField: true,
-      placeholder: 'Name',
+      placeholder: t('COLLECTION_SETTINGS.HEADERS.NAME'),
       width: '20%',
       render: ({ value, onChange }) => (
         <SingleLineEditor
@@ -88,14 +90,14 @@ const Headers = ({ collection }) => {
           onChange={(newValue) => onChange(newValue.replace(/[\r\n]/g, ''))}
           autocomplete={headerAutoCompleteList}
           collection={collection}
-          placeholder={!value ? 'Name' : ''}
+          placeholder={!value ? t('COLLECTION_SETTINGS.HEADERS.NAME') : ''}
         />
       )
     },
     {
       key: 'value',
-      name: 'Value',
-      placeholder: 'Value',
+      name: t('COLLECTION_SETTINGS.HEADERS.VALUE'),
+      placeholder: t('COLLECTION_SETTINGS.HEADERS.VALUE'),
       render: ({ value, onChange }) => (
         <SingleLineEditor
           value={value || ''}
@@ -104,7 +106,7 @@ const Headers = ({ collection }) => {
           onChange={onChange}
           collection={collection}
           autocomplete={MimeTypes}
-          placeholder={!value ? 'Value' : ''}
+          placeholder={!value ? t('COLLECTION_SETTINGS.HEADERS.VALUE') : ''}
         />
       )
     },
@@ -121,7 +123,7 @@ const Headers = ({ collection }) => {
     return (
       <StyledWrapper className="h-full w-full">
         <div className="text-xs mb-4 text-muted">
-          Add request headers that will be sent with every request in this collection.
+          {t('COLLECTION_SETTINGS.HEADERS.DESCRIPTION')}
         </div>
         <BulkEditor
           params={headers}
@@ -152,12 +154,12 @@ const Headers = ({ collection }) => {
       />
       <div className="flex justify-end mt-2">
         <button className="text-link select-none" data-testid="bulk-edit-toggle" onClick={toggleBulkEditMode}>
-          Bulk Edit
+          {t('COLLECTION_SETTINGS.HEADERS.BULK_EDIT')}
         </button>
       </div>
       <div className="mt-6">
         <Button type="submit" size="sm" onClick={handleSave}>
-          Save
+          {t('COLLECTION_SETTINGS.HEADERS.SAVE')}
         </Button>
       </div>
     </StyledWrapper>
