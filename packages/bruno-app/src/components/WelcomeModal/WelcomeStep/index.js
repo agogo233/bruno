@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IconFolder as IconFolderTabler,
   IconGitFork,
@@ -7,31 +8,34 @@ import {
 } from '@tabler/icons';
 import StyledWrapper from './StyledWrapper';
 
-const highlights = [
+const WelcomeStep = () => {
+  const { t } = useTranslation();
+
+  const highlights = [
   {
     icon: IconFolderTabler,
-    title: 'Filesystem only',
-    desc: 'Collections are plain files on your disk. No cloud sync, no proprietary lock-in.'
+    title: t('WELCOME_STEP.HIGHLIGHT_1_TITLE'),
+    desc: t('WELCOME_STEP.HIGHLIGHT_1_DESC')
   },
   {
     icon: IconGitFork,
-    title: 'Git-friendly',
-    desc: 'Every request is a readable file. Commit, branch, review, and collaborate using the tools you already know.'
+    title: t('WELCOME_STEP.HIGHLIGHT_2_TITLE'),
+    desc: t('WELCOME_STEP.HIGHLIGHT_2_DESC')
   },
   {
     icon: IconLock,
-    title: 'Privacy-focused',
-    desc: 'No account, no login. Bruno works entirely offline, your API keys never leave your machine.'
+    title: t('WELCOME_STEP.HIGHLIGHT_3_TITLE'),
+    desc: t('WELCOME_STEP.HIGHLIGHT_3_DESC')
   },
   {
     icon: IconRocket,
-    title: 'Fast and lightweight',
-    desc: 'Built to be snappy. No bloated runtimes, just a fast, focused tool for exploring and testing APIs.'
+    title: t('WELCOME_STEP.HIGHLIGHT_4_TITLE'),
+    desc: t('WELCOME_STEP.HIGHLIGHT_4_DESC')
   }
-];
+  ];
 
-const WelcomeStep = () => (
-  <StyledWrapper className="step-body">
+  return (
+    <StyledWrapper className="step-body">
     <div className="highlights">
       {highlights.map((item) => {
         const Icon = item.icon;
@@ -48,7 +52,8 @@ const WelcomeStep = () => (
         );
       })}
     </div>
-  </StyledWrapper>
-);
+    </StyledWrapper>
+  );
+};
 
 export default WelcomeStep;

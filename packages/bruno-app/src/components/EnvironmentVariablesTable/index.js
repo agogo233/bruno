@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TableVirtuoso } from 'react-virtuoso';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -93,7 +94,8 @@ const EnvVarValueCell = ({
   formik,
   handleRowFocus,
   handleSave,
-  renderExtraValueContent
+  renderExtraValueContent,
+  t
 }) => {
   const editorRef = useRef(null);
   const [compact, setCompact] = useState(true);
@@ -127,7 +129,7 @@ const EnvVarValueCell = ({
             collection={collection}
             name={`${actualIndex}.value`}
             value={valueToString(variable.value, 2)}
-            placeholder={variable.value == null || (typeof variable.value === 'string' && variable.value.trim() === '') ? 'Value' : ''}
+            placeholder={variable.value == null || (typeof variable.value === 'string' && variable.value.trim() === '') ? t('ENV_VARIABLES_TABLE.VALUE') : ''}
             isSecret={showAsSecret}
             hideSecretEye={showAsSecret}
             onMaskChange={setMasked}
@@ -185,6 +187,7 @@ const EnvironmentVariablesTable = ({
   searchQuery = '',
   variableType = 'variables'
 }) => {
+  const { t } = useTranslation();
   const isSecretTab = variableType === 'secrets';
   const { storedTheme } = useTheme();
   const { globalEnvironments, activeGlobalEnvironmentUid } = useSelector((state) => state.globalEnvironments);
@@ -361,10 +364,10 @@ const EnvironmentVariablesTable = ({
           then: (schema) => schema.optional(),
           otherwise: (schema) =>
             schema
-              .required('Name cannot be empty')
+              .required(t('ENV_VARIABLES_TABLE.NAME_REQUIRED'))
               .matches(
                 variableNameRegex,
-                'Name contains invalid characters. Must only contain alphanumeric characters, "-", "_", "." and cannot start with a digit.'
+                t('ENV_VARIABLES_TABLE.NAME_INVALID')
               )
               .trim()
         }),
@@ -390,11 +393,11 @@ const EnvironmentVariablesTable = ({
 
         if (!variable.name || variable.name.trim() === '') {
           if (!errors[index]) errors[index] = {};
-          errors[index].name = 'Name cannot be empty';
+          errors[index].name = t('ENV_VARIABLES_TABLE.NAME_REQUIRED');
         } else if (!variableNameRegex.test(variable.name)) {
           if (!errors[index]) errors[index] = {};
           errors[index].name
-            = 'Name contains invalid characters. Must only contain alphanumeric characters, "-", "_", "." and cannot start with a digit.';
+            = t('ENV_VARIABLES_TABLE.NAME_INVALID');
         } else if (variable.secret && duplicateSecrets.has(variable.name.trim())) {
           if (!errors[index]) errors[index] = {};
           errors[index].name = DUPLICATE_SECRET_NAME_FIELD_ERROR;
@@ -655,7 +658,7 @@ const EnvironmentVariablesTable = ({
 
     const hasChanges = JSON.stringify(activeCurrent.map(stripEnvVarUid)) !== JSON.stringify(activeSaved.map(stripEnvVarUid));
     if (!hasChanges) {
-      toast.error('No changes to save');
+      toast.error(t('ENV_VARIABLES_TABLE.NO_CHANGES'));
       return;
     }
 
@@ -670,7 +673,7 @@ const EnvironmentVariablesTable = ({
     });
 
     if (hasValidationErrors) {
-      toast.error('Please fix validation errors before saving');
+      toast.error(t('ENV_VARIABLES_TABLE.VALIDATION_ERROR'));
       return;
     }
 
@@ -684,7 +687,7 @@ const EnvironmentVariablesTable = ({
 
     onSave(cloneDeep(persistedVariables))
       .then(() => {
-        toast.success('Changes saved successfully');
+        toast.success(t('ENV_VARIABLES_TABLE.SAVED'));
 
         // Preserve unsaved edits on the other tab across the post-save reinit via the
         // draft: keep it if the other tab is still dirty, clear it otherwise.
@@ -718,9 +721,9 @@ const EnvironmentVariablesTable = ({
       })
       .catch((error) => {
         console.error(error);
-        toast.error('An error occurred while saving the changes');
+        toast.error(t('ENV_VARIABLES_TABLE.SAVE_ERROR'));
       });
-  }, [formik.values, environment.variables, onSave, onDraftChange, onDraftClear, setIsModified, isSecretTab, buildSortOrder, sortMode]);
+  }, [formik.values, environment.variables, onSave, onDraftChange, onDraftClear, setIsModified, isSecretTab, buildSortOrder, sortMode, t]);
 
   const handleReset = useCallback(() => {
     const belongsToActiveTab = (variable) => (isSecretTab ? !!variable.secret : !variable.secret);
@@ -772,7 +775,7 @@ const EnvironmentVariablesTable = ({
     const hasChanges
       = JSON.stringify(persistedVariables.map(stripEnvVarUid)) !== JSON.stringify(savedValues.map(stripEnvVarUid));
     if (!hasChanges) {
-      toast.error('No changes to save');
+      toast.error(t('ENV_VARIABLES_TABLE.NO_CHANGES'));
       return;
     }
 
@@ -787,7 +790,7 @@ const EnvironmentVariablesTable = ({
     });
 
     if (hasValidationErrors) {
-      toast.error('Please fix validation errors before saving');
+      toast.error(t('ENV_VARIABLES_TABLE.VALIDATION_ERROR'));
       return;
     }
 
@@ -798,7 +801,7 @@ const EnvironmentVariablesTable = ({
 
     onSave(cloneDeep(persistedVariables))
       .then(() => {
-        toast.success('Changes saved successfully');
+        toast.success(t('ENV_VARIABLES_TABLE.SAVED'));
         onDraftClear();
 
         sortOrderRef.current = buildSortOrder(persistedVariables, sortMode);
@@ -820,9 +823,9 @@ const EnvironmentVariablesTable = ({
       })
       .catch((error) => {
         console.error(error);
-        toast.error('An error occurred while saving the changes');
+        toast.error(t('ENV_VARIABLES_TABLE.SAVE_ERROR'));
       });
-  }, [formik.values, environment.variables, onSave, onDraftClear, setIsModified, isSecretTab, buildSortOrder, sortMode]);
+  }, [formik.values, environment.variables, onSave, onDraftClear, setIsModified, isSecretTab, buildSortOrder, sortMode, t]);
 
   const handleSaveRef = useRef(handleSave);
   handleSaveRef.current = handleSave;
@@ -908,7 +911,7 @@ const EnvironmentVariablesTable = ({
   return (
     <StyledWrapper className={`${resizing ? 'is-resizing' : ''} has-description-column`.trim()}>
       {isSearchActive && displayedVariables.length === 0 ? (
-        <div className="no-results">No results found for &ldquo;{searchQuery.trim()}&rdquo;</div>
+        <div className="no-results">{t('ENV_VARIABLES_TABLE.NO_RESULTS', { searchQuery: searchQuery.trim() })}</div>
       ) : (
         <TableVirtuoso
           className="table-container"
@@ -930,7 +933,7 @@ const EnvironmentVariablesTable = ({
                   if (!e.target.closest('.resize-handle')) cycleSortMode();
                 }}
               >
-                <ColumnSortHeader label="Name" SortIcon={SortIcon} sortLabel={sortLabel} />
+                <ColumnSortHeader label={t('ENV_VARIABLES_TABLE.NAME')} SortIcon={SortIcon} sortLabel={sortLabel} />
                 <div
                   className={`resize-handle ${resizing === 'name' ? 'resizing' : ''}`}
                   style={{ height: tableHeight > 0 ? `${tableHeight}px` : undefined }}
@@ -938,14 +941,14 @@ const EnvironmentVariablesTable = ({
                 />
               </td>
               <td style={{ width: columnWidths.value }}>
-                Value
+                {t('ENV_VARIABLES_TABLE.VALUE')}
                 <div
                   className={`resize-handle ${resizing === 'value' ? 'resizing' : ''}`}
                   style={{ height: tableHeight > 0 ? `${tableHeight}px` : undefined }}
                   onMouseDown={(e) => handleResizeStart(e, 'value')}
                 />
               </td>
-              <td style={{ width: columnWidths.description }}>Description</td>
+              <td style={{ width: columnWidths.description }}>{t('ENV_VARIABLES_TABLE.DESCRIPTION')}</td>
               <td className="actions-column"></td>
             </tr>
           )}
@@ -993,7 +996,7 @@ const EnvironmentVariablesTable = ({
                         name={`${actualIndex}.name`}
                         data-testid="env-var-name-input"
                         value={variable.name}
-                        placeholder={!variable.name || (typeof variable.name === 'string' && variable.name.trim() === '') ? 'Name' : ''}
+                        placeholder={!variable.name || (typeof variable.name === 'string' && variable.name.trim() === '') ? t('ENV_VARIABLES_TABLE.NAME') : ''}
                         onChange={(e) => handleNameChange(actualIndex, e)}
                         onFocus={() => handleRowFocus(variable.uid)}
                         onBlur={() => {
@@ -1018,6 +1021,7 @@ const EnvironmentVariablesTable = ({
                     handleRowFocus={handleRowFocus}
                     handleSave={handleSave}
                     renderExtraValueContent={renderExtraValueContent}
+                    t={t}
                   />
                 </td>
                 <td style={{ width: columnWidths.description }}>
@@ -1026,7 +1030,7 @@ const EnvironmentVariablesTable = ({
                     collection={_collection}
                     name={`${actualIndex}.description`}
                     value={variable.description ?? ''}
-                    placeholder={isLastEmptyRow && (!variable.description || (typeof variable.description === 'string' && variable.description.trim() === '')) ? 'Description' : ''}
+                    placeholder={isLastEmptyRow && (!variable.description || (typeof variable.description === 'string' && variable.description.trim() === '')) ? t('ENV_VARIABLES_TABLE.DESCRIPTION') : ''}
                     onChange={(newValue) => {
                       formik.setFieldValue(`${actualIndex}.description`, newValue, true);
                       if (isLastRow) {
@@ -1063,10 +1067,10 @@ const EnvironmentVariablesTable = ({
       <div className="button-container">
         <div className="flex items-center">
           <button type="button" className="submit" onClick={handleSave} data-testid="save-env">
-            Save
+            {t('ENV_VARIABLES_TABLE.SAVE_BTN')}
           </button>
           <button type="button" className="submit reset ml-2" onClick={handleReset} data-testid="reset-env">
-            Reset
+            {t('ENV_VARIABLES_TABLE.RESET_BTN')}
           </button>
         </div>
       </div>

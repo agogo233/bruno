@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -14,13 +15,13 @@ import StyledWrapper from './StyledWrapper';
 import { sortRequests } from './utils';
 
 const COLUMNS = [
-  { key: 'method', label: 'Method', width: 80, align: 'left' },
-  { key: 'status', label: 'Status', width: 70, align: 'left' },
-  { key: 'domain', label: 'Domain', width: 180, align: 'left' },
-  { key: 'path', label: 'Path', width: 300, align: 'left' },
-  { key: 'time', label: 'Time', width: 110, align: 'left' },
-  { key: 'duration', label: 'Duration', width: 100, align: 'right' },
-  { key: 'size', label: 'Size', width: 80, align: 'right' }
+  { key: 'method', labelKey: 'METHOD', width: 80, align: 'left' },
+  { key: 'status', labelKey: 'STATUS', width: 70, align: 'left' },
+  { key: 'domain', labelKey: 'DOMAIN', width: 180, align: 'left' },
+  { key: 'path', labelKey: 'PATH', width: 300, align: 'left' },
+  { key: 'time', labelKey: 'TIME', width: 110, align: 'left' },
+  { key: 'duration', labelKey: 'DURATION', width: 100, align: 'right' },
+  { key: 'size', labelKey: 'SIZE', width: 80, align: 'right' }
 ];
 
 const MethodBadge = ({ method }) => {
@@ -133,6 +134,7 @@ const RequestRow = ({ request, isSelected, onClick, gridTemplateColumns }) => {
 };
 
 const NetworkTab = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [sortConfig, setSortConfig] = usePersistedState({ key: 'devtools-network-sort', default: { key: null, direction: null } });
   const [savedColWidths, setSavedColWidths] = usePersistedState({ key: 'devtools-network-col-widths', default: null });
@@ -199,8 +201,8 @@ const NetworkTab = () => {
         {filteredRequests.length === 0 ? (
           <div className="network-empty">
             <IconNetwork size={48} strokeWidth={1} />
-            <p>No network requests</p>
-            <span>Requests will appear here as you make API calls</span>
+            <p>{t('DEVTOOLS.NETWORK_TAB.NO_NETWORK_REQUESTS')}</p>
+            <span>{t('DEVTOOLS.NETWORK_TAB.NO_NETWORK_REQUESTS_HINT')}</span>
           </div>
         ) : (
           <div className={`requests-container${resizingIdx !== null ? ' is-resizing' : ''}`}>
@@ -212,7 +214,7 @@ const NetworkTab = () => {
                   onClick={() => handleHeaderClick(col.key)}
                   data-testid={`network-header-${col.key}`}
                 >
-                  <span title={col.label}>{col.label}</span>
+                  <span title={t(`DEVTOOLS.NETWORK_TAB.${col.labelKey}`)}>{t(`DEVTOOLS.NETWORK_TAB.${col.labelKey}`)}</span>
                   {sortConfig.key === col.key && (
                     sortConfig.direction === 'asc'
                       ? <IconArrowUp size={14} strokeWidth={2} data-testid="sort-icon-asc" />

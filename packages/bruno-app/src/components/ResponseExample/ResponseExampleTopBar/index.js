@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import IconEdit from 'components/Icons/IconEdit';
 import { IconCode, IconDeviceFloppy } from '@tabler/icons';
 import StyledWrapper from './StyledWrapper';
@@ -20,6 +21,7 @@ const ResponseExampleTopBar = ({
   onGenerateCode
 }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const example = useMemo(() => {
@@ -112,7 +114,7 @@ const ResponseExampleTopBar = ({
                     value={example?.name || ''}
                     onChange={handleNameChange}
                     className="example-input example-input-name"
-                    placeholder="Enter example name"
+                    placeholder={t('RESPONSE_EXAMPLE.TOP_BAR.NAME_PLACEHOLDER')}
                     autoFocus
                     data-testid="response-example-name-input"
                   />
@@ -122,7 +124,7 @@ const ResponseExampleTopBar = ({
                     value={example?.description || ''}
                     onChange={handleDescriptionChange}
                     className="example-input example-input-description"
-                    placeholder="Enter example description"
+                    placeholder={t('RESPONSE_EXAMPLE.TOP_BAR.DESCRIPTION_PLACEHOLDER')}
                     rows={3}
                     data-testid="response-example-description-input"
                   />
@@ -136,7 +138,7 @@ const ResponseExampleTopBar = ({
                 onClick={handleCancel}
                 data-testid="response-example-cancel-btn"
               >
-                Cancel
+                {t('COMMON.CANCEL')}
               </Button>
               <Button
                 color="primary"
@@ -145,7 +147,7 @@ const ResponseExampleTopBar = ({
                 onClick={handleSave}
                 data-testid="response-example-save-btn"
               >
-                Save
+                {t('COMMON.SAVE')}
               </Button>
             </div>
           </div>
@@ -172,8 +174,8 @@ const ResponseExampleTopBar = ({
                 className="response-example-description-container"
                 textClassName="response-example-description leading-relaxed max-w-fit"
                 buttonClassName="text-blue-600 hover:text-blue-800 font-medium"
-                viewMoreText="View More"
-                viewLessText="View Less"
+                viewMoreText={t('RESPONSE_EXAMPLE.TOP_BAR.VIEW_MORE')}
+                viewLessText={t('RESPONSE_EXAMPLE.TOP_BAR.VIEW_LESS')}
                 dataTestId="response-example-description"
               />
             )}
@@ -185,7 +187,7 @@ const ResponseExampleTopBar = ({
               size="sm"
               icon={<IconCode size={16} color={theme.examples.buttonIconColor} />}
               onClick={handleGenerateCode}
-              title="Generate Code"
+                title={t('RESPONSE_EXAMPLE.TOP_BAR.GENERATE_CODE')}
               data-testid="response-example-generate-code-btn"
             />
             <Button
@@ -193,9 +195,9 @@ const ResponseExampleTopBar = ({
               size="sm"
               icon={<IconEdit size={16} color={theme.examples.buttonIconColor} />}
               onClick={onEditToggle}
-              data-testid="response-example-edit-btn"
-            >
-              Edit Example
+                data-testid="response-example-edit-btn"
+              >
+                {t('RESPONSE_EXAMPLE.TOP_BAR.EDIT_EXAMPLE')}
             </Button>
           </div>
         </div>

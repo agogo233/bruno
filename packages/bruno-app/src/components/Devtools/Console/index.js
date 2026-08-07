@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactJson from 'react-json-view';
@@ -190,6 +191,7 @@ const LogMessage = ({ message, args }) => {
 };
 
 const ConsoleTab = ({ logs, filters, logCounts, onFilterToggle, onToggleAll, onClearLogs }) => {
+  const { t } = useTranslation();
   const logsEndRef = useRef(null);
   const prevLogsCountRef = useRef(0);
 
@@ -209,8 +211,8 @@ const ConsoleTab = ({ logs, filters, logCounts, onFilterToggle, onToggleAll, onC
         {filteredLogs.length === 0 ? (
           <div className="console-empty">
             <IconTerminal2 size={48} strokeWidth={1} />
-            <p>No logs to display</p>
-            <span>Logs will appear here as your application runs</span>
+            <p>{t('DEVTOOLS.CONSOLE.NO_LOGS')}</p>
+            <span>{t('DEVTOOLS.CONSOLE.NO_LOGS_HINT')}</span>
           </div>
         ) : (
           <div className="logs-container">
@@ -232,6 +234,7 @@ const ConsoleTab = ({ logs, filters, logCounts, onFilterToggle, onToggleAll, onC
 };
 
 const Console = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { logs, filters, activeTab, selectedRequest, selectedError, networkFilters, debugErrors } = useSelector((state) => state.logs);
   const collections = useSelector((state) => state.collections.collections);
@@ -379,17 +382,17 @@ const Console = () => {
                 counts={logCounts}
                 onFilterToggle={handleFilterToggle}
                 onToggleAll={handleToggleAllFilters}
-                headerLabel="Filter by Type"
-                title="Filter logs by type"
-                renderIcon={(type) => <LogIcon type={type} />}
-              />
-            </div>
-            <div className="action-controls">
-              <button
-                className="control-button"
-                onClick={handleClearLogs}
-                title="Clear all logs"
-              >
+                 headerLabel={t('DEVTOOLS.CONSOLE.FILTER_BY_TYPE')}
+                 title={t('DEVTOOLS.CONSOLE.FILTER_BY_TYPE_TITLE')}
+                 renderIcon={(type) => <LogIcon type={type} />}
+               />
+             </div>
+             <div className="action-controls">
+               <button
+                 className="control-button"
+                 onClick={handleClearLogs}
+                 title={t('DEVTOOLS.CONSOLE.CLEAR_ALL_LOGS')}
+               >
                 <IconTrash size={16} strokeWidth={1.5} />
               </button>
             </div>
@@ -404,9 +407,9 @@ const Console = () => {
                 counts={requestCounts}
                 onFilterToggle={handleNetworkFilterToggle}
                 onToggleAll={handleToggleAllNetworkFilters}
-                headerLabel="Filter by Method"
-                title="Filter requests by method"
-              />
+                 headerLabel={t('DEVTOOLS.CONSOLE.FILTER_BY_METHOD')}
+                 title={t('DEVTOOLS.CONSOLE.FILTER_BY_METHOD_TITLE')}
+               />
             </div>
           </div>
         );
@@ -446,7 +449,7 @@ const Console = () => {
             onClick={() => handleTabChange('console')}
           >
             <IconTerminal2 size={16} strokeWidth={1.5} />
-            <span>Console</span>
+            <span>{t('DEVTOOLS.CONSOLE.CONSOLE')}</span>
           </button>
 
           <button
@@ -454,7 +457,7 @@ const Console = () => {
             onClick={() => handleTabChange('network')}
           >
             <IconNetwork size={16} strokeWidth={1.5} />
-            <span>Network</span>
+            <span>{t('DEVTOOLS.CONSOLE.NETWORK')}</span>
           </button>
 
           <button
@@ -462,7 +465,7 @@ const Console = () => {
             onClick={() => handleTabChange('performance')}
           >
             <IconDashboard size={16} strokeWidth={1.5} />
-            <span>Performance</span>
+            <span>{t('DEVTOOLS.CONSOLE.PERFORMANCE')}</span>
           </button>
 
           <button
@@ -470,7 +473,7 @@ const Console = () => {
             onClick={() => handleTabChange('terminal')}
           >
             <IconTerminal2 size={16} strokeWidth={1.5} />
-            <span>Terminal</span>
+            <span>{t('DEVTOOLS.CONSOLE.TERMINAL')}</span>
           </button>
 
           {/* <button
@@ -487,7 +490,7 @@ const Console = () => {
           <button
             className="control-button close-button"
             onClick={handlecloseConsole}
-            title="Close console"
+            title={t('DEVTOOLS.CONSOLE.CLOSE_CONSOLE')}
           >
             <IconX size={16} strokeWidth={1.5} />
           </button>

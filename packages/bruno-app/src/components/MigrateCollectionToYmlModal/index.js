@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { migrateCollectionToYml, cancelMigrateCollectionToYml } from 'providers/ReduxStore/slices/collections/actions';
 import { hideMigrateToYmlModal } from 'providers/ReduxStore/slices/collection-migration';
@@ -10,15 +11,16 @@ import Button from 'ui/Button';
 import StyledWrapper from './StyledWrapper';
 
 const PHASE_LABELS = {
-  parsing: 'Converting files',
-  writing: 'Writing yml files',
-  finalizing: 'Removing bru files'
+  parsing: 'parsing',
+  writing: 'writing',
+  finalizing: 'finalizing'
 };
 
 // Rendered at app level (AppProvider) and driven by the collectionMigration slice: the
 // collection is removed from the store while it migrates, so a modal hosted under the
 // collection UI would unmount mid-migration.
 const MigrateCollectionToYmlModal = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const migration = useSelector((state) => state.collectionMigration);
   // Present while confirming; gone during migration — name/pathname come from the slice.
@@ -60,10 +62,10 @@ const MigrateCollectionToYmlModal = () => {
         migration.collectionName
       );
       if (result?.success) {
-        toast.success('Collection backup exported');
+        toast.success(t('MIGRATE_COLLECTION.BACKUP_EXPORTED'));
       }
     } catch (error) {
-      toast.error('Failed to export backup: ' + error.message);
+      toast.error(t('MIGRATE_COLLECTION.BACKUP_FAILED'));
     } finally {
       setIsExporting(false);
     }
@@ -72,16 +74,16 @@ const MigrateCollectionToYmlModal = () => {
   const confirmDisabled = isMigrating ? isCancelling : isExporting || !isCollectionMounted;
   const progressPercent = migration.total ? Math.round((migration.current / migration.total) * 100) : 0;
   const progressLabel = migration.phase
-    ? `${PHASE_LABELS[migration.phase] || migration.phase}: ${migration.current}/${migration.total}`
-    : 'Preparing…';
+    ? `${t(`MIGRATE_COLLECTION.PHASE_${migration.phase.toUpperCase()}`)}: ${migration.current}/${migration.total}`
+    : t('MIGRATE_COLLECTION.PREPARING');
 
   return (
     <Portal>
       <StyledWrapper>
         <Modal
           size="md"
-          title="Migrate to YML format"
-          confirmText={isMigrating ? (isCancelling ? 'Cancelling…' : 'Cancel') : 'Migrate'}
+          title={t('MIGRATE_COLLECTION.TITLE')}
+          confirmText={isMigrating ? (isCancelling ? t('MIGRATE_COLLECTION.CANCELLING') : t('COMMON.CANCEL')) : t('MIGRATE_COLLECTION.MIGRATE')}
           confirmButtonColor={isMigrating ? 'danger' : 'primary'}
           confirmDisabled={confirmDisabled}
           handleConfirm={isMigrating ? handleCancelMigration : handleMigrate}
@@ -93,7 +95,7 @@ const MigrateCollectionToYmlModal = () => {
         >
           <div>
             <p>
-              This will convert all files in <strong>{migration.collectionName}</strong> from <code>.bru</code> format to <code>.yml</code> format.
+              {t('MIGRATE_COLLECTION.DESCRIPTION', { collectionName: migration.collectionName })}
             </p>
             {isMigrating ? (
               <div
@@ -103,7 +105,7 @@ const MigrateCollectionToYmlModal = () => {
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label={isCancelling ? 'Cancelling and restoring the collection' : progressLabel}
+                aria-label={isCancelling ? t('MIGRATE_COLLECTION.ARIA_CANCELLING') : progressLabel}
               >
                 <div className="migration-progress-track">
                   <div
@@ -113,29 +115,29 @@ const MigrateCollectionToYmlModal = () => {
                   />
                 </div>
                 <div className="migration-progress-label" data-testid="migration-progress-label">
-                  {isCancelling ? 'Cancelling and restoring the collection…' : progressLabel}
+                  {isCancelling ? t('MIGRATE_COLLECTION.CANCELLING_RESTORE') : progressLabel}
                 </div>
               </div>
             ) : (
               <>
                 <div className="mt-4 text-sm text-muted">
-                  <p className="font-medium mb-2">What will happen:</p>
+                  <p className="font-medium mb-2">{t('MIGRATE_COLLECTION.WHAT_WILL_HAPPEN')}:</p>
                   <ul className="list-disc ml-5 flex flex-col gap-1">
-                    <li>All <code>.bru</code> request files will be converted to <code>.yml</code></li>
-                    <li>Environment files will be converted to YML format</li>
-                    <li><code>bruno.json</code> will be replaced with <code>opencollection.yml</code></li>
-                    <li>Open tabs will be closed and the collection will be reloaded</li>
+                    <li>{t('MIGRATE_COLLECTION.WHAT_HAPPEN_1')}</li>
+                    <li>{t('MIGRATE_COLLECTION.WHAT_HAPPEN_2')}</li>
+                    <li>{t('MIGRATE_COLLECTION.WHAT_HAPPEN_3')}</li>
+                    <li>{t('MIGRATE_COLLECTION.WHAT_HAPPEN_4')}</li>
                   </ul>
                   {!isCollectionMounted && (
-                    <p className="mt-3">Waiting for the collection to finish loading before migration can start…</p>
+                    <p className="mt-3">{t('MIGRATE_COLLECTION.WAITING_FOR_LOAD')}</p>
                   )}
                 </div>
                 <div className="backup-section mt-4">
                   <div className="backup-section-head">
-                    <span className="backup-section-title">Backup</span>
+                    <span className="backup-section-title">{t('MIGRATE_COLLECTION.BACKUP')}</span>
                   </div>
-                  <p className="backup-section-help">
-                    Export this collection as a ZIP archive before migrating, in case you want to restore it later.
+                    <p className="backup-section-help">
+                      {t('MIGRATE_COLLECTION.BACKUP_HELP')}
                   </p>
                   <div className="backup-section-action">
                     <Button
@@ -146,7 +148,7 @@ const MigrateCollectionToYmlModal = () => {
                       onClick={handleExportBackup}
                       disabled={isExporting}
                     >
-                      {isExporting ? 'Exporting…' : 'Export Collection'}
+                      {isExporting ? t('MIGRATE_COLLECTION.EXPORTING') : t('MIGRATE_COLLECTION.EXPORT_COLLECTION')}
                     </Button>
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import toast from 'react-hot-toast';
 import Bruno from 'components/Bruno';
@@ -16,6 +17,7 @@ import StyledWrapper from './StyledWrapper';
 const TOTAL_STEPS = 4;
 
 const WelcomeModal = ({ onDismiss, onImportCollection, onCreateCollection, onOpenCollection, onStartRequest }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const preferences = useSelector((state) => state.app.preferences);
   const defaultLocation = get(preferences, 'general.defaultLocation', '');
@@ -51,7 +53,7 @@ const WelcomeModal = ({ onDismiss, onImportCollection, onCreateCollection, onOpe
         }
       };
       return dispatch(savePreferences(updatedPreferences)).catch(() => {
-        toast.error('Failed to save preferences');
+        toast.error(t('WELCOME_MODAL.FAILED_SAVE_PREFERENCES'));
       });
     }
     return Promise.resolve();
@@ -107,11 +109,11 @@ const WelcomeModal = ({ onDismiss, onImportCollection, onCreateCollection, onOpe
             <Bruno width={48} />
           </div>
           <h1 className="welcome-heading">
-            {step === 1 ? 'Welcome to Bruno' : step === 4 ? 'Ready to go!' : 'Set up Bruno'}
+             {step === 1 ? t('WELCOME_MODAL.STEP_1_TITLE') : step === 4 ? t('WELCOME_MODAL.STEP_4_TITLE') : t('WELCOME_MODAL.STEP_2_3_TITLE')}
           </h1>
           {step === 1 && (
-            <p className="welcome-tagline">
-              A fast, Git-friendly, and open-source API client.
+             <p className="welcome-tagline">
+               {t('WELCOME_MODAL.TAGLINE')}
             </p>
           )}
         </div>
@@ -134,21 +136,21 @@ const WelcomeModal = ({ onDismiss, onImportCollection, onCreateCollection, onOpe
 
           <div className="footer-buttons">
             <Button type="button" color="secondary" variant="ghost" onClick={handleSaveAndDismiss}>
-              Skip
+              {t('WELCOME_MODAL.SKIP')}
             </Button>
             {step > 1 && (
               <Button type="button" color="secondary" variant="ghost" onClick={() => goTo(step - 1)}>
-                Back
+                {t('WELCOME_MODAL.BACK')}
               </Button>
             )}
             {!isLastStep && (
               <Button type="button" onClick={() => goTo(step + 1)}>
-                {step === 1 ? 'Get Started' : 'Next'}
+                {step === 1 ? t('WELCOME_MODAL.GET_STARTED') : t('WELCOME_MODAL.NEXT')}
               </Button>
             )}
             {isLastStep && (
               <Button type="button" color="secondary" onClick={handleSaveAndDismiss}>
-                I'll explore on my own
+                {t('WELCOME_MODAL.I_WILL_EXPLORE')}
               </Button>
             )}
           </div>

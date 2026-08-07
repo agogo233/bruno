@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { IconTerminal2, IconPlus } from '@tabler/icons';
@@ -214,6 +215,7 @@ const fitTerminal = (activeSessionId, container) => {
 };
 
 const TerminalTab = () => {
+  const { t } = useTranslation();
   const terminalRef = useRef(null);
   const [sessions, setSessions] = useState([]);
   const [activeSessionId, setActiveSessionId] = useState(null);
@@ -434,7 +436,7 @@ const TerminalTab = () => {
         {/* Left Sidebar */}
         <div className="terminal-sessions-sidebar">
           <div className="terminal-sessions-header">
-            <span>Sessions</span>
+            <span>{t('DEVTOOLS.TERMINAL.SESSIONS')}</span>
             <IconPlus
               size={16}
               style={{ cursor: 'pointer', color: '#888' }}
@@ -442,14 +444,14 @@ const TerminalTab = () => {
                 e.stopPropagation();
                 createNewSession();
               }}
-              title="New Terminal Session"
+              title={t('DEVTOOLS.TERMINAL.NEW_TERMINAL_SESSION')}
             />
           </div>
           <div className="terminal-sessions-list">
             {isLoading ? (
-              <div style={{ padding: '12px', color: '#888', fontSize: '13px' }}>Loading sessions...</div>
+              <div style={{ padding: '12px', color: '#888', fontSize: '13px' }}>{t('DEVTOOLS.TERMINAL.LOADING_SESSIONS')}</div>
             ) : sessions.length === 0 ? (
-              <div style={{ padding: '12px', color: '#888', fontSize: '13px' }}>No active sessions</div>
+              <div style={{ padding: '12px', color: '#888', fontSize: '13px' }}>{t('DEVTOOLS.TERMINAL.NO_ACTIVE_SESSIONS')}</div>
             ) : (
               <SessionList
                 sessions={sessions}
@@ -466,7 +468,7 @@ const TerminalTab = () => {
           {!activeSessionId && window.ipcRenderer && (
             <div className="terminal-loading">
               <IconTerminal2 size={24} strokeWidth={1.5} />
-              <span>No terminal session selected</span>
+              <span>{t('DEVTOOLS.TERMINAL.NO_TERMINAL_SESSION_SELECTED')}</span>
             </div>
           )}
           <div

@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import Portal from 'components/Portal';
 
 const STATUS_CODES = [200, 201, 204, 400, 401, 403, 404, 500, 502, 503];
-const BODY_TYPES = [
-  { value: 'json', label: 'JSON' },
-  { value: 'text', label: 'Text' },
-  { value: 'xml', label: 'XML' },
-  { value: 'html', label: 'HTML' }
-];
 
-const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response Example', initialName = '', showMockFields = false, confirmText = 'Create Example' }) => {
+const CreateExampleModal = ({ isOpen, onClose, onSave, title, initialName = '', showMockFields = false, confirmText }) => {
+  const { t } = useTranslation();
+
+  const defaultTitle = t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.DEFAULT_TITLE');
+  const defaultConfirmText = t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.DEFAULT_CONFIRM_TEXT');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [nameError, setNameError] = useState('');
@@ -26,12 +25,12 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
   };
 
   const handleConfirm = () => {
-    if (name.trim()) {
-      if (showMockFields) {
-        onSave(name.trim(), description.trim(), { statusCode: Number(statusCode), bodyType });
-      } else {
-        onSave(name.trim(), description.trim());
-      }
+        if (name.trim()) {
+          if (showMockFields) {
+            onSave(name.trim(), description.trim(), { statusCode: Number(statusCode) });
+          } else {
+            onSave(name.trim(), description.trim());
+          }
       // Reset form
       setName('');
       setDescription('');
@@ -39,7 +38,7 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
       setStatusCode(200);
       setBodyType('json');
     } else {
-      setNameError('Example name is required');
+      setNameError(t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.NAME_REQUIRED'));
     }
   };
 
@@ -71,17 +70,17 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
     <Portal>
       <Modal
         size="md"
-        title={title}
+        title={title || defaultTitle}
         handleCancel={handleClose}
         handleConfirm={handleConfirm}
-        confirmText={confirmText}
-        cancelText="Cancel"
+        confirmText={confirmText || defaultConfirmText}
+        cancelText={t('COMMON.CANCEL')}
         isOpen={isOpen}
       >
         <div className="space-y-4">
           <div>
             <label htmlFor="exampleName" className="block font-medium">
-              Example Name<span className="text-red-600">*</span>
+              {t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.NAME_LABEL')}<span className="text-red-600">*</span>
             </label>
             <input
               id="exampleName"
@@ -102,7 +101,7 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
 
           <div>
             <label htmlFor="exampleDescription" className="block font-medium">
-              Description
+              {t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.DESCRIPTION_LABEL')}
             </label>
             <textarea
               id="exampleDescription"
@@ -118,7 +117,7 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
             <>
               <div>
                 <label htmlFor="statusCode" className="block font-medium">
-                  Status Code
+                  {t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.STATUS_CODE_LABEL')}
                 </label>
                 <select
                   id="statusCode"
@@ -135,19 +134,20 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title = 'Create Response 
 
               <div>
                 <label htmlFor="bodyType" className="block font-medium">
-                  Body Type
+                  {t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.BODY_TYPE_LABEL')}
                 </label>
-                <select
-                  id="bodyType"
-                  className="textbox mt-2 w-full"
-                  value={bodyType}
-                  onChange={(e) => setBodyType(e.target.value)}
-                  data-testid="body-type-select"
-                >
-                  {BODY_TYPES.map((type) => (
-                    <option key={type.value} value={type.value}>{type.label}</option>
-                  ))}
-                </select>
+                  <select
+                    id="bodyType"
+                    className="textbox mt-2 w-full"
+                    value={bodyType}
+                    onChange={(e) => setBodyType(e.target.value)}
+                    data-testid="body-type-select"
+                  >
+                    <option value="json">{t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.BODY_TYPES.JSON')}</option>
+                    <option value="text">{t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.BODY_TYPES.TEXT')}</option>
+                    <option value="xml">{t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.BODY_TYPES.XML')}</option>
+                    <option value="html">{t('RESPONSE_EXAMPLE.CREATE_EXAMPLE_MODAL.BODY_TYPES.HTML')}</option>
+                  </select>
               </div>
             </>
           )}
