@@ -35,15 +35,15 @@ import StatusDot from 'components/StatusDot';
 import { useTranslation } from 'react-i18next';
 
 const useTabConfig = (t) => [
-  { key: 'query', label: t('REQUEST_PANE.QUERY') },
-  { key: 'headers', label: t('REQUEST_PANE.HEADERS') },
-  { key: 'auth', label: t('REQUEST_PANE.AUTH') },
-  { key: 'vars', label: t('REQUEST_PANE.VARS') },
-  { key: 'script', label: t('REQUEST_PANE.SCRIPT') },
-  { key: 'assert', label: t('REQUEST_PANE.ASSERT') },
-  { key: 'tests', label: t('REQUEST_PANE.TESTS') },
-  { key: 'docs', label: t('REQUEST_PANE.DOCS') },
-  { key: 'settings', label: t('REQUEST_PANE.SETTINGS') }
+  { key: 'query', label: t('REQUEST_PANE.GQL.QUERY') },
+  { key: 'headers', label: t('REQUEST_PANE.GQL.HEADERS') },
+  { key: 'auth', label: t('REQUEST_PANE.GQL.AUTH') },
+  { key: 'vars', label: t('REQUEST_PANE.GQL.VARS') },
+  { key: 'script', label: t('REQUEST_PANE.GQL.SCRIPT') },
+  { key: 'assert', label: t('REQUEST_PANE.GQL.ASSERT') },
+  { key: 'tests', label: t('REQUEST_PANE.GQL.TESTS') },
+  { key: 'docs', label: t('REQUEST_PANE.GQL.DOCS') },
+  { key: 'settings', label: t('REQUEST_PANE.GQL.SETTINGS') }
 ];
 
 const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handleGqlClickReference }) => {
@@ -256,7 +256,7 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
                     <IconChevronRight size={14} strokeWidth={2} />
                   )}
                 </span>
-                <span>{t('REQUEST_PANE.VARIABLES')}</span>
+                <span>{t('REQUEST_PANE.GQL.VARIABLES')}</span>
               </button>
               {variablesOpen && (
                 <div className="flex-1 min-h-0 relative">
@@ -290,20 +290,20 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
   const queryMenuItems = useMemo(() => [
     {
       id: 'docs',
-      label: t('REQUEST_PANE.DOCS'),
+      label: t('REQUEST_PANE.GQL.DOCS'),
       leftSection: IconBook,
       onClick: toggleDocs
     },
     {
       id: 'schema-introspection',
-      label: schema && schemaSource === 'introspection' ? t('REQUEST_PANE.REFRESH_FROM_INTROSPECTION') : t('REQUEST_PANE.LOAD_FROM_INTROSPECTION'),
+      label: schema && schemaSource === 'introspection' ? t('REQUEST_PANE.GQL.REFRESH_INTROSPECTION') : t('REQUEST_PANE.GQL.LOAD_INTROSPECTION'),
       leftSection: schema && schemaSource === 'introspection' ? IconRefresh : IconDownload,
       onClick: () => loadSchema('introspection'),
       disabled: isSchemaLoading
     },
     {
       id: 'schema-file',
-      label: t('REQUEST_PANE.LOAD_FROM_FILE'),
+      label: t('REQUEST_PANE.GQL.LOAD_FROM_FILE'),
       leftSection: IconFile,
       onClick: () => loadSchema('file'),
       disabled: isSchemaLoading
@@ -326,17 +326,17 @@ const GraphQLRequestPane = ({ item, collection, onSchemaLoad, toggleDocs, handle
     case 'query':
       rightContent = (
         <div ref={schemaActionsRef} className="flex items-center gap-2">
-          <ActionIcon label={t('REQUEST_PANE.PRETTIFY')} onClick={handlePrettify}>
+          <ActionIcon label={t('REQUEST_PANE.GQL.PRETTIFY')} onClick={handlePrettify}>
             <IconWand size={14} strokeWidth={1.5} />
           </ActionIcon>
           <ActionIcon
-            label={showQueryBuilder ? t('REQUEST_PANE.HIDE_QUERY_BUILDER') : t('REQUEST_PANE.SHOW_QUERY_BUILDER')}
+            label={showQueryBuilder ? t('REQUEST_PANE.GQL.HIDE_QUERY_BUILDER') : t('REQUEST_PANE.GQL.SHOW_QUERY_BUILDER')}
             onClick={toggleQueryBuilder}
           >
             <IconSidebarToggle collapsed={!showQueryBuilder} size={16} strokeWidth={1.5} />
           </ActionIcon>
           <MenuDropdown items={queryMenuItems} placement="bottom-end">
-            <ActionIcon label={t('REQUEST_PANE.MORE_ACTIONS')}>
+            <ActionIcon label={t('REQUEST_PANE.GQL.MORE_ACTIONS')}>
               <IconDots size={16} strokeWidth={1.5} />
             </ActionIcon>
           </MenuDropdown>

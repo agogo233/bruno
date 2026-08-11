@@ -21,9 +21,9 @@ export default function PromptVariablesModal({ title, prompts, onSubmit, onCance
     <Portal>
       <Modal
         size="lg"
-        title={title || t('REQUEST_PANE.INPUT_REQUIRED')}
-        confirmText={t('REQUEST_PANE.CONTINUE')}
-        cancelText={t('REQUEST_PANE.CANCEL')}
+        title={title || t('REQUEST_PANE.PROMPT_VARIABLES.INPUT_REQUIRED')}
+        confirmText={t('REQUEST_PANE.PROMPT_VARIABLES.CONTINUE')}
+        cancelText={t('REQUEST_PANE.PROMPT_VARIABLES.CANCEL')}
         handleConfirm={() => onSubmit(values)}
         handleCancel={onCancel}
       >
@@ -39,7 +39,7 @@ export default function PromptVariablesModal({ title, prompts, onSubmit, onCance
                   type="text"
                   data-testid={`prompt-variable-input-${index}`}
                   className="textbox mt-2 w-full"
-                  placeholder={t('REQUEST_PANE.ENTER_VALUE')}
+                  placeholder={t('REQUEST_PANE.PROMPT_VARIABLES.ENTER_VALUE')}
                   value={values[prompt] || ''}
                   onChange={(e) => handleChange(prompt, e.target.value)}
                   autoFocus={index === 0}

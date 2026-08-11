@@ -121,7 +121,7 @@ const HttpMethodSelector = ({ method = DEFAULT_METHOD, onMethodSelect, showCaret
     // Add "Add Custom" item
     items.push({
       id: 'add-custom',
-      label: t('REQUEST_PANE.ADD_CUSTOM'),
+      label: t('REQUEST_PANE.QUERY_URL.ADD_CUSTOM'),
       onClick: handleAddCustomMethod,
       className: 'font-normal mt-1 text-link'
     });

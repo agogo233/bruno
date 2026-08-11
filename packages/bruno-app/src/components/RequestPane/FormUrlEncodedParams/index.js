@@ -65,15 +65,15 @@ const FormUrlEncodedParams = ({ item, collection }) => {
   const columns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.KEY'),
+      name: t('REQUEST_PANE.FORM_URL_ENCODED.KEY'),
       isKeyField: true,
-      placeholder: t('REQUEST_PANE.KEY'),
+      placeholder: t('REQUEST_PANE.FORM_URL_ENCODED.KEY'),
       width: '20%'
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
-      placeholder: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.FORM_URL_ENCODED.VALUE'),
+      placeholder: t('REQUEST_PANE.FORM_URL_ENCODED.VALUE'),
       render: ({ value, onChange }) => (
         <MultiLineEditor
           value={value || ''}

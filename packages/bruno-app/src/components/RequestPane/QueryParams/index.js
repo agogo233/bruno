@@ -103,15 +103,15 @@ const QueryParams = ({ item, collection }) => {
   const queryColumns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.NAME'),
+      name: t('REQUEST_PANE.QUERY_PARAMS.NAME'),
       isKeyField: true,
-      placeholder: t('REQUEST_PANE.NAME'),
+      placeholder: t('REQUEST_PANE.QUERY_PARAMS.NAME'),
       width: '20%'
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
-      placeholder: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.QUERY_PARAMS.VALUE'),
+      placeholder: t('REQUEST_PANE.QUERY_PARAMS.VALUE'),
       render: ({ value, onChange }) => (
         <MultiLineEditor
           value={value || ''}
@@ -122,7 +122,7 @@ const QueryParams = ({ item, collection }) => {
           collection={collection}
           item={item}
           variablesAutocomplete={true}
-          placeholder={!value ? t('REQUEST_PANE.VALUE') : ''}
+          placeholder={!value ? t('REQUEST_PANE.QUERY_PARAMS.VALUE') : ''}
         />
       )
     },
@@ -132,15 +132,15 @@ const QueryParams = ({ item, collection }) => {
   const pathColumns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.NAME'),
+      name: t('REQUEST_PANE.QUERY_PARAMS.NAME'),
       isKeyField: true,
       width: '20%',
       readOnly: true
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
-      placeholder: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.QUERY_PARAMS.VALUE'),
+      placeholder: t('REQUEST_PANE.QUERY_PARAMS.VALUE'),
       render: ({ row, value, onChange }) => (
         <MultiLineEditor
           value={value || ''}
@@ -181,7 +181,7 @@ const QueryParams = ({ item, collection }) => {
     <StyledWrapper className="w-full flex flex-col" ref={wrapperRef}>
       <div className="flex-1">
         <div className="mb-3 title text-xs">
-          <span>{t('REQUEST_PANE.QUERY')}</span>
+          <span>{t('REQUEST_PANE.QUERY_PARAMS.QUERY')}</span>
         </div>
         <EditableTable
           tableId="query-params"
@@ -198,17 +198,17 @@ const QueryParams = ({ item, collection }) => {
         />
         <div className="bulk-edit-bar flex justify-end mt-2">
           <button className="btn-action text-link select-none" onClick={toggleBulkEditMode}>
-            {t('REQUEST_PANE.BULK_EDIT')}
+            {t('REQUEST_PANE.QUERY_PARAMS.BULK_EDIT')}
           </button>
         </div>
 
         <div className="mb-3 title text-xs flex items-stretch">
-          <span>{t('REQUEST_PANE.PATH')}</span>
+          <span>{t('REQUEST_PANE.QUERY_PARAMS.PATH')}</span>
           <InfoTip className="tooltip-mod" infotipId="path-param-InfoTip">
             <div>
-              {t('REQUEST_PANE.PATH_VARIABLES_AUTO_ADDED')}
+              {t('REQUEST_PANE.QUERY_PARAMS.PATH_VARIABLES_AUTO_ADDED')}
               <code className="font-mono mx-2">:name</code>
-              {t('REQUEST_PANE.PATH_TEMPLATE_USED_IN_URL')}
+              {t('REQUEST_PANE.QUERY_PARAMS.PATH_TEMPLATE_USED_IN_URL')}
               <code className="font-mono mx-2">
                 https://example.com/v1/users/<span>:id</span>
               </code>

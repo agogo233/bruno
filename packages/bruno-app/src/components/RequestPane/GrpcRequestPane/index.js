@@ -42,7 +42,7 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
         return <GrpcBody item={item} collection={collection} hideModeSelector={true} hidePrettifyButton={true} handleRun={handleRun} />;
       }
       case 'headers': {
-        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.ADD_METADATA')} />;
+        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.GRPC.ADD_METADATA')} />;
       }
       case 'auth': {
         return <GrpcAuth item={item} collection={collection} />;
@@ -86,22 +86,22 @@ const GrpcRequestPane = ({ item, collection, handleRun }) => {
     return [
       {
         key: 'body',
-        label: t('REQUEST_PANE.MESSAGE'),
+        label: t('REQUEST_PANE.GRPC.MESSAGE'),
         indicator: getMessageIndicator()
       },
       {
         key: 'headers',
-        label: t('REQUEST_PANE.METADATA'),
+        label: t('REQUEST_PANE.GRPC.METADATA'),
         indicator: activeHeadersLength > 0 ? <sup className="ml-[.125rem] font-medium">{activeHeadersLength}</sup> : null
       },
       {
         key: 'auth',
-        label: t('REQUEST_PANE.AUTH'),
+        label: t('REQUEST_PANE.GRPC.AUTH'),
         indicator: hasAuth ? <StatusDot type="default" dataTestId="auth" /> : null
       },
       {
         key: 'docs',
-        label: t('REQUEST_PANE.DOCS'),
+        label: t('REQUEST_PANE.GRPC.DOCS'),
         indicator: docs && docs.length > 0 ? <StatusDot type="default" /> : null
       }
     ];

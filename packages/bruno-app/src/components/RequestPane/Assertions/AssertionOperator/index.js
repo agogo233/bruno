@@ -74,9 +74,9 @@ const AssertionOperator = ({ operator, onChange }) => {
   const getLabel = (operator) => {
     switch (operator) {
       case 'eq':
-        return t('REQUEST_PANE.EQUALS');
+        return t('REQUEST_PANE.ASSERTIONS.EQUALS');
       case 'neq':
-        return t('REQUEST_PANE.NOT_EQUALS');
+        return t('REQUEST_PANE.ASSERTIONS.NOT_EQUALS');
       default:
         return operator;
     }

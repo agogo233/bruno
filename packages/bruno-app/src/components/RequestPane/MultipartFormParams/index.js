@@ -93,9 +93,9 @@ const MultipartFormParams = ({ item, collection }) => {
         }
 
         if (skipped.length === 1) {
-          toast(t('REQUEST_PANE.ALREADY_ADDED', { fileName: fileBasename(skipped[0]) }));
+          toast(t('REQUEST_PANE.MULTIPART.ALREADY_ADDED', { fileName: fileBasename(skipped[0]) }));
         } else if (skipped.length > 1) {
-          toast(t('REQUEST_PANE.FILES_ALREADY_ADDED', { count: skipped.length }));
+          toast(t('REQUEST_PANE.MULTIPART.FILES_SKIPPED', { count: skipped.length }));
         }
 
         const autoContentType = getMultipartAutoContentType(merged);
@@ -167,15 +167,15 @@ const MultipartFormParams = ({ item, collection }) => {
   const columns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.KEY'),
+      name: t('REQUEST_PANE.MULTIPART.KEY'),
       isKeyField: true,
-      placeholder: t('REQUEST_PANE.KEY'),
+      placeholder: t('REQUEST_PANE.MULTIPART.KEY'),
       width: '20%'
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
-      placeholder: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.MULTIPART.VALUE'),
+      placeholder: t('REQUEST_PANE.MULTIPART.VALUE'),
       width: '35%',
       render: ({ row, value, onChange }) => {
         const files = row.type === 'file' ? getFileList(value) : [];
@@ -201,14 +201,14 @@ const MultipartFormParams = ({ item, collection }) => {
                 allowNewlines={true}
                 collection={collection}
                 item={item}
-                placeholder={!value ? t('REQUEST_PANE.VALUE') : ''}
+                placeholder={!value ? t('REQUEST_PANE.MULTIPART.VALUE') : ''}
               />
             </div>
             <button
               data-testid="multipart-file-upload"
               className="upload-btn ml-1"
               onClick={() => handleBrowseFiles(row, onChange)}
-              title={t('REQUEST_PANE.SELECT_FILE')}
+              title={t('REQUEST_PANE.MULTIPART.SELECT_FILE')}
             >
               <IconUpload size={16} />
             </button>
@@ -218,14 +218,14 @@ const MultipartFormParams = ({ item, collection }) => {
     },
     {
       key: 'contentType',
-      name: t('REQUEST_PANE.CONTENT_TYPE'),
-      placeholder: t('REQUEST_PANE.AUTO'),
+      name: t('REQUEST_PANE.MULTIPART.CONTENT_TYPE'),
+      placeholder: t('REQUEST_PANE.MULTIPART.AUTO'),
       width: '20%',
       render: ({ value, onChange }) => (
         <SingleLineEditor
           onSave={onSave}
           theme={storedTheme}
-          placeholder={!value ? t('REQUEST_PANE.AUTO') : ''}
+          placeholder={!value ? t('REQUEST_PANE.MULTIPART.AUTO') : ''}
           value={value || ''}
           onChange={onChange}
           onRun={handleRun}

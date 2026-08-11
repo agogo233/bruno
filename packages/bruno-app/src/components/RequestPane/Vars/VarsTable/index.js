@@ -56,7 +56,7 @@ const VarsTable = ({ item, collection, vars, varType, initialScroll = 0, isDraft
     if (key !== 'name') return null;
     if (!row.name || row.name.trim() === '') return null;
     if (!variableNameRegex.test(row.name)) {
-      return t('REQUEST_PANE.VARIABLE_INVALID_CHARS');
+      return t('REQUEST_PANE.VARS.INVALID_CHARS');
     }
     return null;
   }, [t]);
@@ -73,21 +73,21 @@ const VarsTable = ({ item, collection, vars, varType, initialScroll = 0, isDraft
   const columns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.NAME'),
+      name: t('REQUEST_PANE.VARS.NAME'),
       isKeyField: true,
       sortable: true,
-      placeholder: t('REQUEST_PANE.NAME'),
+      placeholder: t('REQUEST_PANE.VARS.NAME'),
       width: '20%'
     },
     {
       key: 'value',
-      name: varType === 'request' ? t('REQUEST_PANE.VALUE') : (
+      name: varType === 'request' ? t('REQUEST_PANE.VARS.VALUE') : (
         <div className="flex items-center">
-          <span>{t('REQUEST_PANE.EXPR')}</span>
-          <InfoTip className="tooltip-mod" content={t('REQUEST_PANE.VARIABLE_JS_EXPR_HELP')} infotipId={`request-${varType}-var`} />
+          <span>{t('REQUEST_PANE.VARS.EXPR')}</span>
+          <InfoTip className="tooltip-mod" content={t('REQUEST_PANE.VARS.EXPR_HINT')} infotipId={`request-${varType}-var`} />
         </div>
       ),
-      placeholder: varType === 'request' ? t('REQUEST_PANE.VALUE') : t('REQUEST_PANE.EXPR'),
+      placeholder: varType === 'request' ? t('REQUEST_PANE.VARS.VALUE') : t('REQUEST_PANE.VARS.EXPR'),
       render: ({ row, value, onChange, isLastEmptyRow, rowIndex }) => (
         <VarValueCell
           editor={(
@@ -100,7 +100,7 @@ const VarsTable = ({ item, collection, vars, varType, initialScroll = 0, isDraft
               onRun={handleRun}
               collection={collection}
               item={item}
-              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? t('REQUEST_PANE.VALUE') : t('REQUEST_PANE.EXPR')) : ''}
+              placeholder={value == null || (typeof value === 'string' && value.trim() === '') ? (varType === 'request' ? t('REQUEST_PANE.VARS.VALUE') : t('REQUEST_PANE.VARS.EXPR')) : ''}
             />
           )}
           renderTypeSelector={!isLastEmptyRow && varType === 'request'

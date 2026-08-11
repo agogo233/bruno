@@ -62,13 +62,13 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
     if (key === 'name') {
       if (!row.name || row.name.trim() === '') return null;
       if (!headerNameRegex.test(row.name)) {
-        return t('REQUEST_PANE.HEADER_NAME_INVALID');
+        return t('REQUEST_PANE.REQUEST_HEADERS.NAME_INVALID');
       }
     }
     if (key === 'value') {
       if (!row.value) return null;
       if (!headerValueRegex.test(row.value)) {
-        return t('REQUEST_PANE.HEADER_VALUE_INVALID');
+        return t('REQUEST_PANE.REQUEST_HEADERS.VALUE_INVALID');
       }
     }
     return null;
@@ -89,9 +89,9 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
   const columns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.NAME'),
+      name: t('REQUEST_PANE.REQUEST_HEADERS.NAME'),
       isKeyField: true,
-      placeholder: t('REQUEST_PANE.NAME'),
+      placeholder: t('REQUEST_PANE.REQUEST_HEADERS.NAME'),
       width: '20%',
       render: ({ value, onChange }) => (
         <SingleLineEditor
@@ -103,14 +103,14 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
           onRun={handleRun}
           collection={collection}
           item={item}
-          placeholder={!value ? t('REQUEST_PANE.NAME') : ''}
+          placeholder={!value ? t('REQUEST_PANE.REQUEST_HEADERS.NAME') : ''}
         />
       )
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
-      placeholder: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.REQUEST_HEADERS.VALUE'),
+      placeholder: t('REQUEST_PANE.REQUEST_HEADERS.VALUE'),
       render: ({ value, onChange }) => (
         <SingleLineEditor
           value={value || ''}
@@ -121,7 +121,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
           autocomplete={MimeTypes}
           collection={collection}
           item={item}
-          placeholder={!value ? t('REQUEST_PANE.VALUE') : ''}
+          placeholder={!value ? t('REQUEST_PANE.REQUEST_HEADERS.VALUE') : ''}
         />
       )
     },
@@ -166,7 +166,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
       />
       <div className="bulk-edit-bar flex justify-end mt-2">
         <button className="btn-action text-link select-none" data-testid="bulk-edit-toggle" onClick={toggleBulkEditMode}>
-          {t('REQUEST_PANE.BULK_EDIT')}
+          {t('REQUEST_PANE.REQUEST_HEADERS.BULK_EDIT')}
         </button>
       </div>
     </StyledWrapper>

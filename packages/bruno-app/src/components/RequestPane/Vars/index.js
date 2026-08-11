@@ -19,11 +19,11 @@ const Vars = ({ item, collection }) => {
   return (
     <StyledWrapper className="w-full flex flex-col" ref={wrapperRef}>
       <div>
-        <div className="mb-3 title text-xs">{t('REQUEST_PANE.PRE_REQUEST')}</div>
+        <div className="mb-3 title text-xs">{t('REQUEST_PANE.VARS.PRE_REQUEST')}</div>
         <VarsTable item={item} collection={collection} vars={requestVars} varType="request" initialScroll={scroll} isDraft={isDraft} />
       </div>
       <div>
-        <div className="mt-3 mb-3 title text-xs">{t('REQUEST_PANE.POST_RESPONSE')}</div>
+        <div className="mt-3 mb-3 title text-xs">{t('REQUEST_PANE.VARS.POST_RESPONSE')}</div>
         <VarsTable item={item} collection={collection} vars={responseVars} varType="response" initialScroll={scroll} isDraft={isDraft} />
       </div>
     </StyledWrapper>

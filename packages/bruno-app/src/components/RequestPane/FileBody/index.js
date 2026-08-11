@@ -75,18 +75,18 @@ const FileBody = ({ item, collection }) => {
         <thead>
           <tr>
             <td>
-              <div title={t('REQUEST_PANE.FILE')} className="flex items-center justify-start">{t('REQUEST_PANE.FILE')}</div>
+              <div title={t('REQUEST_PANE.FILE_BODY.FILE')} className="flex items-center justify-start">{t('REQUEST_PANE.FILE_BODY.FILE')}</div>
             </td>
             <td>
-              <div title={t('REQUEST_PANE.CONTENT_TYPE')} className="flex items-center justify-start">{t('REQUEST_PANE.CONTENT_TYPE')}</div>
+              <div title={t('REQUEST_PANE.FILE_BODY.CONTENT_TYPE')} className="flex items-center justify-start">{t('REQUEST_PANE.FILE_BODY.CONTENT_TYPE')}</div>
             </td>
             <td>
-              <div title={t('REQUEST_PANE.SELECTED')} className="flex items-center justify-start min-w-0">
-                <span className="truncate">{t('REQUEST_PANE.SELECTED')}</span>
+              <div title={t('REQUEST_PANE.FILE_BODY.SELECTED')} className="flex items-center justify-start min-w-0">
+                <span className="truncate">{t('REQUEST_PANE.FILE_BODY.SELECTED')}</span>
               </div>
             </td>
             <td>
-              <div title={t('REQUEST_PANE.DESCRIPTION')} className="flex items-center justify-start">{t('REQUEST_PANE.DESCRIPTION')}</div>
+              <div title={t('REQUEST_PANE.FILE_BODY.DESCRIPTION')} className="flex items-center justify-start">{t('REQUEST_PANE.FILE_BODY.DESCRIPTION')}</div>
             </td>
             <td></td>
           </tr>
@@ -119,7 +119,7 @@ const FileBody = ({ item, collection }) => {
                         className="flex items-center justify-center"
                         onSave={onSave}
                         theme={storedTheme}
-                        placeholder={t('REQUEST_PANE.AUTO')}
+                        placeholder={t('REQUEST_PANE.FILE_BODY.AUTO')}
                         value={param.contentType}
                         onChange={(newValue) =>
                           handleParamChange(
@@ -166,7 +166,7 @@ const FileBody = ({ item, collection }) => {
                         onRun={handleRun}
                         collection={collection}
                         item={item}
-                        placeholder={!param.filePath && !param.description ? t('REQUEST_PANE.DESCRIPTION') : ''}
+                        placeholder={!param.filePath && !param.description ? t('REQUEST_PANE.FILE_BODY.DESCRIPTION') : ''}
                       />
                     </td>
                     <td>
@@ -184,7 +184,7 @@ const FileBody = ({ item, collection }) => {
       </table>
       <div>
         <button className="btn-add-param text-link pr-2 pt-3 select-none" onClick={addFile}>
-          {t('REQUEST_PANE.ADD_FILE')}
+          {t('REQUEST_PANE.FILE_BODY.ADD_FILE')}
         </button>
       </div>
     </StyledWrapper>

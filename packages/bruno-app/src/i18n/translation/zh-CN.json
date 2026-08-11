@@ -103,7 +103,13 @@
   "PREFERENCES": {
     "GENERAL": "通用",
     "THEMES": "主题",
-    "DISPLAY": "显示",
+    "DISPLAY": {
+      "LABEL": "显示",
+      "CODE_EDITOR_FONT": "代码编辑器字体",
+      "FONT_SIZE": "字体大小",
+      "ZOOM_LABEL": "缩放",
+      "FAILED_SAVE": "保存失败"
+    },
     "PROXY": "代理",
     "CLIENT_CERTIFICATES": "客户端证书",
     "KEYBINDINGS": "快捷键",
@@ -1164,7 +1170,8 @@
       "RESPONSE": "响应",
       "LATEST": "最新",
       "NO_METADATA": "未收到元数据",
-      "NO_TRAILERS": "未收到尾部"
+      "NO_TRAILERS": "未收到尾部",
+      "RESPONSE_MESSAGE_N": "响应消息 {{count}}"
     },
     "WS": {
       "NO_MESSAGES": "暂无消息。",
@@ -1375,7 +1382,12 @@
       "REFRESH_INTROSPECTION": "从内省刷新",
       "LOAD_INTROSPECTION": "从内省加载",
       "LOAD_FROM_FILE": "从文件加载",
-      "SCHEMA": "模式"
+      "SCHEMA": "模式",
+      "INTROSPECTION_QUERY_FAILED": "内省查询失败",
+      "NO_DATA_FROM_INTROSPECTION": "内省查询未返回数据",
+      "SCHEMA_VALIDATION_ISSUES": "发现 Schema 校验问题",
+      "SCHEMA_LOADED_SUCCESSFULLY": "Schema 加载成功",
+      "ERROR_LOADING_SCHEMA": "加载 Schema 出错"
     },
     "SEND_BUTTON": {
       "SEND": "发送",
@@ -1508,7 +1520,11 @@
       "AUTO_REFRESH_TOKEN_TOOLTIP": "令牌过期时，使用刷新 URL 自动刷新你的令牌。",
       "AUTO_FETCH_TOOLTIP": "当前令牌过期时自动获取新令牌。",
       "GRAPHQL_QUERY_PRETTIFIED": "查询已格式化",
-      "GRAPHQL_QUERY_PRETTIFY_ERROR": "格式化 GraphQL 查询时发生错误"
+      "GRAPHQL_QUERY_PRETTIFY_ERROR": "格式化 GraphQL 查询时发生错误",
+      "KEY": "键",
+      "VALUE": "值",
+      "CONFIGURATION": "配置",
+      "CALLBACK_URL": "回调 URL"
     },
     "QUERY_URL": {
       "PLACEHOLDER": "输入 URL 或粘贴 cURL 请求",
@@ -1550,7 +1566,9 @@
       "PATH": "路径",
       "NAME": "名称",
       "VALUE": "值",
-      "BULK_EDIT": "批量编辑"
+      "BULK_EDIT": "批量编辑",
+      "PATH_VARIABLES_AUTO_ADDED": "路径变量已自动添加",
+      "PATH_TEMPLATE_USED_IN_URL": "URL 中使用的路径模板"
     },
     "VARS": {
       "PRE_REQUEST": "预请求",
@@ -1602,7 +1620,7 @@
       "VALUE": "值",
       "CONTENT_TYPE": "Content-Type",
       "AUTO": "自动",
-      "ALREADY_ADDED": "已添加 \"{{name}}\"",
+      "ALREADY_ADDED": "已添加 \"{{fileName}}\"",
       "FILES_SKIPPED": "已跳过 {{count}} 个文件 - 已存在",
       "SELECT_FILE": "选择文件"
     },
@@ -1622,7 +1640,16 @@
       "EXPAND": "展开",
       "LIST_COMPLEX_UNSUPPORTED": "目前不支持复杂类型的列表参数。",
       "ARGUMENTS": "参数",
-      "FIELDS": "字段"
+      "FIELDS": "字段",
+      "FAILED_TO_LOAD_SCHEMA": "加载 Schema 失败",
+      "UPLOAD_SCHEMA_FILE": "上传 Schema 文件",
+      "NO_SCHEMA_LOADED": "未加载 Schema",
+      "LOAD_SCHEMA_DESCRIPTION": "加载 Schema 以启用查询构建器",
+      "MULTIPLE_OPERATIONS_DETECTED": "检测到多个操作",
+      "QUERY_BUILDER_SINGLE_OPERATION": "查询构建器仅支持单个操作",
+      "SEARCH_OPERATIONS": "搜索操作",
+      "NO_MATCHING_FIELDS": "无匹配的字段",
+      "NO_FIELDS_AVAILABLE": "无可用字段"
     },
     "PROMPT_VARIABLES": {
       "INPUT_REQUIRED": "需要输入",
@@ -1632,7 +1659,8 @@
     },
     "APP_CODE_EDITOR": {
       "DESCRIPTION": "应用视图将替换此请求的请求/响应面板。",
-      "PREVIEW": "预览"
+      "PREVIEW": "预览",
+      "APP_VIEW_REPLACES_PANES": "应用视图将替换此请求的请求 / 响应面板"
     },
     "GRPC_QUERY_URL": {
       "GRPC": "gRPC",
@@ -1730,7 +1758,7 @@
       "KEEP_ALIVE_INTERVAL": "保持连接间隔",
       "KEEP_ALIVE_DESC": "通过发送 ping 请求保持 WebSocket 连接",
       "ZERO_OFF": "0 = 关闭",
-      "TIMEOUT_INVALID": "超时时间必须为有效数字"
+       "TIMEOUT_INVALID": "超时时间必须为有效数字"
     }
   },
   "ENVIRONMENTS": {
@@ -2579,7 +2607,8 @@
       "DESCRIPTION": "为整个集合配置认证。适用于在使用{{inherit}}选项的{{auth}}标签页中的所有请求。",
       "SAVE": "保存",
       "INHERIT": "继承",
-      "AUTH": "认证"
+      "AUTH": "认证",
+      "TBD": "待定"
     },
     "AUTH_MODE": {
       "AWS_SIG_V4": "AWS Sig v4",
@@ -2975,10 +3004,9 @@
       "ERROR_SWAGGER_NOT_SUPPORTED": "不支持 Swagger 2.0。请将规范转换为 OpenAPI 3.x。",
       "ERROR_FILE_READ": "读取所选文件失败",
       "FEATURES": [
-        "检测新增、修改和删除的端点",
-        "相对于规范跟踪本地变更",
-        "一键同步集合",
-        "同步期间保留您的测试、断言和脚本"
+        "保持请求与 OpenAPI 规范同步",
+        "自动检测规范中新增、更新或移除的端点",
+        "在同步回集合前审阅变更"
       ]
     },
     "SETTINGS": {
@@ -3786,5 +3814,29 @@
     "NAME_REQUIRED": "名称为必填项",
     "NAME_EXISTS": "已存在同名工作区",
     "ERROR_RENAMING": "重命名工作区时出错"
+  },
+  "NOTIFICATIONS": {
+    "CHECK_ALL": "通知",
+    "NOTIFICATIONS": "通知",
+    "LIST": {
+      "ENTER": "打开通知",
+      "EMPTY": "暂无通知"
+    },
+    "DETAIL": {
+      "SELECT": "选择一条通知查看详情"
+    },
+    "TABS": {
+      "ALL": "全部",
+      "UNREAD": "未读"
+    },
+    "MENU_LABEL": "选项",
+    "MODAL": {
+      "TITLE": "通知",
+      "CLOSE": "关闭"
+    },
+    "MARK_ALL_READ": "全部标为已读",
+    "CLEAR_ALL": "清除全部",
+    "RESIZE_SIDEBAR": "调整通知侧边栏大小",
+    "EMPTY": "暂无通知"
   }
 }

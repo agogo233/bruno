@@ -36,7 +36,7 @@ const GraphQLSchemaActions = ({ item, collection, onSchemaLoad, toggleDocs }) =>
         {isSchemaLoading && <IconLoader2 className="animate-spin" size={18} strokeWidth={1.5} />}
         {!isSchemaLoading && schema && <IconRefresh size={18} strokeWidth={1.5} />}
         {!isSchemaLoading && !schema && <IconDownload size={18} strokeWidth={1.5} />}
-        <span className="ml-1">{t('REQUEST_PANE.SCHEMA')}</span>
+        <span className="ml-1">{t('REQUEST_PANE.GQL.SCHEMA')}</span>
       </div>
     );
   });
@@ -45,7 +45,7 @@ const GraphQLSchemaActions = ({ item, collection, onSchemaLoad, toggleDocs }) =>
     <div className="flex flex-grow justify-end items-center">
       <div className="flex items-center cursor-pointer hover:underline" onClick={toggleDocs}>
         <IconBook size={18} strokeWidth={1.5} />
-        <span className="ml-1">{t('REQUEST_PANE.DOCS')}</span>
+        <span className="ml-1">{t('REQUEST_PANE.GQL.DOCS')}</span>
       </div>
       <Dropdown onCreate={onSchemaDropdownCreate} icon={<MenuIcon />} placement="bottom-start">
         <div
@@ -55,7 +55,7 @@ const GraphQLSchemaActions = ({ item, collection, onSchemaLoad, toggleDocs }) =>
             loadSchema('introspection');
           }}
         >
-          {schema && schemaSource === 'introspection' ? t('REQUEST_PANE.REFRESH_FROM_INTROSPECTION') : t('REQUEST_PANE.LOAD_FROM_INTROSPECTION')}
+          {schema && schemaSource === 'introspection' ? t('REQUEST_PANE.GQL.REFRESH_INTROSPECTION') : t('REQUEST_PANE.GQL.LOAD_INTROSPECTION')}
         </div>
         <div
           className="dropdown-item"
@@ -64,7 +64,7 @@ const GraphQLSchemaActions = ({ item, collection, onSchemaLoad, toggleDocs }) =>
             loadSchema('file');
           }}
         >
-          {t('REQUEST_PANE.LOAD_FROM_FILE')}
+          {t('REQUEST_PANE.GQL.LOAD_FROM_FILE')}
         </div>
       </Dropdown>
     </div>

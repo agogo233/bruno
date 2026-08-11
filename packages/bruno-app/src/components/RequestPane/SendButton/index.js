@@ -16,7 +16,7 @@ const SendButton = ({ isLoading = false, disabled = false, onSend, onCancel, tes
         data-action={isLoading ? 'cancel' : 'send'}
         onClick={isLoading ? onCancel : onSend}
       >
-        {isLoading ? t('REQUEST_PANE.CANCEL') : t('REQUEST_PANE.SEND')}
+        {isLoading ? t('REQUEST_PANE.SEND_BUTTON.CANCEL') : t('REQUEST_PANE.SEND_BUTTON.SEND')}
       </Button>
     </StyledWrapper>
   );

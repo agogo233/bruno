@@ -85,6 +85,6 @@ const RequestBody = ({ item, collection }) => {
     return <MultipartFormParams item={item} collection={collection} />;
   }
 
-  return <StyledWrapper className="w-full">{t('REQUEST_PANE.NO_BODY')}</StyledWrapper>;
+  return <StyledWrapper className="w-full">{t('REQUEST_PANE.REQUEST_BODY.NO_BODY')}</StyledWrapper>;
 };
 export default RequestBody;

@@ -89,7 +89,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
           {schemaError ? (
             <>
               <IconAlertTriangle size={32} strokeWidth={1.5} className="empty-state-icon warning" />
-              <div className="empty-state-title">{t('REQUEST_PANE.FAILED_TO_LOAD_SCHEMA')}</div>
+              <div className="empty-state-title">{t('REQUEST_PANE.QUERY_BUILDER.FAILED_TO_LOAD_SCHEMA')}</div>
               <div className="empty-state-description">{schemaError.message}</div>
               <div className="empty-state-actions">
                 <Button
@@ -101,7 +101,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
                   disabled={isSchemaLoading}
                   onClick={() => loadSchema('introspection')}
                 >
-                  {t('REQUEST_PANE.TRY_AGAIN')}
+                  {t('REQUEST_PANE.QUERY_BUILDER.TRY_AGAIN')}
                 </Button>
                 <Button
                   variant="outline"
@@ -111,15 +111,15 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
                   disabled={isSchemaLoading}
                   onClick={() => loadSchema('file')}
                 >
-                  {t('REQUEST_PANE.UPLOAD_SCHEMA_FILE')}
+                  {t('REQUEST_PANE.QUERY_BUILDER.UPLOAD_SCHEMA_FILE')}
                 </Button>
               </div>
             </>
           ) : (
             <>
-              <div className="empty-state-title">{t('REQUEST_PANE.NO_SCHEMA_LOADED')}</div>
+              <div className="empty-state-title">{t('REQUEST_PANE.QUERY_BUILDER.NO_SCHEMA_LOADED')}</div>
               <div className="empty-state-description">
-                {t('REQUEST_PANE.LOAD_SCHEMA_DESCRIPTION')}
+                {t('REQUEST_PANE.QUERY_BUILDER.LOAD_SCHEMA_DESCRIPTION')}
               </div>
               <div className="empty-state-actions">
                 <Button
@@ -131,7 +131,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
                   disabled={isSchemaLoading}
                   onClick={() => loadSchema('introspection')}
                 >
-                  {t('REQUEST_PANE.LOAD_FROM_INTROSPECTION')}
+                  {t('REQUEST_PANE.GQL.LOAD_INTROSPECTION')}
                 </Button>
                 <Button
                   variant="outline"
@@ -141,7 +141,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
                   disabled={isSchemaLoading}
                   onClick={() => loadSchema('file')}
                 >
-                  {t('REQUEST_PANE.UPLOAD_SCHEMA_FILE')}
+                  {t('REQUEST_PANE.QUERY_BUILDER.UPLOAD_SCHEMA_FILE')}
                 </Button>
               </div>
             </>
@@ -159,8 +159,8 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
           <div className="sync-error-text">
             {syncError === 'multiple_operations' ? (
               <>
-                <strong>{t('REQUEST_PANE.MULTIPLE_OPERATIONS_DETECTED')}</strong>
-                <span>{t('REQUEST_PANE.QUERY_BUILDER_SINGLE_OPERATION')}</span>
+                <strong>{t('REQUEST_PANE.QUERY_BUILDER.MULTIPLE_OPERATIONS_DETECTED')}</strong>
+                <span>{t('REQUEST_PANE.QUERY_BUILDER.QUERY_BUILDER_SINGLE_OPERATION')}</span>
               </>
             ) : null}
           </div>
@@ -175,7 +175,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
         <div className="query-builder-search">
           <input
             type="text"
-            placeholder={t('REQUEST_PANE.SEARCH_OPERATIONS')}
+            placeholder={t('REQUEST_PANE.QUERY_BUILDER.SEARCH_OPERATIONS')}
             value={searchText}
             className="mousetrap"
             onChange={(e) => setSearchText(e.target.value)}
@@ -225,7 +225,7 @@ const QueryBuilder = ({ schema, onQueryChange, editorValue, onVariablesChange, v
                     />
                   ) : (
                     <div className="empty-state">
-                      {searchText ? t('REQUEST_PANE.NO_MATCHING_FIELDS') : t('REQUEST_PANE.NO_FIELDS_AVAILABLE')}
+                      {searchText ? t('REQUEST_PANE.QUERY_BUILDER.NO_MATCHING_FIELDS') : t('REQUEST_PANE.QUERY_BUILDER.NO_FIELDS_AVAILABLE')}
                     </div>
                   )
                 )}

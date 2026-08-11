@@ -113,12 +113,12 @@ const Settings = ({ item, collection }) => {
 
   return (
     <div className="h-full w-full">
-      <div className="text-xs mb-4 text-muted">{t('REQUEST_PANE.CONFIGURE_REQUEST_SETTINGS')}</div>
+      <div className="text-xs mb-4 text-muted">{t('REQUEST_PANE.SETTINGS.CONFIG_HINT')}</div>
       <div className="bruno-form">
         <div className="mb-6">
           <h3 className="text-xs font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1 mb-4">
             <IconTag size={16} />
-{t('REQUEST_PANE.TAGS')}
+{t('REQUEST_PANE.SETTINGS.TAGS')}
           </h3>
           <Tags item={item} collection={collection} />
         </div>
@@ -129,8 +129,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={encodeUrl}
               onChange={onToggleUrlEncoding}
-              label={t('REQUEST_PANE.URL_ENCODING')}
-              description={t('REQUEST_PANE.URL_ENCODING_DESC')}
+              label={t('REQUEST_PANE.SETTINGS.URL_ENCODING')}
+              description={t('REQUEST_PANE.SETTINGS.URL_ENCODING_DESC')}
               size="medium"
               data-testid="encode-url-toggle"
             />
@@ -140,8 +140,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={followRedirects}
               onChange={onToggleFollowRedirects}
-              label={t('REQUEST_PANE.FOLLOW_REDIRECTS')}
-              description={t('REQUEST_PANE.FOLLOW_REDIRECTS_DESC')}
+              label={t('REQUEST_PANE.SETTINGS.FOLLOW_REDIRECTS')}
+              description={t('REQUEST_PANE.SETTINGS.FOLLOW_REDIRECTS_DESC')}
               size="medium"
               data-testid="follow-redirects-toggle"
             />
@@ -151,8 +151,8 @@ const Settings = ({ item, collection }) => {
             <ToggleSelector
               checked={forwardAuthorizationHeader}
               onChange={onToggleForwardAuthorizationOnRedirect}
-              label={t('REQUEST_PANE.FORWARD_AUTH_ON_REDIRECT')}
-              description={t('REQUEST_PANE.FORWARD_AUTH_ON_REDIRECT_DESC')}
+              label={t('REQUEST_PANE.SETTINGS.FORWARD_AUTH')}
+              description={t('REQUEST_PANE.SETTINGS.FORWARD_AUTH_DESC')}
               size="medium"
               data-testid="forward-auth-header-toggle"
             />
@@ -163,8 +163,8 @@ const Settings = ({ item, collection }) => {
               <ToggleSelector
                 checked={enableApp}
                 onChange={onToggleEnableApp}
-                label={t('REQUEST_PANE.ENABLE_APP')}
-                description={t('REQUEST_PANE.ENABLE_APP_DESC')}
+                label={t('REQUEST_PANE.SETTINGS.ENABLE_APP')}
+                description={t('REQUEST_PANE.SETTINGS.ENABLE_APP_DESC')}
                 size="medium"
                 data-testid="enable-app-toggle"
               />
@@ -173,18 +173,18 @@ const Settings = ({ item, collection }) => {
 
           <SettingsInput
             id="maxRedirects"
-            label={t('REQUEST_PANE.MAX_REDIRECTS')}
+            label={t('REQUEST_PANE.SETTINGS.MAX_REDIRECTS')}
             value={maxRedirects}
             onChange={onMaxRedirectsChange}
-            description={t('REQUEST_PANE.MAX_REDIRECTS_DESC')}
+            description={t('REQUEST_PANE.SETTINGS.MAX_REDIRECTS_DESC')}
             onKeyDown={handleKeyDown}
           />
 
           <InheritableSettingsInput
             id="timeout"
-            label={t('REQUEST_PANE.TIMEOUT')}
+            label={t('REQUEST_PANE.SETTINGS.TIMEOUT')}
             value={timeout}
-            description={t('REQUEST_PANE.TIMEOUT_DESC')}
+            description={t('REQUEST_PANE.SETTINGS.TIMEOUT_DESC')}
             onKeyDown={handleKeyDown}
             isInherited={isTimeoutInherited}
             onDropdownSelect={handleTimeoutDropdownSelect}

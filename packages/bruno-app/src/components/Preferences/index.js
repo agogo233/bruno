@@ -103,7 +103,7 @@ const Preferences = () => {
           </div>
           <div className={getTabClassname('display')} role="tab" onClick={() => setTab('display')}>
             <IconBrowser size={16} strokeWidth={1.5} />
-            {t('PREFERENCES.DISPLAY')}
+            {t('PREFERENCES.DISPLAY.LABEL')}
           </div>
           <div className={getTabClassname('proxy')} role="tab" onClick={() => setTab('proxy')}>
             <IconUserCircle size={16} strokeWidth={1.5} />

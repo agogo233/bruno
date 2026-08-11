@@ -102,7 +102,7 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
         collectionUid: collection.uid
       }));
     } else {
-      toast.error(t('REQUEST_PANE.NOTHING_TO_PRETTIFY'));
+      toast.error(t('REQUEST_PANE.WS.NOTHING_TO_PRETTIFY'));
     }
   }, [body, dispatch, item.uid, collection.uid]);
 
@@ -119,27 +119,27 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
     return [
       {
         key: 'body',
-        label: t('REQUEST_PANE.MESSAGE'),
+        label: t('REQUEST_PANE.WS.MESSAGE'),
         indicator: null
       },
       {
         key: 'headers',
-        label: t('REQUEST_PANE.HEADERS'),
+        label: t('REQUEST_PANE.WS.HEADERS'),
         indicator: activeHeadersLength > 0 ? <sup className="ml-[.125rem] font-medium">{activeHeadersLength}</sup> : null
       },
       {
         key: 'auth',
-        label: t('REQUEST_PANE.AUTH'),
+        label: t('REQUEST_PANE.WS.AUTH'),
         indicator: hasAuth ? <StatusDot type="default" dataTestId="auth" /> : null
       },
       {
         key: 'settings',
-        label: t('REQUEST_PANE.SETTINGS'),
+        label: t('REQUEST_PANE.WS.SETTINGS'),
         indicator: null
       },
       {
         key: 'docs',
-        label: t('REQUEST_PANE.DOCS'),
+        label: t('REQUEST_PANE.WS.DOCS'),
         indicator: docs && docs.length > 0 ? <StatusDot type="default" /> : null
       }
     ];
@@ -158,7 +158,7 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
         );
       }
       case 'headers': {
-        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.ADD_HEADERS')} />;
+        return <RequestHeaders item={item} collection={collection} addHeaderText={t('REQUEST_PANE.WS.ADD_HEADERS')} />;
       }
       case 'settings': {
         return <WSSettingsPane item={item} collection={collection} />;
@@ -199,12 +199,12 @@ const WSRequestPane = ({ item, collection, handleRun }) => {
     case 'body':
       rightContent = (
         <div ref={rightContentRef} className="flex items-center gap-2">
-          <ToolHint text={t('REQUEST_PANE.PRETTIFY_ALL')} toolhintId="prettify-all-ws">
+          <ToolHint text={t('REQUEST_PANE.WS.PRETTIFY_ALL')} toolhintId="prettify-all-ws">
             <ActionIcon data-testid="ws-prettify-all" onClick={onPrettifyAll}>
               <IconWand size={14} strokeWidth={1.5} />
             </ActionIcon>
           </ToolHint>
-          <ToolHint text={t('REQUEST_PANE.ADD_MESSAGE')} toolhintId="add-msg-ws">
+          <ToolHint text={t('REQUEST_PANE.WS.ADD_MESSAGE')} toolhintId="add-msg-ws">
             <ActionIcon data-testid="ws-add-message" onClick={addNewMessage}>
               <IconPlus size={15} strokeWidth={1.5} />
             </ActionIcon>

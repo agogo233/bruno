@@ -31,7 +31,7 @@ const AppCodeEditor = ({ item, collection }) => {
     <StyledWrapper className="w-full h-full flex flex-col">
       <div className="app-toolbar mb-3 pb-3 flex items-center justify-between gap-4">
         <p className="text-xs text-muted min-w-0">
-          {t('REQUEST_PANE.APP_VIEW_REPLACES_PANES')}
+          {t('REQUEST_PANE.APP_CODE_EDITOR.APP_VIEW_REPLACES_PANES')}
         </p>
         <Button
           size="sm"
@@ -40,7 +40,7 @@ const AppCodeEditor = ({ item, collection }) => {
           className="flex-shrink-0"
           data-testid="app-preview-btn"
         >
-{t('REQUEST_PANE.PREVIEW')}
+{t('REQUEST_PANE.APP_CODE_EDITOR.PREVIEW')}
         </Button>
       </div>
 

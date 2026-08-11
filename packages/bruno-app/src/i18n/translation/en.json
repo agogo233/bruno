@@ -103,7 +103,13 @@
   "PREFERENCES": {
     "GENERAL": "General",
     "THEMES": "Themes",
-    "DISPLAY": "Display",
+    "DISPLAY": {
+      "LABEL": "Display",
+      "CODE_EDITOR_FONT": "Code editor font",
+      "FONT_SIZE": "Font size",
+      "ZOOM_LABEL": "Zoom",
+      "FAILED_SAVE": "Failed to save changes"
+    },
     "PROXY": "Proxy",
     "CLIENT_CERTIFICATES": "Client Certificates",
     "KEYBINDINGS": "Keybindings",
@@ -1164,7 +1170,8 @@
       "RESPONSE": "Response",
       "LATEST": "Latest",
       "NO_METADATA": "No metadata received",
-      "NO_TRAILERS": "No trailers received"
+      "NO_TRAILERS": "No trailers received",
+      "RESPONSE_MESSAGE_N": "Response message {{count}}"
     },
     "WS": {
       "NO_MESSAGES": "No messages yet.",
@@ -1375,7 +1382,12 @@
       "REFRESH_INTROSPECTION": "Refresh from Introspection",
       "LOAD_INTROSPECTION": "Load from Introspection",
       "LOAD_FROM_FILE": "Load from File",
-      "SCHEMA": "Schema"
+      "SCHEMA": "Schema",
+      "INTROSPECTION_QUERY_FAILED": "Introspection query failed",
+      "NO_DATA_FROM_INTROSPECTION": "No data returned from introspection",
+      "SCHEMA_VALIDATION_ISSUES": "Schema validation issues found",
+      "SCHEMA_LOADED_SUCCESSFULLY": "Schema loaded successfully",
+      "ERROR_LOADING_SCHEMA": "Error loading schema"
     },
     "SEND_BUTTON": {
       "SEND": "Send",
@@ -1508,7 +1520,11 @@
       "AUTO_REFRESH_TOKEN_TOOLTIP": "Automatically refresh your token using the refresh URL when it expires.",
       "AUTO_FETCH_TOOLTIP": "Automatically fetch a new token when the current one expires.",
       "GRAPHQL_QUERY_PRETTIFIED": "Query prettified",
-      "GRAPHQL_QUERY_PRETTIFY_ERROR": "Error occurred while prettifying GraphQL query"
+      "GRAPHQL_QUERY_PRETTIFY_ERROR": "Error occurred while prettifying GraphQL query",
+      "KEY": "Key",
+      "VALUE": "Value",
+      "CONFIGURATION": "Configuration",
+      "CALLBACK_URL": "Callback URL"
     },
     "QUERY_URL": {
       "PLACEHOLDER": "Enter URL or paste a cURL request",
@@ -1550,7 +1566,9 @@
       "PATH": "Path",
       "NAME": "Name",
       "VALUE": "Value",
-      "BULK_EDIT": "Bulk Edit"
+      "BULK_EDIT": "Bulk Edit",
+      "PATH_VARIABLES_AUTO_ADDED": "Path variables auto-added",
+      "PATH_TEMPLATE_USED_IN_URL": "Path template used in URL"
     },
     "VARS": {
       "PRE_REQUEST": "Pre Request",
@@ -1602,7 +1620,7 @@
       "VALUE": "Value",
       "CONTENT_TYPE": "Content-Type",
       "AUTO": "Auto",
-      "ALREADY_ADDED": "\"{{name}}\" is already added",
+      "ALREADY_ADDED": "\"{{fileName}}\" is already added",
       "FILES_SKIPPED": "{{count}} files are already added - skipped",
       "SELECT_FILE": "Select File"
     },
@@ -1622,7 +1640,16 @@
       "EXPAND": "Expand",
       "LIST_COMPLEX_UNSUPPORTED": "List arguments for complex types are not currently supported.",
       "ARGUMENTS": "ARGUMENTS",
-      "FIELDS": "FIELDS"
+      "FIELDS": "FIELDS",
+      "FAILED_TO_LOAD_SCHEMA": "Failed to load schema",
+      "UPLOAD_SCHEMA_FILE": "Upload schema file",
+      "NO_SCHEMA_LOADED": "No schema loaded",
+      "LOAD_SCHEMA_DESCRIPTION": "Load a schema to enable query builder",
+      "MULTIPLE_OPERATIONS_DETECTED": "Multiple operations detected",
+      "QUERY_BUILDER_SINGLE_OPERATION": "Query builder requires a single operation",
+      "SEARCH_OPERATIONS": "Search operations",
+      "NO_MATCHING_FIELDS": "No matching fields",
+      "NO_FIELDS_AVAILABLE": "No fields available"
     },
     "PROMPT_VARIABLES": {
       "INPUT_REQUIRED": "Input Required",
@@ -1632,7 +1659,8 @@
     },
     "APP_CODE_EDITOR": {
       "DESCRIPTION": "The app view replaces the request/response panes for this request.",
-      "PREVIEW": "Preview"
+      "PREVIEW": "Preview",
+      "APP_VIEW_REPLACES_PANES": "App view will replace the request / response panes for this request"
     },
     "GRPC_QUERY_URL": {
       "GRPC": "gRPC",
@@ -1730,7 +1758,7 @@
       "KEEP_ALIVE_INTERVAL": "Keep Alive Interval",
       "KEEP_ALIVE_DESC": "Keep the websocket alive by sending ping requests",
       "ZERO_OFF": "0 (zero) = off",
-      "TIMEOUT_INVALID": "Timeout needs to be a valid number"
+       "TIMEOUT_INVALID": "Timeout needs to be a valid number"
     }
   },
   "ENVIRONMENTS": {
@@ -2579,7 +2607,8 @@
       "DESCRIPTION": "Configures authentication for the entire collection. This applies to all requests using the {{inherit}} option in the {{auth}} tab.",
       "SAVE": "Save",
       "INHERIT": "Inherit",
-      "AUTH": "Auth"
+      "AUTH": "Auth",
+      "TBD": "TBD"
     },
     "AUTH_MODE": {
       "AWS_SIG_V4": "AWS Sig v4",
@@ -2975,10 +3004,9 @@
       "ERROR_SWAGGER_NOT_SUPPORTED": "Swagger 2.0 is not supported. Please convert your spec to OpenAPI 3.x.",
       "ERROR_FILE_READ": "Failed to read the selected file",
       "FEATURES": [
-        "Detect new, modified, and removed endpoints",
-        "Track local changes against the spec",
-        "Sync collection with a single click",
-        "Your tests, assertions, and scripts are preserved during sync"
+        "Keep your requests in sync with the OpenAPI spec",
+        "Auto-detect endpoints added, updated, or removed in the spec",
+        "Review changes before syncing back to the collection"
       ]
     },
     "SETTINGS": {
@@ -3786,5 +3814,29 @@
     "NAME_REQUIRED": "name is required",
     "NAME_EXISTS": "A workspace with this name already exists",
     "ERROR_RENAMING": "An error occurred while renaming the workspace"
+  },
+  "NOTIFICATIONS": {
+    "CHECK_ALL": "Notifications",
+    "NOTIFICATIONS": "Notifications",
+    "LIST": {
+      "ENTER": "Open notification",
+      "EMPTY": "No notifications"
+    },
+    "DETAIL": {
+      "SELECT": "Select a notification to view details"
+    },
+    "TABS": {
+      "ALL": "All",
+      "UNREAD": "Unread"
+    },
+    "MENU_LABEL": "Options",
+    "MODAL": {
+      "TITLE": "Notifications",
+      "CLOSE": "Close"
+    },
+    "MARK_ALL_READ": "Mark all as read",
+    "CLEAR_ALL": "Clear all",
+    "RESIZE_SIDEBAR": "Resize notifications sidebar",
+    "EMPTY": "No notifications"
   }
 }

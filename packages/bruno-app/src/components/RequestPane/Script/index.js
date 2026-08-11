@@ -102,13 +102,13 @@ const Script = ({ item, collection }) => {
       <Tabs value={activeTab} onValueChange={onScriptTabChange}>
         <TabsList>
           <TabsTrigger value="pre-request">
-            {t('REQUEST_PANE.PRE_REQUEST')}
+            {t('REQUEST_PANE.SCRIPT.PRE_REQUEST')}
             {hasPreRequestScript && (
               <StatusDot type={item.preRequestScriptErrorMessage ? 'error' : 'default'} />
             )}
           </TabsTrigger>
           <TabsTrigger value="post-response">
-            {t('REQUEST_PANE.POST_RESPONSE')}
+            {t('REQUEST_PANE.SCRIPT.POST_RESPONSE')}
             {hasPostResponseScript && (
               <StatusDot type={item.postResponseScriptErrorMessage ? 'error' : 'default'} />
             )}

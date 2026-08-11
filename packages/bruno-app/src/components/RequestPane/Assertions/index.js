@@ -106,14 +106,14 @@ const Assertions = ({ item, collection }) => {
   const columns = [
     {
       key: 'name',
-      name: t('REQUEST_PANE.EXPR'),
+      name: t('REQUEST_PANE.ASSERTIONS.EXPR'),
       isKeyField: true,
-      placeholder: t('REQUEST_PANE.EXPR'),
+      placeholder: t('REQUEST_PANE.ASSERTIONS.EXPR'),
       width: '20%'
     },
     {
       key: 'operator',
-      name: t('REQUEST_PANE.OPERATOR'),
+      name: t('REQUEST_PANE.ASSERTIONS.OPERATOR'),
       width: '120px',
       getValue: (row) => parseAssertionOperator(row.value).operator,
       render: ({ row, rowIndex, isLastEmptyRow }) => {
@@ -151,7 +151,7 @@ const Assertions = ({ item, collection }) => {
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.VALUE'),
+      name: t('REQUEST_PANE.ASSERTIONS.VALUE'),
       width: '30%',
       render: ({ row, value, onChange }) => {
         const { operator, value: assertionValue } = parseAssertionOperator(value);

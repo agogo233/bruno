@@ -23,26 +23,26 @@ import { useTranslation } from 'react-i18next';
 
 const DEFAULT_MODES = (t) => [
   {
-    name: t('REQUEST_PANE.FORM'),
+    name: t('REQUEST_PANE.REQUEST_BODY.FORM'),
     options: [
-      { id: 'multipartForm', label: t('REQUEST_PANE.MULTIPART_FORM'), leftSection: IconForms },
-      { id: 'formUrlEncoded', label: t('REQUEST_PANE.FORM_URL_ENCODED'), leftSection: IconForms }
+      { id: 'multipartForm', label: t('REQUEST_PANE.REQUEST_BODY.MULTIPART_FORM'), leftSection: IconForms },
+      { id: 'formUrlEncoded', label: t('REQUEST_PANE.REQUEST_BODY.FORM_URL_ENCODED'), leftSection: IconForms }
     ]
   },
   {
-    name: t('REQUEST_PANE.RAW'),
+    name: t('REQUEST_PANE.REQUEST_BODY.RAW'),
     options: [
-      { id: 'json', label: t('REQUEST_PANE.JSON'), leftSection: IconBraces },
-      { id: 'xml', label: t('REQUEST_PANE.XML'), leftSection: IconCode },
-      { id: 'text', label: t('REQUEST_PANE.TEXT'), leftSection: IconFileText },
-      { id: 'sparql', label: t('REQUEST_PANE.SPARQL'), leftSection: IconDatabase }
+      { id: 'json', label: t('REQUEST_PANE.REQUEST_BODY.JSON'), leftSection: IconBraces },
+      { id: 'xml', label: t('REQUEST_PANE.REQUEST_BODY.XML'), leftSection: IconCode },
+      { id: 'text', label: t('REQUEST_PANE.REQUEST_BODY.TEXT'), leftSection: IconFileText },
+      { id: 'sparql', label: t('REQUEST_PANE.REQUEST_BODY.SPARQL'), leftSection: IconDatabase }
     ]
   },
   {
-    name: t('REQUEST_PANE.OTHER'),
+    name: t('REQUEST_PANE.REQUEST_BODY.OTHER'),
     options: [
-      { id: 'file', label: t('REQUEST_PANE.FILE_BINARY'), leftSection: IconFile },
-      { id: 'none', label: t('REQUEST_PANE.NO_BODY'), leftSection: IconX }
+      { id: 'file', label: t('REQUEST_PANE.REQUEST_BODY.FILE_BINARY'), leftSection: IconFile },
+      { id: 'none', label: t('REQUEST_PANE.REQUEST_BODY.NO_BODY'), leftSection: IconX }
     ]
   }
 ];
@@ -75,7 +75,7 @@ const RequestBodyMode = ({ item, collection }) => {
           })
         );
       } catch (e) {
-        toastError(new Error(t('REQUEST_PANE.UNABLE_PRETTIFY_INVALID_JSON')));
+        toastError(new Error(t('REQUEST_PANE.REQUEST_BODY.PRETTIFY_JSON_FAILED')));
       }
     } else if (body?.xml && bodyMode === 'xml') {
       try {
@@ -88,7 +88,7 @@ const RequestBodyMode = ({ item, collection }) => {
           })
         );
       } catch (e) {
-        toastError(new Error(t('REQUEST_PANE.UNABLE_PRETTIFY_INVALID_XML')));
+        toastError(new Error(t('REQUEST_PANE.REQUEST_BODY.PRETTIFY_XML_FAILED')));
       }
     }
   };
@@ -121,7 +121,7 @@ const RequestBodyMode = ({ item, collection }) => {
       </div>
       {(bodyMode === 'json' || bodyMode === 'xml') && (
         <button className="ml-2" onClick={onPrettify}>
-{t('REQUEST_PANE.PRETTIFY')}
+{t('REQUEST_PANE.REQUEST_BODY.PRETTIFY')}
         </button>
       )}
     </StyledWrapper>

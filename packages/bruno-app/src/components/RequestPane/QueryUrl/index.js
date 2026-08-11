@@ -91,7 +91,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
     if (item?.request?.url !== '' || (item.draft?.request?.url !== undefined && item.draft?.request?.url !== '')) {
       setGenerateCodeItemModalOpen(true);
     } else {
-      toast.error(t('REQUEST_PANE.URL_IS_REQUIRED'));
+      toast.error(t('REQUEST_PANE.QUERY_URL.URL_REQUIRED'));
     }
   };
 
@@ -112,7 +112,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
     try {
       const request = getRequestFromCurlCommand(pastedData, 'graphql-request');
       if (!request || !request.url) {
-        toast.error(t('REQUEST_PANE.INVALID_CURL_COMMAND'));
+        toast.error(t('REQUEST_PANE.QUERY_URL.INVALID_CURL'));
         return;
       }
       // Update URL
@@ -167,11 +167,11 @@ const QueryUrl = ({ item, collection, handleRun }) => {
           }));
         }
 
-        toast.success(t('REQUEST_PANE.GRAPHQL_QUERY_IMPORTED'));
+        toast.success(t('REQUEST_PANE.QUERY_URL.IMPORTED_GQL'));
       }
     } catch (error) {
       console.error('Error parsing cURL command:', error);
-      toast.error(t('REQUEST_PANE.FAILED_TO_PARSE_GRAPHQL_QUERY'));
+      toast.error(t('REQUEST_PANE.QUERY_URL.PARSE_GQL_FAILED'));
     }
   }, [dispatch, item.uid, collection.uid]);
 
@@ -198,7 +198,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
       // Parse the curl command
       const request = getRequestFromCurlCommand(pastedData);
       if (!request || !request.url) {
-        toast.error(t('REQUEST_PANE.INVALID_CURL_COMMAND'));
+        toast.error(t('REQUEST_PANE.QUERY_URL.INVALID_CURL'));
         return;
       }
 
@@ -379,10 +379,10 @@ const QueryUrl = ({ item, collection, handleRun }) => {
         }
       }
 
-      toast.success(t('REQUEST_PANE.CURL_IMPORTED'));
+      toast.success(t('REQUEST_PANE.QUERY_URL.IMPORTED_CURL'));
     } catch (error) {
       console.error('Error parsing cURL command:', error);
-      toast.error(t('REQUEST_PANE.FAILED_TO_PARSE_CURL'));
+      toast.error(t('REQUEST_PANE.QUERY_URL.PARSE_CURL_FAILED'));
     }
   },
   [dispatch, item.uid, item.type, collection.uid]
@@ -406,7 +406,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
           <SingleLineEditor
             ref={editorRef}
             value={url}
-            placeholder={t('REQUEST_PANE.ENTER_URL_OR_PASTE')}
+            placeholder={t('REQUEST_PANE.QUERY_URL.PLACEHOLDER')}
             onSave={(finalValue) => onSave(finalValue)}
             theme={storedTheme}
             onChange={(newValue) => onUrlChange(newValue)}
@@ -418,7 +418,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
             showNewlineArrow={true}
           />
           <div className="flex items-center h-full mx-2 gap-3" id="request-actions">
-            <ToolHint text={t('REQUEST_PANE.GENERATE_CODE')} toolhintId="http-generate-code" place="top" positionStrategy="fixed">
+            <ToolHint text={t('REQUEST_PANE.QUERY_URL.GENERATE_CODE')} toolhintId="http-generate-code" place="top" positionStrategy="fixed">
               <div
                 className="flex items-center"
                 data-testid="generate-code-button"
@@ -429,7 +429,7 @@ const QueryUrl = ({ item, collection, handleRun }) => {
                 <IconCode color={theme.requestTabs.icon.color} strokeWidth={1.5} size={20} className="cursor-pointer" />
               </div>
             </ToolHint>
-            <ToolHint text={`${t('REQUEST_PANE.SAVE')} (${saveShortcut})`} toolhintId="http-save-request" place="top" positionStrategy="fixed">
+            <ToolHint text={`${t('REQUEST_PANE.QUERY_URL.SAVE')} (${saveShortcut})`} toolhintId="http-save-request" place="top" positionStrategy="fixed">
               <div
                 className="flex items-center"
                 data-testid="save-request-button"

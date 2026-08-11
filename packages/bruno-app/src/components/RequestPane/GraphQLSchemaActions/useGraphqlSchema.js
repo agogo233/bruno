@@ -52,14 +52,14 @@ const useGraphqlSchema = (endpoint, environment, request, collection) => {
   const loadSchemaFromIntrospection = async () => {
     const response = await fetchGqlSchema(endpoint, environment, request, collection);
     if (!response) {
-      throw new Error(t('REQUEST_PANE.INTROSPECTION_QUERY_FAILED'));
+      throw new Error(t('REQUEST_PANE.GQL.INTROSPECTION_QUERY_FAILED'));
     }
     if (response.status !== 200) {
       throw new Error(response.statusText);
     }
     const data = response.data?.data;
     if (!data) {
-      throw new Error(t('REQUEST_PANE.NO_DATA_FROM_INTROSPECTION'));
+      throw new Error(t('REQUEST_PANE.GQL.NO_DATA_FROM_INTROSPECTION'));
     }
     setSchemaSource('introspection');
     return data;
@@ -97,18 +97,18 @@ const useGraphqlSchema = (endpoint, environment, request, collection) => {
 
         if (validationErrors.length > 0) {
           const errorMessages = validationErrors.map((e) => e.message).join('; ');
-          toast(`${t('REQUEST_PANE.SCHEMA_VALIDATION_ISSUES')}${errorMessages}`, {
+          toast(`${t('REQUEST_PANE.GQL.SCHEMA_VALIDATION_ISSUES')}${errorMessages}`, {
             icon: '⚠️',
             duration: 5000
           });
         } else {
-          toast.success(t('REQUEST_PANE.SCHEMA_LOADED_SUCCESSFULLY'));
+          toast.success(t('REQUEST_PANE.GQL.SCHEMA_LOADED_SUCCESSFULLY'));
         }
       }
     } catch (err) {
       setError(err);
       console.error(err);
-      toast.error(`${t('REQUEST_PANE.ERROR_LOADING_SCHEMA')}${err.message}`);
+      toast.error(`${t('REQUEST_PANE.GQL.ERROR_LOADING_SCHEMA')}${err.message}`);
     }
 
     setIsLoading(false);

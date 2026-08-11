@@ -50,17 +50,17 @@ const HttpRequestPane = ({ item, collection }) => {
   const requestPaneTab = focusedTab?.requestPaneTab;
 
   const TAB_CONFIG = useMemo(() => [
-    { key: 'params', label: t('REQUEST_PANE.PARAMS') },
-    { key: 'body', label: t('REQUEST_PANE.BODY') },
-    { key: 'headers', label: t('REQUEST_PANE.HEADERS') },
-    { key: 'auth', label: t('REQUEST_PANE.AUTH') },
-    { key: 'vars', label: t('REQUEST_PANE.VARS') },
-    { key: 'script', label: t('REQUEST_PANE.SCRIPT') },
-    { key: 'assert', label: t('REQUEST_PANE.ASSERT') },
-    { key: 'tests', label: t('REQUEST_PANE.TESTS') },
-    { key: 'docs', label: t('REQUEST_PANE.DOCS') },
-    { key: 'app', label: t('REQUEST_PANE.APP') },
-    { key: 'settings', label: t('REQUEST_PANE.SETTINGS') }
+    { key: 'params', label: t('REQUEST_PANE.HTTP.PARAMS') },
+    { key: 'body', label: t('REQUEST_PANE.HTTP.BODY') },
+    { key: 'headers', label: t('REQUEST_PANE.HTTP.HEADERS') },
+    { key: 'auth', label: t('REQUEST_PANE.HTTP.AUTH') },
+    { key: 'vars', label: t('REQUEST_PANE.HTTP.VARS') },
+    { key: 'script', label: t('REQUEST_PANE.HTTP.SCRIPT') },
+    { key: 'assert', label: t('REQUEST_PANE.HTTP.ASSERT') },
+    { key: 'tests', label: t('REQUEST_PANE.HTTP.TESTS') },
+    { key: 'docs', label: t('REQUEST_PANE.HTTP.DOCS') },
+    { key: 'app', label: t('REQUEST_PANE.HTTP.APP') },
+    { key: 'settings', label: t('REQUEST_PANE.HTTP.SETTINGS') }
   ], [t]);
   const getProperty = useCallback(
     (key, defaultValue = []) => (item.draft ? get(item, `draft.${key}`, defaultValue) : get(item, key, defaultValue)),
