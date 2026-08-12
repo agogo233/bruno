@@ -11,6 +11,7 @@ import {
 } from 'providers/ReduxStore/slices/collections';
 import get from 'lodash/get';
 import Button from 'ui/Button';
+import { getMockResponseDescriptionError, getMockResponseNameLengthError } from 'utils/mock-server/mock-responses';
 
 const MockResponseTopBar = ({
   item,
@@ -54,6 +55,9 @@ const MockResponseTopBar = ({
     return null;
   }
 
+  const nameError = getMockResponseNameLengthError(example.name);
+  const descriptionError = getMockResponseDescriptionError(example.description);
+
   if (editMode) {
     return (
       <StyledWrapper className="p-4">
@@ -71,6 +75,9 @@ const MockResponseTopBar = ({
                     autoFocus
                     data-testid="mock-response-name-input"
                   />
+                  {nameError ? (
+                    <div className="text-red-500 text-xs mt-1">{nameError}</div>
+                  ) : null}
                 </div>
                 <div>
                   <textarea
@@ -81,6 +88,9 @@ const MockResponseTopBar = ({
                     rows={3}
                     data-testid="mock-response-description-input"
                   />
+                  {descriptionError ? (
+                    <div className="text-red-500 text-xs mt-1">{descriptionError}</div>
+                  ) : null}
                 </div>
                 {copiedFrom?.exampleName ? (
                   <div className="text-xs opacity-60">
@@ -104,6 +114,7 @@ const MockResponseTopBar = ({
                 size="sm"
                 icon={<IconDeviceFloppy size={16} />}
                 onClick={onSave}
+                disabled={Boolean(nameError || descriptionError)}
                 data-testid="mock-response-save-btn"
               >
                 {t('MOCK_SERVER.TOPBAR.SAVE')}
@@ -118,8 +129,8 @@ const MockResponseTopBar = ({
   return (
     <StyledWrapper className="p-4">
       <div className="max-w-full">
-        <div className="flex items-center justify-between gap-6 md:flex-row flex-col">
-          <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-6 md:flex-row flex-col">
+          <div className="flex-1 min-w-0 overflow-hidden">
             <h2 className="response-example-title font-medium leading-tight" data-testid="mock-response-title">
               {example.name}
             </h2>
@@ -127,8 +138,8 @@ const MockResponseTopBar = ({
               <TruncatedText
                 text={example.description}
                 maxLines={2}
-                className="response-example-description-container"
-                textClassName="response-example-description leading-relaxed max-w-fit"
+                className="response-example-description-container max-w-full"
+                textClassName="response-example-description leading-relaxed max-w-full"
                 buttonClassName="text-blue-600 hover:text-blue-800 font-medium"
                 viewMoreText={t('MOCK_SERVER.TOPBAR.VIEW_MORE')}
                 viewLessText={t('MOCK_SERVER.TOPBAR.VIEW_LESS')}

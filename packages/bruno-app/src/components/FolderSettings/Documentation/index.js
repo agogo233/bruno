@@ -1,10 +1,8 @@
 import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
 import { updateFolderDocs } from 'providers/ReduxStore/slices/collections';
-import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveFolderRoot } from 'providers/ReduxStore/slices/collections/actions';
-import { buildAiVariablesPayload, buildDocsContextFromFolder } from 'utils/ai';
 import Button from 'ui/Button';
 import StyledWrapper from './StyledWrapper';
 import { usePersistedState } from 'hooks/usePersistedState';
@@ -36,8 +34,6 @@ const Documentation = ({ collection, folder }) => {
   };
 
   const onSave = () => dispatch(saveFolderRoot(collection.uid, folder.uid));
-  const docsContext = useMemo(() => buildDocsContextFromFolder(collection, folder), [collection, folder]);
-  const aiVariables = useMemo(() => buildAiVariablesPayload(collection, folder), [collection, folder]);
 
   if (!folder) {
     return null;
@@ -53,8 +49,6 @@ const Documentation = ({ collection, folder }) => {
           isEditing={isEditing}
           collection={collection}
           collectionPath={collection.pathname}
-          docsContext={docsContext}
-          variables={aiVariables}
           onRequestEdit={toggleViewMode}
           initialScroll={scroll}
           onScroll={setScroll}

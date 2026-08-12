@@ -1,17 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import Portal from 'components/Portal';
 import Modal from 'components/Modal';
-import { validateName, validateNameError } from 'utils/common/regex';
 import { loadMockResponses } from 'providers/ReduxStore/slices/mock-server/index';
 import {
   cloneMockServerInstancePayload,
   DEFAULT_MOCK_SERVER_PORT,
   getMockServerInstances,
+  getMockServerNameError,
   isMockServerNameTaken,
   isMockServerPortTaken,
   openMockServerDashboard,
@@ -31,7 +31,7 @@ const CloneMockServerModal = ({
   const { t } = useTranslation();
   const inputRef = useRef();
   const activeWorkspaceUid = useSelector((state) => state.workspaces.activeWorkspaceUid);
-  const configuredInstances = useSelector((state) => getMockServerInstances(state));
+  const configuredInstances = useSelector((state) => getMockServerInstances(state), shallowEqual);
   const existingInstances = useSelector((state) => getMockServerInstances(state, activeWorkspaceUid));
 
   const formik = useFormik({
@@ -42,11 +42,12 @@ const CloneMockServerModal = ({
     },
     validationSchema: Yup.object({
       name: Yup.string()
+        .trim()
         .min(1, () => t('MOCK_SERVER.CLONE_MODAL.MIN_CHAR'))
         .max(255, () => t('MOCK_SERVER.CLONE_MODAL.MAX_CHAR'))
         .test('is-valid-name', function (value) {
-          const isValid = validateName(value);
-          return isValid ? true : this.createError({ message: validateNameError(value) });
+          const error = getMockServerNameError(value);
+          return error ? this.createError({ message: error }) : true;
         })
         .required(() => t('MOCK_SERVER.CLONE_MODAL.NAME_REQUIRED'))
         .test('duplicate-name', () => t('MOCK_SERVER.CLONE_MODAL.DUPLICATE_NAME'), (value) => (
@@ -173,8 +174,10 @@ const CloneMockServerModal = ({
               className="block textbox w-full mt-2"
               min={1}
               max={65535}
-              value={formik.values.port}
-              onChange={formik.handleChange}
+              value={formik.values.port || ''}
+              onChange={(event) => {
+                formik.setFieldValue('port', event.target.value ? Number(event.target.value) : '');
+              }}
               onBlur={formik.handleBlur}
               data-testid="mock-server-clone-port-input"
             />

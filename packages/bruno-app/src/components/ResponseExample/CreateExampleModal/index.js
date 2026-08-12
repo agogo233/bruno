@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import Portal from 'components/Portal';
-
-const STATUS_CODES = [200, 201, 204, 400, 401, 403, 404, 500, 502, 503];
+import statusCodePhraseMap from 'components/ResponsePane/StatusCode/get-status-code-phrase';
 
 const CreateExampleModal = ({ isOpen, onClose, onSave, title, initialName = '', showMockFields = false, confirmText }) => {
   const { t } = useTranslation();
@@ -25,12 +24,12 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title, initialName = '', 
   };
 
   const handleConfirm = () => {
-        if (name.trim()) {
-          if (showMockFields) {
-            onSave(name.trim(), description.trim(), { statusCode: Number(statusCode) });
-          } else {
-            onSave(name.trim(), description.trim());
-          }
+    if (name.trim()) {
+      if (showMockFields) {
+        onSave(name.trim(), description.trim(), { statusCode: Number(statusCode) || 200, bodyType });
+      } else {
+        onSave(name.trim(), description.trim());
+      }
       // Reset form
       setName('');
       setDescription('');
@@ -123,11 +122,11 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title, initialName = '', 
                   id="statusCode"
                   className="textbox mt-2 w-full"
                   value={statusCode}
-                  onChange={(e) => setStatusCode(e.target.value)}
+                  onChange={(e) => setStatusCode(Number(e.target.value))}
                   data-testid="status-code-select"
                 >
-                  {STATUS_CODES.map((code) => (
-                    <option key={code} value={code}>{code}</option>
+                  {Object.entries(statusCodePhraseMap).map(([code, phrase]) => (
+                    <option key={code} value={code}>{code} {phrase}</option>
                   ))}
                 </select>
               </div>

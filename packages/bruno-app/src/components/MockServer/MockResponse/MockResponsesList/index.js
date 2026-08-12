@@ -349,6 +349,7 @@ const MockResponsesList = ({ instance, collection }) => {
       {showCreateModal ? (
         <CreateMockResponseModal
           collection={isSpecServer ? null : resolvedCollection}
+          existingResponses={responses}
           onCreate={handleCreate}
           onClose={() => setShowCreateModal(false)}
         />

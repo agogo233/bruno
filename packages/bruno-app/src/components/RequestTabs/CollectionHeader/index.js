@@ -331,6 +331,9 @@ const CollectionHeader = ({ collection, isScratchCollection }) => {
     ...(!hasOpenApiSyncConfigured
       ? [{ id: 'openapi-sync', label: t('REQUEST_TABS.TAB_STRIP.OPENAPI'), leftSection: OpenAPISyncIcon, onClick: viewOpenApiSync }]
       : []),
+    ...(isMockServerEnabled
+      ? [{ id: 'mock-server', label: t('REQUEST_TABS.TAB_STRIP.MOCK_SERVER'), leftSection: IconServer2, onClick: viewMockServer }]
+      : []),
     { id: 'collection-settings', label: t('REQUEST_TABS.TAB_STRIP.COLLECTION_SETTINGS'), leftSection: IconSettings, onClick: viewCollectionSettings }
   ];
 
@@ -789,13 +792,6 @@ const CollectionHeader = ({ collection, isScratchCollection }) => {
                   <IconRun size={16} strokeWidth={1.5} />
                 </ActionIcon>
               </ToolHint>
-              {isMockServerEnabled && (
-                <ToolHint text={t('REQUEST_TABS.TAB_STRIP.MOCK_SERVER')} toolhintId="MockServerToolhintId" place="bottom">
-                  <ActionIcon onClick={viewMockServer} aria-label={t('REQUEST_TABS.TAB_STRIP.MOCK_SERVER')} size="sm" data-testid="mock-server">
-                    <IconServer2 size={16} strokeWidth={1.5} />
-                  </ActionIcon>
-                </ToolHint>
-              )}
               {/* JS Sandbox Mode - always visible */}
               <JsSandboxMode collection={collection} />
               {/* Overflow menu */}

@@ -8,7 +8,6 @@ import { IconCaretDown, IconTrash } from '@tabler/icons';
 import Portal from 'components/Portal';
 import Modal from 'components/Modal';
 import Button from 'ui/Button';
-import { validateName, validateNameError } from 'utils/common/regex';
 import { normalizePath } from 'utils/common/path';
 import { isScratchCollection } from 'utils/collections';
 import { matchLoadedApiSpecs } from 'components/Sidebar/ApiSpecs/matchLoadedApiSpecs';
@@ -18,11 +17,14 @@ import {
   getMockServerInstances,
   checkMockServerPortAvailable,
   getMockServerPortError,
+  getMockServerNameError,
   openMockServerDashboard,
   resolveTabCollectionUid,
   saveMockServerInstance,
   suggestAvailableMockServerPort,
-  updateMockServerTabName
+  updateMockServerTabName,
+  toMockServerDelayInputValue,
+  blockMockServerDelayKeys
 } from 'utils/mock-server/mock-server-instances';
 
 const resolveSelectedSpecUid = (editingInstance, apiSpecs) => {
@@ -185,11 +187,12 @@ const CreateMockServerModal = ({
     },
     validationSchema: Yup.object({
       name: Yup.string()
+        .trim()
         .min(1, () => t('MOCK_SERVER.CREATE_MODAL.MIN_CHAR'))
         .max(255, () => t('MOCK_SERVER.CREATE_MODAL.MAX_CHAR'))
         .test('is-valid-name', function (value) {
-          const isValid = validateName(value);
-          return isValid ? true : this.createError({ message: validateNameError(value) });
+          const error = getMockServerNameError(value);
+          return error ? this.createError({ message: error }) : true;
         })
         .required(() => t('MOCK_SERVER.CREATE_MODAL.NAME_REQUIRED'))
         .test('duplicate-name', () => t('MOCK_SERVER.CREATE_MODAL.DUPLICATE_NAME'), (value) => {
@@ -330,6 +333,12 @@ const CreateMockServerModal = ({
     formik.handleSubmit();
   };
 
+  const handleCancel = () => {
+    formik.resetForm({ values: formik.values });
+    setPortError(null);
+    onClose();
+  };
+
   const handleDelete = () => {
     if (editingInstance && onDelete) {
       onDelete(editingInstance);
@@ -343,7 +352,7 @@ const CreateMockServerModal = ({
         title={isEditing ? t('MOCK_SERVER.CREATE_MODAL.SETTINGS_TITLE') : t('MOCK_SERVER.CREATE_MODAL.CREATE_TITLE')}
         confirmText={isEditing ? t('MOCK_SERVER.CREATE_MODAL.SAVE') : t('MOCK_SERVER.CREATE_MODAL.CREATE')}
         handleConfirm={handleConfirm}
-        handleCancel={onClose}
+        handleCancel={handleCancel}
         footerLeft={isEditing && onDelete ? (
           <Button
             type="button"
@@ -521,9 +530,9 @@ const CreateMockServerModal = ({
                     className="block textbox w-full mt-2"
                     min={1}
                     max={65535}
-                    value={formik.values.port}
+                    value={formik.values.port || ''}
                     onChange={(event) => {
-                      formik.handleChange(event);
+                      formik.setFieldValue('port', event.target.value ? Number(event.target.value) : '');
                       if (portError) {
                         setPortError(null);
                       }
@@ -561,7 +570,8 @@ const CreateMockServerModal = ({
                     min={0}
                     step={100}
                     value={formik.values.globalDelay}
-                    onChange={formik.handleChange}
+                    onChange={(event) => formik.setFieldValue('globalDelay', toMockServerDelayInputValue(event.target.value))}
+                    onKeyDown={blockMockServerDelayKeys}
                     onBlur={formik.handleBlur}
                     data-testid="mock-server-settings-delay-input"
                   />
