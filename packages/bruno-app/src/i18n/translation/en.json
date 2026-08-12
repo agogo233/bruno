@@ -3780,6 +3780,20 @@
     "SAVE_BTN": "Save",
     "RESET_BTN": "Reset"
   },
+  "ERRORS": {
+    "modalTitle": "Error",
+    "saveFileErrorTitle": "Save File Error"
+  },
+  "SECURITY": {
+    "javascriptSandbox": "JavaScript Sandbox",
+    "safeMode": "Safe Mode",
+    "safeModeDescription": "JavaScript code is executed in a secure sandbox and cannot access your filesystem or execute system commands.",
+    "developerMode": "Developer Mode",
+    "developerModeDescription": "JavaScript code has access to the filesystem, can execute system commands and access sensitive information.",
+    "developerModeWarning": "Use only if you trust the authors of the collection",
+    "recommended": "Recommended",
+    "sandboxModeUpdateFailed": "Failed to update sandbox mode"
+  },
   "TOAST": {
     "CLOSE": "Close toast",
     "POSTMAN_IMPORT_COMPLETED": "Postman collection import completed with issues. Some items could not be converted.",

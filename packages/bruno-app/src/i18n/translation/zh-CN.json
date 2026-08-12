@@ -3780,6 +3780,20 @@
     "SAVE_BTN": "保存",
     "RESET_BTN": "重置"
   },
+  "ERRORS": {
+    "modalTitle": "错误",
+    "saveFileErrorTitle": "保存文件时出错"
+  },
+  "SECURITY": {
+    "javascriptSandbox": "JavaScript 沙箱",
+    "safeMode": "安全模式",
+    "safeModeDescription": "JavaScript 代码在安全的沙箱中执行，无法访问文件系统或执行系统命令。",
+    "developerMode": "开发者模式",
+    "developerModeDescription": "JavaScript 代码可以访问文件系统、执行系统命令并访问敏感信息。",
+    "developerModeWarning": "仅当信任集合作者时使用此模式",
+    "recommended": "推荐",
+    "sandboxModeUpdateFailed": "更新沙箱模式失败"
+  },
   "TOAST": {
     "CLOSE": "关闭提示",
     "POSTMAN_IMPORT_COMPLETED": "Postman 集合导入完成，但存在部分问题。部分项目无法转换。",
