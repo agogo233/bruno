@@ -3092,7 +3092,7 @@
       "PARAMETERS": "参数",
       "HEADERS": "标头",
       "AUTHENTICATION": "认证",
-      "BODY": "Body",
+      "BODY": "正文",
       "MODIFIED_IN_COLLECTION": "集合中已修改",
       "DELETED_FROM_COLLECTION": "从集合中已删除",
       "ADDED_TO_COLLECTION": "添加到集合"
