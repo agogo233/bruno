@@ -977,6 +977,7 @@ const EnvironmentVariablesTable = ({
                       type="checkbox"
                       className="mousetrap"
                       name={`${actualIndex}.enabled`}
+                      data-testid="env-var-enabled-checkbox"
                       checked={variable.enabled}
                       onChange={formik.handleChange}
                     />

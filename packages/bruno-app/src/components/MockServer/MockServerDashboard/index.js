@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
-import { startMockServer, stopMockServer, refreshMockRoutes, updateMockDelay, syncMockServerState } from 'providers/ReduxStore/slices/mock-server/index';
+import { startMockServer, stopMockServer, refreshMockRoutes, loadMockResponses, syncMockServerState } from 'providers/ReduxStore/slices/mock-server/index';
 import { IconRefresh, IconCopy, IconCheck, IconPlayerPlay, IconPlayerStop, IconSettings } from '@tabler/icons';
 import toast from 'react-hot-toast';
 import RouteTable from './RouteTable';
@@ -27,7 +27,7 @@ import MockResponsesList from 'components/MockServer/MockResponse/MockResponsesL
 import Tab from 'components/Tab';
 import ActionIcon from 'ui/ActionIcon';
 import Button from 'ui/Button';
-import { resolveMockResponseCollection, resolveMockResponseLocation } from 'utils/mock-server/mock-responses';
+import { resolveMockResponseCollection, resolveMockResponseLocation, countMockRoutes } from 'utils/mock-server/mock-responses';
 import StyledWrapper from './StyledWrapper';
 
 const MockServerLogCount = ({ mockServerUid }) => {
@@ -59,6 +59,9 @@ const MockServerDashboard = ({ instance, collection }) => {
     findMockServerInstance(state, mockServerUid) || instance
   ));
   const workspaceInstances = useSelector((state) => getMockServerInstances(state, activeWorkspaceUid));
+  const mockResponses = useSelector((state) => state.mockServer.mockResponses[mockServerUid]) || [];
+  const routeCount = useMemo(() => countMockRoutes(mockResponses), [mockResponses]);
+  const exampleCount = mockResponses.length;
 
   const activeWorkspace = useMemo(() => (
     workspaces.find((workspace) => workspace.uid === activeWorkspaceUid) || null
@@ -81,8 +84,6 @@ const MockServerDashboard = ({ instance, collection }) => {
     status: 'stopped',
     port: null,
     baseUrl: null,
-    routeCount: 0,
-    exampleCount: 0,
     globalDelay: instance.globalDelay || 0
   };
 
@@ -169,8 +170,9 @@ const MockServerDashboard = ({ instance, collection }) => {
 
   const handleRefresh = async () => {
     try {
-      const result = await dispatch(refreshMockRoutes(location)).unwrap();
-      toast.success(t('MOCK_SERVER.DASHBOARD.ROUTES_REFRESHED', { routeCount: result.routeCount, exampleCount: result.exampleCount }));
+      await dispatch(refreshMockRoutes(location)).unwrap();
+      const { responses } = await dispatch(loadMockResponses(location)).unwrap();
+      toast.success(t('MOCK_SERVER.DASHBOARD.ROUTES_REFRESHED', { routeCount: countMockRoutes(responses), exampleCount: responses.length }));
     } catch (err) {
       toast.error(err.message || t('MOCK_SERVER.DASHBOARD.REFRESH_FAILED'));
     }
@@ -232,10 +234,6 @@ const MockServerDashboard = ({ instance, collection }) => {
     }
 
     try {
-      if (isRunning) {
-        await dispatch(updateMockDelay({ mockServerUid, delay: newDelay })).unwrap();
-      }
-
       await persistInstance({ globalDelay: newDelay });
     } catch (err) {
       toast.error(err.message || t('MOCK_SERVER.DASHBOARD.UPDATE_DELAY_FAILED'));
@@ -359,8 +357,8 @@ const MockServerDashboard = ({ instance, collection }) => {
 
           {isRunning && (
             <div className="server-stats" data-testid="mock-server-stats">
-              <span>{t('MOCK_SERVER.DASHBOARD.ROUTES_COUNT', { count: serverState.routeCount })}</span>
-              <span>{t('MOCK_SERVER.DASHBOARD.RESPONSES_COUNT', { count: serverState.exampleCount })}</span>
+              <span>{t('MOCK_SERVER.DASHBOARD.ROUTES_COUNT', { count: routeCount })}</span>
+              <span>{t('MOCK_SERVER.DASHBOARD.RESPONSES_COUNT', { count: exampleCount })}</span>
             </div>
           )}
 
@@ -374,7 +372,7 @@ const MockServerDashboard = ({ instance, collection }) => {
                 onChange={handleDelayChange}
                 onKeyDown={blockMockServerDelayKeys}
                 onBlur={handleDelayBlur}
-                disabled={isStarting}
+                disabled={isRunning || isStarting || isStopping}
                 min={0}
                 step={100}
                 data-testid="mock-server-delay-input"
@@ -436,7 +434,7 @@ const MockServerDashboard = ({ instance, collection }) => {
         <Tab
           name="routes"
           label={t('MOCK_SERVER.DASHBOARD.TAB_ROUTES')}
-          count={serverState.routeCount}
+          count={routeCount}
           isActive={activeTab === 'routes'}
           onClick={setActiveTab}
           data-testid="mock-server-tab-routes"

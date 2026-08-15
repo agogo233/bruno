@@ -1758,7 +1758,7 @@
       "KEEP_ALIVE_INTERVAL": "Keep Alive Interval",
       "KEEP_ALIVE_DESC": "Keep the websocket alive by sending ping requests",
       "ZERO_OFF": "0 (zero) = off",
-       "TIMEOUT_INVALID": "Timeout needs to be a valid number"
+      "TIMEOUT_INVALID": "Timeout needs to be a valid number"
     }
   },
   "ENVIRONMENTS": {
@@ -2151,7 +2151,8 @@
       "NO_WORKSPACE_PATH": "Workspace path is required to clone mock responses",
       "CLONED": "Mock server cloned",
       "CLONE_FAILED": "Failed to clone mock server",
-      "HINT": "Clones mock responses and server settings. The clone starts stopped."
+      "HINT": "Clones mock responses and server settings. The clone starts stopped.",
+      "PORT_INTEGER": "Port must be a whole number"
     },
     "DASHBOARD": {
       "PORT_REQUIRED": "Port is required",
@@ -2532,7 +2533,14 @@
     "NO_ENVIRONMENT_VARIABLES": "No environment variables found",
     "RUNTIME_VARIABLES": "Runtime Variables",
     "NO_RUNTIME_VARIABLES": "No runtime variables found",
-    "RUNTIME_NOTE": "Note: As of today, runtime variables can only be set via the API - <span className=\"font-medium\">getVar()</span> and <span className=\"font-medium\">setVar()</span>.<br />You can use the <span className=\"font-medium\">var</span> variable with the <span className=\"font-medium\">{{\"{{var}}\"}}</span> syntax."
+    "OPEN_IN_DRAWER": "Open in drawer",
+    "OPEN_OBJECT_IN_DRAWER": "Open object in drawer",
+    "COPY_VALUE": "Copy value",
+    "CLOSE": "Close",
+    "NAME": "Name",
+    "VALUE": "Value",
+    "RUNTIME": "Runtime",
+    "ENVIRONMENT": "Environment"
   },
   "REQUEST_TAB_PANEL": {
     "LOADING": "Loading...",

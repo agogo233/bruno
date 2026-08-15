@@ -765,7 +765,7 @@ const CollectionItem = ({ item, collectionUid, collectionPathname, searchText })
               <span className="item-name" title={item.name}>
                 {item.name}
               </span>
-              {hasExamples && (
+{hasExamples && (
                 <sup className="ml-1 example-count-badge" title={t('SIDEBAR.COLLECTION_ITEM.EXAMPLE_COUNT', { count: item.examples.length })} data-testid="example-count-badge">
                   {item.examples.length}
                 </sup>

@@ -9,6 +9,7 @@ import { findCollectionByUid, flattenItems, isItemARequest, hasRequestChanges } 
 import filter from 'lodash/filter';
 import ConfirmCollectionCloseDrafts from './ConfirmCollectionCloseDrafts';
 import StyledWrapper from './StyledWrapper';
+import Portal from 'ui/Portal';
 
 const RemoveCollection = ({ onClose, collectionUid }) => {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const RemoveCollection = ({ onClose, collectionUid }) => {
   // Otherwise, show the standard remove confirmation modal
   return (
     <StyledWrapper>
+<Portal>
       <Modal
         size="sm"
         title={t('SIDEBAR.REMOVE_COLLECTION.TITLE')}
@@ -65,6 +67,7 @@ const RemoveCollection = ({ onClose, collectionUid }) => {
           {t('SIDEBAR.REMOVE_COLLECTION.HINT')}
         </p>
       </Modal>
+      </Portal>
     </StyledWrapper>
   );
 };

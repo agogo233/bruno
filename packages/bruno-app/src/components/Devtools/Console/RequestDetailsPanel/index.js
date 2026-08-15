@@ -10,22 +10,28 @@ import {
 import { clearSelectedRequest } from 'providers/ReduxStore/slices/logs';
 import QueryResponse from 'components/ResponsePane/QueryResponse/index';
 import Network from 'components/ResponsePane/Timeline/TimelineItem/Network';
+import { sentHeadersFromTimeline } from 'utils/timeline';
 import StyledWrapper from './StyledWrapper';
 import { uuid } from 'utils/common/index';
 
+const formatHeaders = (headers) => {
+  if (!headers) return [];
+  if (Array.isArray(headers)) return headers;
+  return Object.entries(headers).map(([key, value]) => ({ name: key, value }));
+};
+
+const formatBody = (body) => {
+  if (!body) return t('DEVTOOLS.REQUEST_DETAILS.NO_BODY');
+  if (typeof body === 'string') return body;
+  return JSON.stringify(body, null, 2);
+};
+
 const RequestTab = ({ request, response }) => {
   const { t } = useTranslation();
-  const formatHeaders = (headers) => {
-    if (!headers) return [];
-    if (Array.isArray(headers)) return headers;
-    return Object.entries(headers).map(([key, value]) => ({ name: key, value }));
-  };
-
-  const formatBody = (body) => {
-    if (!body) return t('DEVTOOLS.REQUEST_DETAILS.NO_BODY');
-    if (typeof body === 'string') return body;
-    return JSON.stringify(body, null, 2);
-  };
+  const sentHeaders = sentHeadersFromTimeline(response?.timeline);
+  /** In case of `bru.sendRequest` it builds its own entry in timeline,
+   * so to show the headers sent in new request we need headers not sentHeaders */
+  const headers = sentHeaders.length ? sentHeaders : formatHeaders(request?.headers);
 
   return (
     <div className="tab-content">
@@ -44,9 +50,9 @@ const RequestTab = ({ request, response }) => {
       </div>
 
       <div className="section">
-        <h4>{t('DEVTOOLS.REQUEST_DETAILS.REQUEST_HEADERS')}</h4>
-        {formatHeaders(request?.headers).length > 0 ? (
-          <div className="headers-table">
+<h4>{t('DEVTOOLS.REQUEST_DETAILS.REQUEST_HEADERS')}</h4>
+        {headers.length > 0 ? (
+          <div className="headers-table" data-testid="request-details-request-headers">
             <table>
               <thead>
                 <tr>
@@ -55,10 +61,10 @@ const RequestTab = ({ request, response }) => {
                 </tr>
               </thead>
               <tbody>
-                {formatHeaders(request.headers).map((header, index) => (
-                  <tr key={index}>
-                    <td className="header-name">{header.name}</td>
-                    <td className="header-value">{header.value}</td>
+                {headers.map((header, index) => (
+                  <tr key={index} data-testid="request-details-header-row">
+                    <td className="header-name" data-testid="request-details-header-name">{header.name}</td>
+                    <td className="header-value" data-testid="request-details-header-value">{header.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -81,11 +87,6 @@ const RequestTab = ({ request, response }) => {
 
 const ResponseTab = ({ response, request, collection }) => {
   const { t } = useTranslation();
-  const formatHeaders = (headers) => {
-    if (!headers) return [];
-    if (Array.isArray(headers)) return headers;
-    return Object.entries(headers).map(([key, value]) => ({ name: key, value }));
-  };
 
   return (
     <div className="tab-content">
@@ -214,6 +215,7 @@ const RequestDetailsPanel = () => {
       <div className="panel-tabs">
         <button
           className={`tab-button ${activeTab === 'request' ? 'active' : ''}`}
+          data-testid="request-details-tab"
           onClick={() => setActiveTab('request')}
         >
           <IconArrowRight size={14} strokeWidth={1.5} />
@@ -230,6 +232,7 @@ const RequestDetailsPanel = () => {
 
         <button
           className={`tab-button ${activeTab === 'network' ? 'active' : ''}`}
+          data-testid="network-details-tab"
           onClick={() => setActiveTab('network')}
         >
           <IconNetwork size={14} strokeWidth={1.5} />

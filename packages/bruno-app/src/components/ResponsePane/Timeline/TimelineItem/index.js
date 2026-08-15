@@ -196,6 +196,7 @@ const TimelineItem = ({
                   key={tab.id}
                   type="button"
                   className={`tl-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+                  data-testid={`tl-tab-${tab.id}`}
                   onClick={() => handleTabClick(tab.id)}
                 >
                   {tab.label}
@@ -206,7 +207,7 @@ const TimelineItem = ({
             <div className="tl-panel">
               {visitedTabs.request && (
                 <div style={{ display: activeTab === 'request' ? 'block' : 'none' }}>
-                  <Request request={request} item={item} collection={collection} />
+                  <Request request={request} response={response} item={item} collection={collection} />
                 </div>
               )}
               {visitedTabs.response && (

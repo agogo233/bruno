@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { IconAlertTriangle } from '@tabler/icons';
 import Modal from 'components/Modal';
 import Button from 'ui/Button';
+import Portal from 'ui/Portal';
 
 const ConfirmCollectionClose = ({ collection, onCancel, onCloseWithoutSave, onSaveAndClose }) => {
   const { t } = useTranslation();
   return (
+<Portal>
     <Modal
       size="md"
       title={t('REQUEST_TABS.CONFIRM_CLOSE.UNSAVED_CHANGES')}
@@ -46,6 +48,7 @@ const ConfirmCollectionClose = ({ collection, onCancel, onCloseWithoutSave, onSa
         </div>
       </div>
     </Modal>
+    </Portal>
   );
 };
 

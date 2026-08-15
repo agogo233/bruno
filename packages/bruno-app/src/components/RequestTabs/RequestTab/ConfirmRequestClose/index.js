@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { IconAlertTriangle } from '@tabler/icons';
 import Modal from 'components/Modal';
 import Button from 'ui/Button';
+import Portal from 'ui/Portal';
 
 const ConfirmRequestClose = ({ item, example, onCancel, onCloseWithoutSave, onSaveAndClose }) => {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ const ConfirmRequestClose = ({ item, example, onCancel, onCloseWithoutSave, onSa
   const itemType = isExample ? t('REQUEST_TABS.CONFIRM_CLOSE.EXAMPLE') : t('REQUEST_TABS.CONFIRM_CLOSE.REQUEST');
 
   return (
+<Portal>
     <Modal
       size="md"
       title={t('REQUEST_TABS.CONFIRM_CLOSE.UNSAVED_CHANGES')}
@@ -48,6 +50,7 @@ const ConfirmRequestClose = ({ item, example, onCancel, onCloseWithoutSave, onSa
         </div>
       </div>
     </Modal>
+    </Portal>
   );
 };
 

@@ -1758,7 +1758,7 @@
       "KEEP_ALIVE_INTERVAL": "保持连接间隔",
       "KEEP_ALIVE_DESC": "通过发送 ping 请求保持 WebSocket 连接",
       "ZERO_OFF": "0 = 关闭",
-       "TIMEOUT_INVALID": "超时时间必须为有效数字"
+      "TIMEOUT_INVALID": "超时时间必须为有效数字"
     }
   },
   "ENVIRONMENTS": {
@@ -2151,7 +2151,8 @@
       "NO_WORKSPACE_PATH": "克隆 Mock 响应需要工作区路径",
       "CLONED": "Mock 服务器已克隆",
       "CLONE_FAILED": "克隆 Mock 服务器失败",
-      "HINT": "将克隆 Mock 响应和服务器设置。克隆体以停止状态启动。"
+      "HINT": "将克隆 Mock 响应和服务器设置。克隆体以停止状态启动。",
+      "PORT_INTEGER": "端口必须为整数"
     },
     "DASHBOARD": {
       "PORT_REQUIRED": "端口必填",
@@ -2532,7 +2533,14 @@
     "NO_ENVIRONMENT_VARIABLES": "未找到环境变量",
     "RUNTIME_VARIABLES": "运行时变量",
     "NO_RUNTIME_VARIABLES": "未找到运行时变量",
-    "RUNTIME_NOTE": "注意：目前，运行时变量只能通过 API 设置——<span className=\"font-medium\">getVar()</span> 和 <span className=\"font-medium\">setVar()</span>。<br />您可以使用 <span className=\"font-medium\">var</span> 变量配合 <span className=\"font-medium\">{{\"{{var}}\"}}</span> 语法。"
+    "OPEN_IN_DRAWER": "在抽屉中打开",
+    "OPEN_OBJECT_IN_DRAWER": "在抽屉中打开对象",
+    "COPY_VALUE": "复制值",
+    "CLOSE": "关闭",
+    "NAME": "名称",
+    "VALUE": "值",
+    "RUNTIME": "运行时",
+    "ENVIRONMENT": "环境"
   },
   "REQUEST_TAB_PANEL": {
     "LOADING": "加载中...",

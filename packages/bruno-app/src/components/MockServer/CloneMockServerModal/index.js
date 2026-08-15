@@ -9,9 +9,11 @@ import Modal from 'components/Modal';
 import { loadMockResponses } from 'providers/ReduxStore/slices/mock-server/index';
 import {
   cloneMockServerInstancePayload,
+  checkMockServerPortAvailable,
   DEFAULT_MOCK_SERVER_PORT,
   getMockServerInstances,
   getMockServerNameError,
+  getMockServerPortError,
   isMockServerNameTaken,
   isMockServerPortTaken,
   openMockServerDashboard,
@@ -54,22 +56,38 @@ const CloneMockServerModal = ({
           !isMockServerNameTaken(existingInstances, value)
         )),
       port: Yup.number()
+        .typeError(() => t('MOCK_SERVER.CLONE_MODAL.PORT_REQUIRED'))
+        .required(() => t('MOCK_SERVER.CLONE_MODAL.PORT_REQUIRED'))
+        .integer(() => t('MOCK_SERVER.CLONE_MODAL.PORT_INTEGER'))
         .min(1, () => t('MOCK_SERVER.CLONE_MODAL.PORT_MIN'))
         .max(65535, () => t('MOCK_SERVER.CLONE_MODAL.PORT_MAX'))
-        .required(() => t('MOCK_SERVER.CLONE_MODAL.PORT_REQUIRED'))
-        .test('duplicate-port', () => t('MOCK_SERVER.CLONE_MODAL.DUPLICATE_PORT'), (value) => (
-          !isMockServerPortTaken(configuredInstances, value)
-        ))
+        .test('duplicate-port', () => t('MOCK_SERVER.CLONE_MODAL.DUPLICATE_PORT'), (value) => {
+          const normalizedPort = Number(value);
+          if (!normalizedPort) {
+            return true;
+          }
+
+          return !isMockServerPortTaken(configuredInstances, normalizedPort);
+        })
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setFieldError }) => {
       if (!workspacePath) {
         toast.error(t('MOCK_SERVER.CLONE_MODAL.NO_WORKSPACE_PATH'));
         return;
       }
 
+      const resolvedPort = Number(values.port);
+      const portCheck = await checkMockServerPortAvailable(resolvedPort, configuredInstances);
+      const portError = getMockServerPortError(portCheck, resolvedPort);
+      if (portError) {
+        setFieldError('port', portError);
+        toast.error(portError);
+        return;
+      }
+
       const newInstance = cloneMockServerInstancePayload(instance, {
         name: values.name.trim(),
-        port: Number(values.port),
+        port: resolvedPort,
         workspaceUid: activeWorkspaceUid
       });
 
