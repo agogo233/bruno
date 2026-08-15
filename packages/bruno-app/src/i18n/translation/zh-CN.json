@@ -1676,7 +1676,7 @@
       "CANCEL_FAILED": "取消 gRPC 连接失败",
       "END_STREAM_FAILED": "结束 gRPC 流失败",
       "CANCEL": "取消",
-      "SAVE": "保存（Cmd + S）",
+      "SAVE": "保存（{{shortcut}}）",
       "SELECT_METHOD": "选择方法",
       "SEARCH": "搜索",
       "DEFAULT_SERVICE": "默认服务",
@@ -1744,7 +1744,7 @@
     },
     "WS_QUERY_URL": {
       "PLACEHOLDER": "ws://localhost:8080 或 wss://example.com",
-      "SAVE": "保存（",
+      "SAVE": "保存（{{shortcut}}）",
       "CONNECT": "连接",
       "CLOSE_CONNECTION": "关闭连接",
       "DISCONNECTING": "断开连接中...",
@@ -2867,7 +2867,7 @@
       "INFO_EXPR": "您可以在此处编写任何有效的 JS 表达式"
     },
     "AUTH": {
-      "DESCRIPTION": "为整个文件夹配置认证。适用于在认证标签页中使用{{inherit}}选项的所有请求。",
+      "DESCRIPTION": "为整个文件夹配置认证。适用于在{{auth}}标签页中使用{{inherit}}选项的所有请求。",
       "SAVE": "保存",
       "AUTH_INHERITED_FROM": "认证继承自 {{name}}：",
       "TBD": "待定",
