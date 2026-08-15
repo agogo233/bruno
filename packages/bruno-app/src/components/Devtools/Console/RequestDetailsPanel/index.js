@@ -20,7 +20,7 @@ const formatHeaders = (headers) => {
   return Object.entries(headers).map(([key, value]) => ({ name: key, value }));
 };
 
-const formatBody = (body) => {
+const formatBody = (body, t) => {
   if (!body) return t('DEVTOOLS.REQUEST_DETAILS.NO_BODY');
   if (typeof body === 'string') return body;
   return JSON.stringify(body, null, 2);
@@ -50,7 +50,7 @@ const RequestTab = ({ request, response }) => {
       </div>
 
       <div className="section">
-<h4>{t('DEVTOOLS.REQUEST_DETAILS.REQUEST_HEADERS')}</h4>
+        <h4>{t('DEVTOOLS.REQUEST_DETAILS.REQUEST_HEADERS')}</h4>
         {headers.length > 0 ? (
           <div className="headers-table" data-testid="request-details-request-headers">
             <table>
@@ -78,7 +78,7 @@ const RequestTab = ({ request, response }) => {
       {request?.data && (
         <div className="section">
           <h4>{t('DEVTOOLS.REQUEST_DETAILS.REQUEST_BODY')}</h4>
-          <pre className="code-block">{formatBody(request.data)}</pre>
+          <pre className="code-block">{formatBody(request.data, t)}</pre>
         </div>
       )}
     </div>

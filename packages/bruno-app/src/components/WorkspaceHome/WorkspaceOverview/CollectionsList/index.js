@@ -358,15 +358,14 @@ const CollectionsList = ({ workspace }) => {
                       size="xs"
                       leftSection={<IconBrandGit size={11} strokeWidth={2} />}
                     >
-{t('WORKSPACE_HOME.COLLECTIONS_LIST.GIT_BADGE')}
-                      </StatusBadge>
-                   )}
-                   {collection.failedToOpen && (
-                     <StatusBadge status="danger" size="xs">{t('WORKSPACE_HOME.COLLECTIONS_LIST.FAILED_TO_OPEN')}</StatusBadge>
-                   )}
-                   {isNotCloned(collection) && (
-                     <StatusBadge status="warning" size="xs">{t('WORKSPACE_HOME.COLLECTIONS_LIST.NOT_CLONED')}</StatusBadge>
-                   )}
+                      {t('WORKSPACE_HOME.COLLECTIONS_LIST.GIT_BADGE')}
+                    </StatusBadge>
+                  )}
+                  {collection.failedToOpen && (
+                    <StatusBadge status="danger" size="xs">{t('WORKSPACE_HOME.COLLECTIONS_LIST.FAILED_TO_OPEN')}</StatusBadge>
+                  )}
+                  {isNotCloned(collection) && (
+                    <StatusBadge status="warning" size="xs">{t('WORKSPACE_HOME.COLLECTIONS_LIST.NOT_CLONED')}</StatusBadge>
                   )}
                 </div>
                 <div className="collection-path">{collection.pathname}</div>
