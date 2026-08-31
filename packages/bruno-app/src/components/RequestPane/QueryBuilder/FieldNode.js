@@ -371,7 +371,7 @@ const FieldNode = ({
                 <span className="arg-name">{arg.name}</span>
                 {arg.isRequired && <span className="arg-required">!</span>}
 {!isArgEnabled && <span className="field-type">{arg.typeLabel}</span>}
-                isArgEnabled && (
+                {isArgEnabled && (
                    <ArgValueInput value={argValue} onChange={(v) => onArgChange(field.path, arg.name, v)} field={arg} t={t} />
                  )}
               </div>
