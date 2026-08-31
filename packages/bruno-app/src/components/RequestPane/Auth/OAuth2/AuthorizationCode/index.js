@@ -393,7 +393,7 @@ const OAuth2AuthorizationCode = ({ save, item = {}, request, handleRun, updateAu
           <div className="relative group cursor-pointer">
             <IconHelp size={16} className="text-gray-500" />
             <span className="group-hover:opacity-100 pointer-events-none opacity-0 max-w-60 absolute left-0 bottom-full mb-1 w-max p-2 text-xs rounded-md transition-opacity duration-200" style={tooltipStyle}>
-              Automatically fetch a new token when you try to access a resource and don't have one.
+              {t('REQUEST_PANE.OAUTH2.AUTO_FETCH_TOKEN_HELP')}
             </span>
           </div>
         </div>
@@ -413,7 +413,7 @@ const OAuth2AuthorizationCode = ({ save, item = {}, request, handleRun, updateAu
           <div className="relative group cursor-pointer">
             <IconHelp size={16} className="text-gray-500" />
             <span className="group-hover:opacity-100 pointer-events-none opacity-0 max-w-60 absolute left-0 bottom-full mb-1 w-max p-2 text-xs rounded-md transition-opacity duration-200" style={tooltipStyle}>
-              Automatically refresh your token using the refresh URL when it expires.
+              {t('REQUEST_PANE.OAUTH2.AUTO_REFRESH_TOKEN_HELP')}
             </span>
           </div>
         </div>

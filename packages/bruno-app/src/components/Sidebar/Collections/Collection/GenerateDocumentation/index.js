@@ -32,7 +32,7 @@ const CollectionNotFound = ({ onClose, t }) => (
       <StyledWrapper>
         <div className="flex items-center gap-2 text-warning">
           <IconAlertTriangle size={16} className="shrink-0" />
-          <span>Collection not found. It may have been deleted or is no longer available.</span>
+          <span>{t('SIDEBAR.GENERATE_DOCS.COLLECTION_NOT_FOUND')}</span>
         </div>
       </StyledWrapper>
     </Modal>
@@ -198,7 +198,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
               </div>
 
               <p className="note m-0">
-                The generated file loads Bruno's JavaScript and CSS files from a CDN, which requires an internet connection.
+                {t('SIDEBAR.GENERATE_DOCS.CDN_NOTE')}
               </p>
             </div>
           )}

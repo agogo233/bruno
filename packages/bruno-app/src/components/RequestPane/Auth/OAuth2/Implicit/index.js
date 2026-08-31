@@ -290,7 +290,7 @@ const OAuth2Implicit = ({ save, item = {}, request, handleRun, updateAuth, colle
           <div className="relative group cursor-pointer">
             <IconHelp size={16} className="text-gray-500" />
             <span className="group-hover:opacity-100 pointer-events-none opacity-0 max-w-60 absolute left-0 bottom-full mb-1 w-max p-2 bg-gray-700 text-white text-xs rounded-md transition-opacity duration-200">
-              Automatically fetch a new token when the current one expires.
+              {t('REQUEST_PANE.OAUTH2.AUTO_FETCH_HELP')}
             </span>
           </div>
         </div>

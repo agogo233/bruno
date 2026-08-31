@@ -146,16 +146,16 @@ const RenameCollectionItem = ({ collectionUid, item, onClose }) => {
                     { isFolder ? (
                       <Help width="300">
                         <p>
-                          You can choose to save the folder as a different name on your file system versus what is displayed in the app.
+                          {t('SIDEBAR.RENAME_COLLECTION_ITEM.FS_NAME_HELP')}
                         </p>
                       </Help>
                     ) : (
                       <Help width="300">
                         <p>
-                          Bruno saves each request as a file in your collection's folder.
+                          {t('SIDEBAR.COMMON.SAVES_EACH_REQUEST')}
                         </p>
                         <p className="mt-2">
-                          You can choose a file name different from your request's name or one compatible with filesystem rules.
+                          {t('SIDEBAR.RENAME_COLLECTION_ITEM.FILE_NAME_HELP')}
                         </p>
                       </Help>
                     )}

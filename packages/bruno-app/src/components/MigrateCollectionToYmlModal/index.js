@@ -292,7 +292,7 @@ const MigrateCollectionToYmlModal = () => {
       <StyledWrapper>
         <Modal
           size="md"
-          title="Unsaved changes"
+          title={t('MIGRATE_COLLECTION.UNSAVED_TITLE')}
           dataTestId="migration-drafts-step"
           handleCancel={handleBackToConfirm}
           disableEscapeKey={true}
@@ -302,11 +302,10 @@ const MigrateCollectionToYmlModal = () => {
         >
           <div className="flex items-center">
             <IconAlertTriangle size={32} strokeWidth={1.5} className="warning-text" />
-            <h1 className="ml-2 text-lg font-medium">Hold on..</h1>
+            <h1 className="ml-2 text-lg font-medium">{t('MIGRATE_COLLECTION.UNSAVED_HEADING')}</h1>
           </div>
           <p className="mt-4">
-            You have unsaved changes in <span className="font-medium">{totalDraftsCount}</span>{' '}
-            {pluralizeWord('item', totalDraftsCount)}. Save or discard them before migrating.
+            {t('MIGRATE_COLLECTION.UNSAVED_MSG', { count: totalDraftsCount, items: pluralizeWord('item', totalDraftsCount) })}
           </p>
 
           <ul className="mt-4 ml-2">
@@ -319,15 +318,14 @@ const MigrateCollectionToYmlModal = () => {
 
           {totalDraftsCount > MAX_UNSAVED_ITEMS_TO_SHOW && (
             <p className="ml-2 mt-1 text-xs">
-              ...{totalDraftsCount - MAX_UNSAVED_ITEMS_TO_SHOW} additional{' '}
-              {pluralizeWord('item', totalDraftsCount - MAX_UNSAVED_ITEMS_TO_SHOW)} not shown
+              {t('MIGRATE_COLLECTION.MORE_ITEMS_HIDDEN', { count: totalDraftsCount - MAX_UNSAVED_ITEMS_TO_SHOW, items: pluralizeWord('item', totalDraftsCount - MAX_UNSAVED_ITEMS_TO_SHOW) })}
             </p>
           )}
 
           {hasBlockingTransients && (
             <div className="mt-4">
               <p className="text-xs mb-2">
-                Transient requests need to be saved individually before migrating.
+                {t('MIGRATE_COLLECTION.TRANSIENT_NEED_SAVE')}
               </p>
               <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
                 {transientRequestDrafts.map((item) => (

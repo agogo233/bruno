@@ -26,7 +26,7 @@ const EnvironmentSelectionList = ({
   selectedUids = [],
   onToggle,
   onToggleAll,
-  title = 'Environments'
+  title,
 }) => {
   const { t } = useTranslation();
   const resolvedTitle = title || t('SIDEBAR.ENVIRONMENT_SELECTION.TITLE');

@@ -92,7 +92,12 @@
     "EXPORT_COLLECTION": "Export Collection",
     "EXPORTING": "Exporting…",
     "BACKUP_EXPORTED": "Collection backup exported",
-    "BACKUP_FAILED": "Failed to export backup"
+    "BACKUP_FAILED": "Failed to export backup",
+    "UNSAVED_TITLE": "Unsaved changes",
+    "UNSAVED_HEADING": "Hold on..",
+    "TRANSIENT_NEED_SAVE": "Transient requests need to be saved individually before migrating.",
+    "UNSAVED_MSG": "You have unsaved changes in {{count}} {{items}}. Save or discard them before migrating.",
+    "MORE_ITEMS_HIDDEN": "...{{count}} additional {{items}} not shown"
   },
   "OPENAPI_SPEC_TAB": {
     "LOADING_SPEC": "Loading spec...",
@@ -217,7 +222,8 @@
       "CREATE": "Create",
       "CREATED": "New folder created!",
       "RESERVED_NAME": "The folder name \"environments\" at the root of the collection is reserved in bruno",
-      "FOLDER_NAME_REQUIRED": "folder name is required"
+      "FOLDER_NAME_REQUIRED": "folder name is required",
+      "FS_NAME_HELP": "You can choose to save the folder as a different name on your file system versus what is displayed in the app."
     },
     "NEW_APP": {
       "TITLE": "New App",
@@ -480,7 +486,8 @@
       "REQUEST_NAME": "Request Name",
       "FILE_NAME": "File Name",
       "FILE_NAME_HINT": "on filesystem",
-      "TYPE_NAME": "{{type}} Name"
+      "TYPE_NAME": "{{type}} Name",
+      "FS_FOLDER_NAME_DESC": "The name of the folder on your filesystem."
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "Rename Folder",
@@ -495,7 +502,9 @@
       "CANCEL": "Cancel",
       "RENAME": "Rename",
       "TITLE": "Rename {{type}}",
-      "TYPE_NAME": "{{type}} Name"
+      "TYPE_NAME": "{{type}} Name",
+      "FS_NAME_HELP": "You can choose to save the folder as a different name on your file system versus what is displayed in the app.",
+      "FILE_NAME_HELP": "You can choose a file name different from your request's name or one compatible with filesystem rules."
     },
     "CLONE_COLLECTION_ITEM": {
       "CLONE_FOLDER": "Clone Folder",
@@ -679,7 +688,9 @@
       "REQUEST_SINGULAR": "request",
       "REQUEST_PLURAL": "requests",
       "ENVIRONMENTS_COUNT": "{{count}} environments",
-      "VERSION_LABEL": "Version: {{version}}"
+      "VERSION_LABEL": "Version: {{version}}",
+      "COLLECTION_NOT_FOUND": "Collection not found. It may have been deleted or is no longer available.",
+      "CDN_NOTE": "The generated file loads Bruno's JavaScript and CSS files from a CDN, which requires an internet connection."
     },
     "ENVIRONMENT_SELECTION": {
       "TITLE": "Environments",
@@ -823,7 +834,8 @@
       "COLLECTION_NOT_FOUND": "Collection not found. It may have been deleted or is no longer available.",
       "FOLDER": "Folder",
       "APP": "App",
-      "REQUEST": "Request"
+      "REQUEST": "Request",
+      "SAVES_EACH_REQUEST": "Bruno saves each request as a file in your collection's folder."
     }
   },
   "BETA": {
@@ -1457,7 +1469,9 @@
       "GRPC_NOT_SUPPORTED": "Inherited auth not supported by gRPC. Using no auth instead.",
       "WS_OAUTH2_NOT_SUPPORTED": "OAuth 2 not yet supported by WebSockets. Using no auth instead.",
       "WS_OAUTH1_NOT_SUPPORTED": "OAuth 1.0 not yet supported by WebSockets. Using no auth instead.",
-      "WS_NOT_SUPPORTED": "Inherited auth not supported by WebSockets. Using no auth instead."
+      "WS_NOT_SUPPORTED": "Inherited auth not supported by WebSockets. Using no auth instead.",
+      "OAUTH1_CLEAR_FILE": "Clear file",
+      "OAUTH1_SELECT_FILE": "Select File"
     },
     "OAUTH2": {
       "TBD": "TBD",
@@ -1534,7 +1548,10 @@
       "KEY": "Key",
       "VALUE": "Value",
       "CONFIGURATION": "Configuration",
-      "CALLBACK_URL": "Callback URL"
+      "CALLBACK_URL": "Callback URL",
+      "AUTO_FETCH_TOKEN_HELP": "Automatically fetch a new token when you try to access a resource and don't have one.",
+      "AUTO_REFRESH_TOKEN_HELP": "Automatically refresh your token using the refresh URL when it expires.",
+      "AUTO_FETCH_HELP": "Automatically fetch a new token when the current one expires."
     },
     "QUERY_URL": {
       "PLACEHOLDER": "Enter URL or paste a cURL request",
@@ -3597,7 +3614,10 @@
     "ON_FILESYSTEM": "(on filesystem)",
     "NEW_COLLECTION": "New collection",
     "NO_COLLECTIONS_YET": "No Collections Yet",
-    "NO_COLLECTIONS_YET_HINT": "Collections help you organize your requests. Create your first one to save this request."
+    "NO_COLLECTIONS_YET_HINT": "Collections help you organize your requests. Create your first one to save this request.",
+    "LOCATION_HELP_1": "Bruno stores your collections on your computer's filesystem.",
+    "LOCATION_HELP_2": "Choose the location where you want to store this collection.",
+    "FILE_FORMAT_HELP": "Choose the file format for storing requests in this collection."
   },
   "DEVTOOLS": {
     "PERFORMANCE": {

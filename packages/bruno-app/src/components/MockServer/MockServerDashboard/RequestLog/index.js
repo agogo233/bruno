@@ -270,7 +270,7 @@ const RequestLog = ({ mockServerUid, location }) => {
           label={t('MOCK_SERVER.REQUEST_LOG.FILTER_STATUS')}
           options={STATUS_FILTER_OPTIONS.map((option) => ({
             value: option.value,
-            label: t(`MOCK_SERVER.REQUEST_LOG.STATUS_${option.value}_LABEL`)
+            label: t(`MOCK_SERVER.REQUEST_LOG.STATUS_${option.value.toUpperCase()}_LABEL`)
           }))}
           value={statusFilter}
           onChange={setStatusFilter}

@@ -92,7 +92,12 @@
     "EXPORT_COLLECTION": "导出集合",
     "EXPORTING": "正在导出…",
     "BACKUP_EXPORTED": "集合备份已导出",
-    "BACKUP_FAILED": "导出备份失败"
+    "BACKUP_FAILED": "导出备份失败",
+    "UNSAVED_TITLE": "未保存的更改",
+    "UNSAVED_HEADING": "请稍等..",
+    "TRANSIENT_NEED_SAVE": "临时请求需要在迁移前逐个保存。",
+    "UNSAVED_MSG": "您在 {{count}} 个{{items}}中有未保存的更改。请在迁移前保存或放弃它们。",
+    "MORE_ITEMS_HIDDEN": "...另有 {{count}} 个{{items}}未显示"
   },
   "OPENAPI_SPEC_TAB": {
     "LOADING_SPEC": "正在加载规范文件...",
@@ -433,7 +438,8 @@
       "CREATE": "创建",
       "CREATED": "新文件夹已创建！",
       "RESERVED_NAME": "文件夹名 \"environments\" 在集合根目录下为保留名称",
-      "FOLDER_NAME_REQUIRED": "文件夹名称为必填项"
+      "FOLDER_NAME_REQUIRED": "文件夹名称为必填项",
+      "FS_NAME_HELP": "您可以选择在文件系统中以不同于应用中显示的名称保存该文件夹。"
     },
     "NEW_APP": {
       "TITLE": "新建应用",
@@ -696,7 +702,8 @@
       "REQUEST_NAME": "请求名称",
       "FILE_NAME": "文件名",
       "FILE_NAME_HINT": "在文件系统上",
-      "TYPE_NAME": "{{type}}名称"
+      "TYPE_NAME": "{{type}}名称",
+      "FS_FOLDER_NAME_DESC": "文件系统中该文件夹的名称。"
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "重命名文件夹",
@@ -711,7 +718,9 @@
       "CANCEL": "取消",
       "RENAME": "重命名",
       "TITLE": "重命名{{type}}",
-      "TYPE_NAME": "{{type}}名称"
+      "TYPE_NAME": "{{type}}名称",
+      "FS_NAME_HELP": "您可以选择在文件系统中以不同于应用中显示的名称保存该文件夹。",
+      "FILE_NAME_HELP": "您可以选择与请求名不同的文件名，或符合文件系统规则的名称。"
     },
     "CLONE_COLLECTION_ITEM": {
       "CLONE_FOLDER": "克隆文件夹",
@@ -895,7 +904,9 @@
       "REQUEST_SINGULAR": "个请求",
       "REQUEST_PLURAL": "个请求",
       "ENVIRONMENTS_COUNT": "{{count}} 个环境",
-      "VERSION_LABEL": "版本：{{version}}"
+      "VERSION_LABEL": "版本：{{version}}",
+      "COLLECTION_NOT_FOUND": "未找到集合。它可能已被删除或不再可用。",
+      "CDN_NOTE": "生成的文件从 CDN 加载 Bruno 的 JavaScript 和 CSS 文件，需要联网。"
     },
     "ENVIRONMENT_SELECTION": {
       "TITLE": "环境",
@@ -1039,7 +1050,8 @@
       "COLLECTION_NOT_FOUND": "未找到集合。它可能已被删除或不再可用。",
       "FOLDER": "文件夹",
       "APP": "应用",
-      "REQUEST": "请求"
+      "REQUEST": "请求",
+      "SAVES_EACH_REQUEST": "Bruno 将每个请求作为文件保存在您的集合文件夹中。"
     }
   },
   "RESPONSE_PANE": {
@@ -1457,7 +1469,9 @@
       "GRPC_NOT_SUPPORTED": "gRPC 不支持继承认证。将使用无认证。",
       "WS_OAUTH2_NOT_SUPPORTED": "WebSocket 尚不支持 OAuth 2.0。将使用无认证。",
       "WS_OAUTH1_NOT_SUPPORTED": "WebSocket 尚不支持 OAuth 1.0。将使用无认证。",
-      "WS_NOT_SUPPORTED": "WebSocket 不支持继承认证。将使用无认证。"
+      "WS_NOT_SUPPORTED": "WebSocket 不支持继承认证。将使用无认证。",
+      "OAUTH1_CLEAR_FILE": "清除文件",
+      "OAUTH1_SELECT_FILE": "选择文件"
     },
     "OAUTH2": {
       "TBD": "待定",
@@ -1534,7 +1548,10 @@
       "KEY": "键",
       "VALUE": "值",
       "CONFIGURATION": "配置",
-      "CALLBACK_URL": "回调 URL"
+      "CALLBACK_URL": "回调 URL",
+      "AUTO_FETCH_TOKEN_HELP": "当您尝试访问资源但没有令牌时，自动获取新令牌。",
+      "AUTO_REFRESH_TOKEN_HELP": "令牌过期时，使用刷新 URL 自动刷新令牌。",
+      "AUTO_FETCH_HELP": "当前令牌过期时自动获取新令牌。"
     },
     "QUERY_URL": {
       "PLACEHOLDER": "输入 URL 或粘贴 cURL 请求",
@@ -3542,7 +3559,10 @@
     "ON_FILESYSTEM": "（在文件系统上）",
     "NEW_COLLECTION": "新建集合",
     "NO_COLLECTIONS_YET": "暂无集合",
-    "NO_COLLECTIONS_YET_HINT": "集合帮助你组织请求。创建你的第一个集合以保存此请求。"
+    "NO_COLLECTIONS_YET_HINT": "集合帮助你组织请求。创建你的第一个集合以保存此请求。",
+    "LOCATION_HELP_1": "Bruno 将您的集合存储在计算机的文件系统中。",
+    "LOCATION_HELP_2": "选择您希望存储此集合的位置。",
+    "FILE_FORMAT_HELP": "选择用于存储此集合中请求的文件格式。"
   },
   "GLOBAL_SEARCH": {
     "TITLE": "全局搜索",

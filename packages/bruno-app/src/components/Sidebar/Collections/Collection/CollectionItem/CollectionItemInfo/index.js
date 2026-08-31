@@ -35,13 +35,13 @@ const CollectionItemInfo = ({ item, onClose }) => {
                 {type == 'folder' ? (
                   <Help width="300">
                     <p>
-                      The name of the folder on your filesystem.
+                      {t('SIDEBAR.COLLECTION_ITEM_INFO.FS_FOLDER_NAME_DESC')}
                     </p>
                   </Help>
                 ) : (
                   <Help width="300">
                     <p>
-                      Bruno saves each request as a file in your collection's folder.
+                      {t('SIDEBAR.COMMON.SAVES_EACH_REQUEST')}
                     </p>
                   </Help>
                 )}

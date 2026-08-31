@@ -120,7 +120,7 @@ const NewFolder = ({ collectionUid, item, onClose }) => {
                     {t('SIDEBAR.NEW_FOLDER.FOLDER_NAME')} <small className="font-normal text-muted ml-1">{t('SIDEBAR.NEW_FOLDER.FILE_NAME_HINT')}</small>
                     <Help width="300">
                       <p>
-                        You can choose to save the folder as a different name on your file system versus what is displayed in the app.
+                        {t('SIDEBAR.NEW_FOLDER.FS_NAME_HELP')}
                       </p>
                     </Help>
                   </label>

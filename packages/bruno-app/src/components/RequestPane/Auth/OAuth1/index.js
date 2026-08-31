@@ -236,7 +236,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
               <button
                 className="flex-shrink-0 oauth1-icon cursor-pointer"
                 onClick={handleClearFile}
-                title="Clear file"
+                title={t('REQUEST_PANE.AUTH.OAUTH1_CLEAR_FILE')}
                 type="button"
               >
                 <IconX size={14} />
@@ -262,7 +262,7 @@ const OAuth1 = ({ item = {}, collection, request, save, updateAuth }) => {
                 <button
                   className="flex items-center gap-1 oauth1-icon cursor-pointer text-link"
                   onClick={handleBrowse}
-                  title="Select File"
+                  title={t('REQUEST_PANE.AUTH.OAUTH1_SELECT_FILE')}
                   type="button"
                 >
                   <IconUpload size={14} />

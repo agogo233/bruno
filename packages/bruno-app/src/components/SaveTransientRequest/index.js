@@ -501,10 +501,10 @@ const SaveTransientRequest = ({ item: itemProp, collection: collectionProp, isOp
                             {t('SAVE_TRANSIENT.LOCATION')}
                             <Help width={250} placement="top">
                               <p>
-                                Bruno stores your collections on your computer's filesystem.
+                                {t('SAVE_TRANSIENT.LOCATION_HELP_1')}
                               </p>
                               <p className="mt-2">
-                                Choose the location where you want to store this collection.
+                                {t('SAVE_TRANSIENT.LOCATION_HELP_2')}
                               </p>
                             </Help>
                           </label>
@@ -535,7 +535,7 @@ const SaveTransientRequest = ({ item: itemProp, collection: collectionProp, isOp
                             {t('SAVE_TRANSIENT.FILE_FORMAT')}
                             <Help width={300} placement="top">
                               <p>
-                                Choose the file format for storing requests in this collection.
+                                {t('SAVE_TRANSIENT.FILE_FORMAT_HELP')}
                               </p>
                               <p className="mt-2">
                                 <strong>{t('SAVE_TRANSIENT.OPEN_COLLECTION_YAML')}:</strong> {t('SAVE_TRANSIENT.YAML_DESC')}
