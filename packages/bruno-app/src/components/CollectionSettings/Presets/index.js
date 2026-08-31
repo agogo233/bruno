@@ -104,7 +104,7 @@ const PresetsSettings = ({ collection }) => {
 
         <div className="preset-field">
           <label className="preset-field-label" htmlFor="default-environment">{t('COLLECTION_SETTINGS.PRESETS.DEFAULT_ENVIRONMENT')}</label>
-          <p className="preset-field-subtitle">{t('COLLECTION_SETTINGS.PRESETS.DEFAULT_ENVIRONMENT_SUB')}</p>
+          <p className="preset-field-subtitle">{t('COLLECTION_SETTINGS.PRESETS.DEFAULT_ENVIRONMENT_SHARED_SUB')}</p>
           <div className="default-env-dropdown">
             <MenuDropdown
               items={defaultEnvironmentItems}

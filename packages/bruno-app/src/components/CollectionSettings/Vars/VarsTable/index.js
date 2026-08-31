@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from 'providers/Theme';
@@ -14,6 +14,7 @@ import { createDescriptionColumn } from 'components/EditableTable/descriptionCol
 import StyledWrapper from './StyledWrapper';
 import toast from 'react-hot-toast';
 import { variableNameRegex } from 'utils/common/regex';
+import { getAllVariables } from 'utils/collections';
 import { setCollectionVars, moveCollectionVar } from 'providers/ReduxStore/slices/collections/index';
 
 const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) => {
@@ -32,6 +33,8 @@ const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) =>
   };
 
   const onSave = () => dispatch(saveCollectionSettings(collection.uid));
+
+  const resolvableVariables = useMemo(() => getAllVariables(collection), [collection]);
 
   const handleVarsChange = useCallback((updatedVars) => {
     dispatch(setCollectionVars({ collectionUid: collection.uid, vars: updatedVars, type: varType }));
@@ -94,7 +97,7 @@ const VarsTable = ({ collection, vars, varType, initialScroll = 0, isDraft }) =>
                   compact={compact}
                   variable={row}
                   theme={storedTheme}
-                  collection={collection}
+                  resolvableVariables={resolvableVariables}
                   onChange={(fields) => {
                     const updated = (vars || []).map((v) => v.uid === row.uid ? { ...v, ...fields } : v);
                     handleVarsChange(updated);

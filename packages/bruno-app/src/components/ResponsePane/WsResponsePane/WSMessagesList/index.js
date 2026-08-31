@@ -60,7 +60,7 @@ const TypeIcon = ({ type }) => {
   }[type];
 };
 
-const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
+const WSMessageItem = memo(({ message, isOpen, onToggle, item, collection }) => {
   const { t } = useTranslation();
   const [showHex, setShowHex] = useState(false);
   const preferences = useSelector((state) => state.app.preferences);
@@ -169,6 +169,8 @@ const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
               enableLineWrapping={showHex ? false : true}
               font={preferences.codeFont || 'default'}
               value={showHex ? contentHexdump : parsedContent.content}
+              item={item}
+              collection={collection}
               readOnly
             />
           </div>
@@ -178,7 +180,7 @@ const WSMessageItem = memo(({ message, isOpen, onToggle }) => {
   );
 });
 
-const WSMessagesList = ({ messages = [] }) => {
+const WSMessagesList = ({ messages = [], item, collection }) => {
   const { t } = useTranslation();
   const virtuosoRef = useRef(null);
   const [scrollerElement, setScrollerElement] = useState(null);
@@ -235,8 +237,8 @@ const WSMessagesList = ({ messages = [] }) => {
 
   const renderItem = useCallback((_, msg) => {
     const isOpen = openMessages.has(msg.timestamp);
-    return <WSMessageItem message={msg} isOpen={isOpen} onToggle={handleMessageToggle} />;
-  }, [openMessages, handleMessageToggle]);
+    return <WSMessageItem message={msg} isOpen={isOpen} onToggle={handleMessageToggle} item={item} collection={collection} />;
+  }, [openMessages, handleMessageToggle, item, collection]);
 
   const computeItemKey = useCallback((_, msg) => {
     return msg.seq ?? msg.timestamp;

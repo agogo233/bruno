@@ -53,6 +53,7 @@ const BearerAuth = ({ item, collection, updateAuth, request, save }) => {
           item={item}
           isSecret={true}
           isCompact
+          disableLinkAwareClick={true}
         />
         {showWarning && <SensitiveFieldWarning fieldName="bearer-token" warningMessage={warningMessage} />}
       </div>

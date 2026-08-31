@@ -25,7 +25,7 @@ import CodeEditor from 'components/CodeEditor';
 import AIAssist from 'components/AIAssist';
 import { buildAiVariablesPayload, buildDocsContextFromCollection } from 'utils/ai';
 import StyledWrapper from './StyledWrapper';
-import EmptyAppState from '../AppView/EmptyAppState';
+import EmptyAppState from 'components/EmptyAppState';
 import { buildVariables } from '../AppView/buildVariables';
 import {
   SENTINEL,
@@ -403,8 +403,8 @@ const CollectionApp = ({ item, collection }) => {
       ) : (
         <div className="app-pane" data-testid="collection-app-preview">
           <EmptyAppState
-            title={t('COLLECTION_APP.VIEW.NO_APP_TITLE')}
-            hint={t('COLLECTION_APP.VIEW.NO_APP_HINT')}
+            hint={t('COLLECTION_APP.VIEW.NO_APP_ADD_CODE_HINT')}
+            onAddCode={() => setView('code')}
           />
         </div>
       )}

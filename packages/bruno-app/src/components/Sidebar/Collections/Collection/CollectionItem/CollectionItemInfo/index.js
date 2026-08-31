@@ -2,10 +2,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from 'components/Modal';
 import Help from 'components/Help';
+import { getItemTypeLabel } from 'utils/collections';
 
 const CollectionItemInfo = ({ item, onClose }) => {
   const { t } = useTranslation();
   const { name, filename, type } = item;
+  const itemTypeLabel = getItemTypeLabel(item);
 
   return (
     <Modal
@@ -20,7 +22,7 @@ const CollectionItemInfo = ({ item, onClose }) => {
           <tbody>
             <tr className="">
               <td className="py-2 px-2 text-left text-muted ">
-                {type == 'folder' ? t('SIDEBAR.COLLECTION_ITEM_INFO.FOLDER_NAME') : t('SIDEBAR.COLLECTION_ITEM_INFO.REQUEST_NAME')}
+                {t('SIDEBAR.COLLECTION_ITEM_INFO.TYPE_NAME', { type: t(`SIDEBAR.COMMON.${itemTypeLabel.toUpperCase()}`) })}
               </td>
               <td className="py-2 px-2 text-nowrap truncate max-w-[500px]" title={name}>
                 <span className="mr-2">:</span>{name}

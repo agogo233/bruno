@@ -685,14 +685,18 @@
       "URL_REQUIRED": "URL 不能为空",
       "PASTE_SUCCESS": "项目粘贴成功",
       "FOLDER_OPEN_ERROR": "打开文件夹时出错",
-      "EXAMPLE_COUNT": "{{count}} 个示例"
+      "EXAMPLE_COUNT": "{{count}} 个示例",
+      "COPIED_TYPE": "{{type}}已复制",
+      "CLONED_TYPE": "{{type}}克隆成功！",
+      "CLONE_ERROR_TYPE": "克隆{{type}}时发生错误"
     },
     "COLLECTION_ITEM_INFO": {
       "TITLE": "信息",
       "FOLDER_NAME": "文件夹名称",
       "REQUEST_NAME": "请求名称",
       "FILE_NAME": "文件名",
-      "FILE_NAME_HINT": "在文件系统上"
+      "FILE_NAME_HINT": "在文件系统上",
+      "TYPE_NAME": "{{type}}名称"
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "重命名文件夹",
@@ -705,7 +709,9 @@
       "HIDE_FS_NAME": "隐藏文件系统名称",
       "SHOW_FS_NAME": "显示文件系统名称",
       "CANCEL": "取消",
-      "RENAME": "重命名"
+      "RENAME": "重命名",
+      "TITLE": "重命名{{type}}",
+      "TYPE_NAME": "{{type}}名称"
     },
     "CLONE_COLLECTION_ITEM": {
       "CLONE_FOLDER": "克隆文件夹",
@@ -727,7 +733,8 @@
       "DELETE_REQUEST": "删除请求",
       "DELETE": "删除",
       "CONFIRM": "确定要删除吗",
-      "ERROR": "删除项目时出错"
+      "ERROR": "删除项目时出错",
+      "TITLE": "删除{{type}}"
     },
     "IGNORE_COLLECTION_ITEM": {
       "TITLE": "忽略文件夹",
@@ -1029,7 +1036,10 @@
       "ERROR_MOVING": "移动时发生错误",
       "ERROR_PASTING": "粘贴项目时发生错误",
       "ERROR_EXPORTING": "导出集合失败：",
-      "COLLECTION_NOT_FOUND": "未找到集合。它可能已被删除或不再可用。"
+      "COLLECTION_NOT_FOUND": "未找到集合。它可能已被删除或不再可用。",
+      "FOLDER": "文件夹",
+      "APP": "应用",
+      "REQUEST": "请求"
     }
   },
   "RESPONSE_PANE": {
@@ -1559,7 +1569,15 @@
       "VALUE": "值",
       "BULK_EDIT": "批量编辑",
       "NAME_INVALID": "请求头名称不能包含空格或换行符",
-      "VALUE_INVALID": "请求头值不能包含换行符"
+      "VALUE_INVALID": "请求头值不能包含换行符",
+      "INHERITED_HEADERS": "继承的请求头",
+      "REQUEST_HEADERS": "请求头",
+      "OVERRIDDEN_BY_REQUEST_HEADER": "已被请求头覆盖",
+      "OVERRIDES_DEFAULT_HEADER": "覆盖 Bruno 的默认请求头",
+      "AUTO_ADDED_AT_RUNTIME": "运行时自动添加",
+      "REQUIRED_BY_HTTP": "HTTP 必需，无法省略",
+      "HIDE_INHERITED_HEADERS": "隐藏继承的请求头",
+      "SHOW_INHERITED_HEADERS": "显示继承的请求头（{{count}}）"
     },
     "QUERY_PARAMS": {
       "QUERY": "查询",
@@ -2114,7 +2132,15 @@
       "ADVANCED_SETTINGS": "高级设置",
       "PORT": "端口",
       "RESPONSE_DELAY": "响应延迟（毫秒）",
-      "AUTO_PORT": "Bruno 将自动选择下一个可用端口。"
+      "AUTO_PORT": "Bruno 将自动选择下一个可用端口。",
+      "STANDALONE": "独立",
+      "STANDALONE_HINT": "独立 Mock 服务器没有来源。请在仪表盘中手动添加响应。",
+      "LOADING_COLLECTION": "集合加载中…",
+      "SYNC_WITH_SPEC": "将 Mock 响应与 API 规范同步",
+      "SYNC_WITH_EXAMPLES": "将 Mock 响应与集合示例同步",
+      "SYNC_FAILED": "Mock 服务器已创建，但同步响应失败",
+      "COLLECTION_NOT_AVAILABLE": "所选集合不可用",
+      "PORT_VALIDATE_FAILED": "端口校验失败"
     },
     "RENAME_MODAL": {
       "TITLE": "重命名 Mock 服务器",
@@ -2262,7 +2288,8 @@
       "TOGGLE_RESPONSES": "展开/收起 Mock 响应",
       "ACTIONS_LABEL": "Mock 服务器操作",
       "NO_MOCK_SERVERS": "暂无 Mock 服务器。",
-      "NO_MOCK_SERVERS_HINT": "使用 + 按钮创建一个。"
+      "NO_MOCK_SERVERS_HINT": "使用 + 按钮创建一个。",
+      "NO_MOCK_RESPONSES": "暂无 Mock 响应"
     },
     "SIDEBAR_ITEM": {
       "RENAMED": "Mock 响应已重命名",
@@ -2370,7 +2397,11 @@
       "MATCH": "匹配方式",
       "ALL_AND": "全部（AND）",
       "ANY_OR": "任一（OR)",
-      "NO_RULES": "无规则。此响应匹配该路由上的所有请求。"
+      "NO_RULES": "无规则。此响应匹配该路由上的所有请求。",
+      "ALL_RULES_AND": "全部规则（AND）",
+      "ANY_RULE_OR": "任一规则（OR）",
+      "ADD_RULE": "+ 添加规则",
+      "NO_RULES_MATCH_ALL": "无规则——该路由上的所有请求都会得到此响应。"
     },
     "REQUEST_PANE": {
       "REQUEST": "请求",
@@ -2379,7 +2410,17 @@
       "TRY": "试运行",
       "START_SERVER_TITLE": "试运行此响应前请先启动 Mock 服务器",
       "STARTING": "启动中...",
-      "START_SERVER": "启动服务器"
+      "START_SERVER": "启动服务器",
+      "DEMO_REQUEST": "演示请求",
+      "NAME": "名称",
+      "VALUE": "值",
+      "HEADERS": "请求头",
+      "QUERY_PARAMS": "查询参数",
+      "BODY": "请求体",
+      "DEMO_HINT": "根据规则自动生成——符合此特征的请求将匹配该 Mock 响应。",
+      "DEMO_NO_RULES": "未定义规则——任何 {{method}} {{url}} 请求都会匹配此响应。添加规则后可在此查看匹配的请求头、查询参数或请求体。",
+      "OPEN_AS_REQUEST": "作为新请求打开",
+      "MORE_TRY_OPTIONS": "更多试运行选项"
     },
     "RESPONSE_CREATE_MODAL": {
       "NAME_REQUIRED": "Mock 响应名称必填",
@@ -2733,7 +2774,8 @@
       "DEFAULT_ENVIRONMENT_SUB": "导出集合并首次打开时，在环境中自动选择。",
       "NONE": "无",
       "SAVE": "保存",
-      "REQUEST_URL_PLACEHOLDER": "请求 URL"
+      "REQUEST_URL_PLACEHOLDER": "请求 URL",
+      "DEFAULT_ENVIRONMENT_SHARED_SUB": "分享集合并首次打开时自动选择。"
     },
     "PRESETS_TYPES": {
       "HTTP": "HTTP",
@@ -2907,7 +2949,8 @@
       "PREVIEW": "预览",
       "NO_APP_TITLE": "暂无应用",
       "NO_APP_HINT": "切换到代码并编写一些 HTML/JS",
-      "TITLE_PREFIX": "应用 - "
+      "TITLE_PREFIX": "应用 - ",
+      "NO_APP_ADD_CODE_HINT": "在 Code 视图中添加 HTML/JS 以渲染此应用的自定义 UI。"
     },
     "ERROR": {
       "REQUEST_NOT_FOUND": "未找到请求：{{pathname}}",

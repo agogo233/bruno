@@ -87,7 +87,11 @@ const MatchTracePanel = ({ entry }) => {
   if (!trace) {
     return (
       <div className="match-trace-panel" data-testid="mock-server-match-trace">
-        <div className="match-trace-empty">{t('MOCK_SERVER.REQUEST_LOG.NO_MATCH_TRACE')}</div>
+        {entry?.error ? (
+          <div className="match-trace-error" data-testid="mock-server-log-error">{entry.error}</div>
+        ) : (
+          <div className="match-trace-empty">{t('MOCK_SERVER.REQUEST_LOG.NO_MATCH_TRACE')}</div>
+        )}
       </div>
     );
   }
@@ -108,6 +112,10 @@ const MatchTracePanel = ({ entry }) => {
             )
           : <span className="match-trace-result match-trace-result-fail">{failureLabel || t('MOCK_SERVER.REQUEST_LOG.NO_MATCH')}</span>}
       </div>
+
+      {entry.error ? (
+        <div className="match-trace-error" data-testid="mock-server-log-error">{entry.error}</div>
+      ) : null}
 
       {trace.availableRoutes?.length ? (
         <div className="match-trace-section">
@@ -195,7 +203,7 @@ const RequestLog = ({ mockServerUid, location }) => {
     dispatch(syncMockServerState(location));
 
     return unsubscribe;
-  }, [dispatch, mockServerUid, location.collectionPath, location.sourceType, location.workspacePath]);
+  }, [dispatch, mockServerUid, location.workspacePath]);
 
   const filteredLogs = useMemo(() => {
     return logs.filter((entry) => {

@@ -110,7 +110,7 @@ const NewFolder = ({ collectionUid, item, onClose }) => {
               value={formik.values.folderName || ''}
             />
             {formik.touched.folderName && formik.errors.folderName ? (
-              <div className="text-red-500">{formik.errors.folderName}</div>
+              <div className="text-red-500" data-testid="form-error">{formik.errors.folderName}</div>
             ) : null}
 
             {showFilesystemName && (
@@ -165,7 +165,7 @@ const NewFolder = ({ collectionUid, item, onClose }) => {
                   </div>
                 )}
                 {formik.touched.directoryName && formik.errors.directoryName ? (
-                  <div className="text-red-500">{formik.errors.directoryName}</div>
+                  <div className="text-red-500" data-testid="form-error">{formik.errors.directoryName}</div>
                 ) : null}
               </div>
             )}

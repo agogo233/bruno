@@ -589,6 +589,7 @@ const EnvironmentList = ({
                       handleImportClick();
                     }}
                     title={t('ENVIRONMENTS.SETTINGS_LIST.IMPORT_ENV_TITLE')}
+                    data-testid="import-environment-btn"
                   >
                     <IconDownload size={14} strokeWidth={1.5} />
                   </button>

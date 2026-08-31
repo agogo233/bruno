@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
+import { IconDatabase } from '@tabler/icons';
 import ColorBadge from 'components/ColorBadge';
 
 // Show at most 6 environments at a glance; the list virtualises and scrolls beyond
@@ -25,8 +26,7 @@ const EnvironmentSelectionList = ({
   selectedUids = [],
   onToggle,
   onToggleAll,
-  title = 'Environments',
-  disabled = false
+  title = 'Environments'
 }) => {
   const { t } = useTranslation();
   const resolvedTitle = title || t('SIDEBAR.ENVIRONMENT_SELECTION.TITLE');
@@ -58,7 +58,6 @@ const EnvironmentSelectionList = ({
           type="checkbox"
           className="env-checkbox"
           checked={selectedSet.has(env?.uid)}
-          disabled={disabled}
           onChange={() => onToggle?.(env?.uid)}
           data-testid={`env-select-${env?.uid}`}
         />
@@ -66,7 +65,7 @@ const EnvironmentSelectionList = ({
         <span className="env-name truncate">{env?.name}</span>
       </label>
     ),
-    [selectedSet, disabled, onToggle]
+    [selectedSet, onToggle]
   );
 
   if (!environments.length) {
@@ -80,7 +79,10 @@ const EnvironmentSelectionList = ({
     <>
       <div className="env-section-header">
         <div className="env-section-heading">
-          <h4 className="env-section-title" data-testid="env-section-title">{resolvedTitle}</h4>
+          <h4 className="env-section-title" data-testid="env-section-title">
+            <IconDatabase className="env-section-icon" size={16} strokeWidth={1.33} aria-hidden="true" />
+            {resolvedTitle}
+          </h4>
           <span className="env-section-count" data-testid="env-selected-count">
             ({selectedCount}/{environments.length} {t('SIDEBAR.ENVIRONMENT_SELECTION.SELECTED')})
           </span>
@@ -91,7 +93,6 @@ const EnvironmentSelectionList = ({
             type="checkbox"
             className="env-checkbox"
             checked={allSelected}
-            disabled={disabled}
             onChange={handleToggleAll}
             data-testid="env-select-all"
           />

@@ -13,6 +13,7 @@ import {
   getMockServerInstances,
   checkMockServerPortAvailable,
   getMockServerPortError,
+  getMockServerPortRangeError,
   getMockServerNameError,
   isMockServerNameTaken,
   resolveInstanceSpec,
@@ -27,7 +28,7 @@ import MockResponsesList from 'components/MockServer/MockResponse/MockResponsesL
 import Tab from 'components/Tab';
 import ActionIcon from 'ui/ActionIcon';
 import Button from 'ui/Button';
-import { resolveMockResponseCollection, resolveMockResponseLocation, countMockRoutes } from 'utils/mock-server/mock-responses';
+import { resolveMockResponseLocation, countMockRoutes } from 'utils/mock-server/mock-responses';
 import StyledWrapper from './StyledWrapper';
 
 const MockServerLogCount = ({ mockServerUid }) => {
@@ -51,7 +52,6 @@ const MockServerDashboard = ({ instance, collection }) => {
   const [nameDraft, setNameDraft] = useState(null);
   const [delayDraft, setDelayDraft] = useState(null);
   const [portError, setPortError] = useState(null);
-  const collections = useSelector((state) => state.collections.collections);
   const apiSpecs = useSelector((state) => state.apiSpec.apiSpecs);
   const workspaces = useSelector((state) => state.workspaces.workspaces);
   const activeWorkspaceUid = useSelector((state) => state.workspaces.activeWorkspaceUid);
@@ -67,18 +67,9 @@ const MockServerDashboard = ({ instance, collection }) => {
     workspaces.find((workspace) => workspace.uid === activeWorkspaceUid) || null
   ), [workspaces, activeWorkspaceUid]);
 
-  const resolvedCollection = useMemo(() => (
-    resolveMockResponseCollection({
-      collection,
-      instance,
-      collections,
-      activeWorkspace
-    })
-  ), [collection, instance, collections, activeWorkspace]);
-
   const location = useMemo(() => (
-    resolveMockResponseLocation(instance, resolvedCollection, collections, workspaces, activeWorkspace)
-  ), [instance, resolvedCollection, collections, workspaces, activeWorkspace]);
+    resolveMockResponseLocation(instance, workspaces, activeWorkspace)
+  ), [instance, workspaces, activeWorkspace]);
 
   const serverState = useSelector((state) => state.mockServer.servers[mockServerUid]) || {
     status: 'stopped',
@@ -96,43 +87,42 @@ const MockServerDashboard = ({ instance, collection }) => {
   const nameValue = nameDraft ?? storedInstance.name;
   const delayValue = delayDraft ?? activeDelay;
 
-  useEffect(() => {
-    validatePort(activePort);
-  }, [activePort]);
-
-  const validatePort = async (value = activePort) => {
-    const trimmed = String(value).trim();
-
-    if (!trimmed) {
-      const error = t('MOCK_SERVER.DASHBOARD.PORT_REQUIRED');
-      setPortError(error);
-      return error;
-    }
-
-    const nextPort = Number(trimmed);
-    if (!Number.isInteger(nextPort) || nextPort < 1 || nextPort > 65535) {
-      const error = t('MOCK_SERVER.DASHBOARD.PORT_RANGE');
-      setPortError(error);
-      return error;
+  const resolvePortError = async (value) => {
+    const rangeError = getMockServerPortRangeError(value);
+    if (rangeError) {
+      return rangeError;
     }
 
     try {
-      const portCheck = await checkMockServerPortAvailable(nextPort, workspaceInstances, {
+      const portCheck = await checkMockServerPortAvailable(Number(value), workspaceInstances, {
         excludeUid: storedInstance.uid
       });
-      const error = getMockServerPortError(portCheck, nextPort);
-      setPortError(error);
-      return error;
+      return getMockServerPortError(portCheck, value);
     } catch (err) {
-      const error = err.message || t('MOCK_SERVER.DASHBOARD.PORT_VALIDATE_FAILED');
-      setPortError(error);
-      return error;
+      return err.message || t('MOCK_SERVER.DASHBOARD.PORT_VALIDATE_FAILED');
     }
   };
 
+  const conflictingPortsKey = workspaceInstances
+    .filter((i) => i.uid !== storedInstance.uid)
+    .map((i) => Number(i.port))
+    .join(',');
+
+  useEffect(() => {
+    let isCurrent = true;
+    resolvePortError(activePort).then((error) => {
+      if (isCurrent) {
+        setPortError(error);
+      }
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [activePort, conflictingPortsKey]);
+
   useEffect(() => {
     dispatch(syncMockServerState(location));
-  }, [dispatch, location.mockServerUid, location.collectionPath, location.sourceType, location.workspacePath]);
+  }, [dispatch, location.mockServerUid, location.workspacePath]);
 
   const resolveStartPayload = () => resolveMockServerStartPayload(storedInstance, {
     collection,
@@ -141,9 +131,10 @@ const MockServerDashboard = ({ instance, collection }) => {
   });
 
   const handleStart = async () => {
-    const validationError = await validatePort(activePort);
+    const validationError = await resolvePortError(activePort);
+    setPortError(validationError);
     if (validationError) {
-      toast.error(validationError || t('MOCK_SERVER.DASHBOARD.FIX_PORT_BEFORE_START'));
+      toast.error(validationError);
       return;
     }
 

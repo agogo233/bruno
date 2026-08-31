@@ -13,9 +13,8 @@ import { updateRequestPaneTab, setTabAppPreview } from 'providers/ReduxStore/sli
 import { addLog } from 'providers/ReduxStore/slices/logs';
 import { uuid } from 'utils/common';
 import { useTheme } from 'providers/Theme';
-import Button from 'ui/Button';
+import EmptyAppState from 'components/EmptyAppState';
 import StyledWrapper from './StyledWrapper';
-import EmptyAppState from './EmptyAppState';
 import { buildVariables } from './buildVariables';
 import {
   SENTINEL,
@@ -297,10 +296,6 @@ const AppView = ({ item, collection, code }) => {
     dispatch(setTabAppPreview({ uid: item.uid, appPreview: false }));
   }, [dispatch, item.uid]);
 
-  const openAppsDocs = useCallback(() => {
-    window?.ipcRenderer?.openExternal('https://link.usebruno.com/apps');
-  }, []);
-
   return (
     <StyledWrapper data-testid="app-view">
       <div className="app-view-toolbar">
@@ -321,30 +316,8 @@ const AppView = ({ item, collection, code }) => {
         </div>
       ) : (
         <EmptyAppState
-          title={t('APP_VIEW.NO_APP_YET')}
           hint={t('APP_VIEW.NO_APP_YET_HINT')}
-          actions={(
-            <>
-              <Button
-                size="sm"
-                variant="filled"
-                color="primary"
-                onClick={goToAppTab}
-                data-testid="empty-app-add-code"
-              >
-                {t('APP_VIEW.ADD_APP_CODE')}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                color="secondary"
-                onClick={openAppsDocs}
-                data-testid="empty-app-learn-more"
-              >
-                {t('APP_VIEW.LEARN_MORE')}
-              </Button>
-            </>
-          )}
+          onAddCode={goToAppTab}
         />
       )}
     </StyledWrapper>

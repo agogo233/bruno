@@ -146,6 +146,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           collection={collection}
           item={item}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
 
@@ -161,6 +162,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           item={item}
           isSecret={true}
           isCompact
+          disableLinkAwareClick={true}
         />
 
         {showWarning && <SensitiveFieldWarning fieldName="awsv4-secret-access-key" warningMessage={warningMessage} />}
@@ -177,6 +179,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           collection={collection}
           item={item}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
 
@@ -191,6 +194,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           collection={collection}
           item={item}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
 
@@ -205,6 +209,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           collection={collection}
           item={item}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
 
@@ -219,6 +224,7 @@ const AwsV4Auth = ({ item, collection, updateAuth, request, save }) => {
           collection={collection}
           item={item}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
     </StyledWrapper>

@@ -469,14 +469,18 @@
       "URL_REQUIRED": "URL is required",
       "PASTE_SUCCESS": "Item pasted successfully",
       "FOLDER_OPEN_ERROR": "Error opening the folder",
-      "EXAMPLE_COUNT": "{{count}} example"
+      "EXAMPLE_COUNT": "{{count}} example",
+      "COPIED_TYPE": "{{type}} copied",
+      "CLONED_TYPE": "{{type}} cloned!",
+      "CLONE_ERROR_TYPE": "An error occurred while cloning the {{type}}"
     },
     "COLLECTION_ITEM_INFO": {
       "TITLE": "Info",
       "FOLDER_NAME": "Folder Name",
       "REQUEST_NAME": "Request Name",
       "FILE_NAME": "File Name",
-      "FILE_NAME_HINT": "on filesystem"
+      "FILE_NAME_HINT": "on filesystem",
+      "TYPE_NAME": "{{type}} Name"
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "Rename Folder",
@@ -489,7 +493,9 @@
       "HIDE_FS_NAME": "Hide Filesystem Name",
       "SHOW_FS_NAME": "Show Filesystem Name",
       "CANCEL": "Cancel",
-      "RENAME": "Rename"
+      "RENAME": "Rename",
+      "TITLE": "Rename {{type}}",
+      "TYPE_NAME": "{{type}} Name"
     },
     "CLONE_COLLECTION_ITEM": {
       "CLONE_FOLDER": "Clone Folder",
@@ -511,7 +517,8 @@
       "DELETE_REQUEST": "Delete Request",
       "DELETE": "Delete",
       "CONFIRM": "Are you sure you want to delete",
-      "ERROR": "Error deleting item"
+      "ERROR": "Error deleting item",
+      "TITLE": "Delete {{type}}"
     },
     "IGNORE_COLLECTION_ITEM": {
       "TITLE": "Ignore Folder",
@@ -813,7 +820,10 @@
       "ERROR_MOVING": "An error occurred while moving",
       "ERROR_PASTING": "An error occurred while pasting the item",
       "ERROR_EXPORTING": "Failed to export collection: ",
-      "COLLECTION_NOT_FOUND": "Collection not found. It may have been deleted or is no longer available."
+      "COLLECTION_NOT_FOUND": "Collection not found. It may have been deleted or is no longer available.",
+      "FOLDER": "Folder",
+      "APP": "App",
+      "REQUEST": "Request"
     }
   },
   "BETA": {
@@ -1559,7 +1569,15 @@
       "VALUE": "Value",
       "BULK_EDIT": "Bulk Edit",
       "NAME_INVALID": "Header name cannot contain spaces or newlines",
-      "VALUE_INVALID": "Header value cannot contain newlines"
+      "VALUE_INVALID": "Header value cannot contain newlines",
+      "INHERITED_HEADERS": "Inherited Headers",
+      "REQUEST_HEADERS": "Request Headers",
+      "OVERRIDDEN_BY_REQUEST_HEADER": "Overridden by a request header",
+      "OVERRIDES_DEFAULT_HEADER": "Overrides Bruno's default header",
+      "AUTO_ADDED_AT_RUNTIME": "Automatically added at runtime",
+      "REQUIRED_BY_HTTP": "Required by HTTP, cannot be omitted",
+      "HIDE_INHERITED_HEADERS": "Hide Inherited Headers",
+      "SHOW_INHERITED_HEADERS": "Show Inherited Headers ({{count}})"
     },
     "QUERY_PARAMS": {
       "QUERY": "Query",
@@ -2114,7 +2132,15 @@
       "ADVANCED_SETTINGS": "Advanced settings",
       "PORT": "Port",
       "RESPONSE_DELAY": "Response delay (ms)",
-      "AUTO_PORT": "Bruno will pick the next available port automatically."
+      "AUTO_PORT": "Bruno will pick the next available port automatically.",
+      "STANDALONE": "Standalone",
+      "STANDALONE_HINT": "A standalone mock server has no source. Add responses manually from the dashboard.",
+      "LOADING_COLLECTION": "Loading collection…",
+      "SYNC_WITH_SPEC": "Sync mock responses with API spec",
+      "SYNC_WITH_EXAMPLES": "Sync mock responses with collection examples",
+      "SYNC_FAILED": "Mock server created, but syncing responses failed",
+      "COLLECTION_NOT_AVAILABLE": "Selected collection is not available",
+      "PORT_VALIDATE_FAILED": "Failed to validate port"
     },
     "RENAME_MODAL": {
       "TITLE": "Rename Mock Server",
@@ -2262,7 +2288,8 @@
       "TOGGLE_RESPONSES": "Toggle mock responses",
       "ACTIONS_LABEL": "Mock server actions",
       "NO_MOCK_SERVERS": "No mock servers yet.",
-      "NO_MOCK_SERVERS_HINT": "Use the + button to create one."
+      "NO_MOCK_SERVERS_HINT": "Use the + button to create one.",
+      "NO_MOCK_RESPONSES": "No mock responses yet"
     },
     "SIDEBAR_ITEM": {
       "RENAMED": "Mock response renamed",
@@ -2370,7 +2397,11 @@
       "MATCH": "Match",
       "ALL_AND": "ALL (AND)",
       "ANY_OR": "ANY (OR)",
-      "NO_RULES": "No rules. This response matches every request on the route."
+      "NO_RULES": "No rules. This response matches every request on the route.",
+      "ALL_RULES_AND": "All rules (AND)",
+      "ANY_RULE_OR": "Any rule (OR)",
+      "ADD_RULE": "+ Add Rule",
+      "NO_RULES_MATCH_ALL": "No rules - every request on this route gets this response."
     },
     "REQUEST_PANE": {
       "REQUEST": "Request",
@@ -2379,7 +2410,17 @@
       "TRY": "Try",
       "START_SERVER_TITLE": "Start the mock server to try this response",
       "STARTING": "Starting...",
-      "START_SERVER": "Start Server"
+      "START_SERVER": "Start Server",
+      "DEMO_REQUEST": "Demo Request",
+      "NAME": "Name",
+      "VALUE": "Value",
+      "HEADERS": "Headers",
+      "QUERY_PARAMS": "Query Params",
+      "BODY": "Body",
+      "DEMO_HINT": "Auto-generated from the rules - a request like this matches this mock response.",
+      "DEMO_NO_RULES": "No rules defined - any {{method}} {{url}} request matches this response. Add rules to see the matching headers, query params, or body here.",
+      "OPEN_AS_REQUEST": "Open as New Request",
+      "MORE_TRY_OPTIONS": "More try options"
     },
     "RESPONSE_CREATE_MODAL": {
       "NAME_REQUIRED": "Mock response name is required",
@@ -2733,7 +2774,8 @@
       "DEFAULT_ENVIRONMENT_SUB": "Automatically selected in the Environment when the collection is exported and opened first.",
       "NONE": "None",
       "SAVE": "Save",
-      "REQUEST_URL_PLACEHOLDER": "Request URL"
+      "REQUEST_URL_PLACEHOLDER": "Request URL",
+      "DEFAULT_ENVIRONMENT_SHARED_SUB": "Selected when this collection is shared and first opened."
     },
     "PRESETS_TYPES": {
       "HTTP": "HTTP",
@@ -2907,7 +2949,8 @@
       "PREVIEW": "Preview",
       "NO_APP_TITLE": "No app yet",
       "NO_APP_HINT": "Switch to Code and write some HTML/JS",
-      "TITLE_PREFIX": "App - "
+      "TITLE_PREFIX": "App - ",
+      "NO_APP_ADD_CODE_HINT": "Add HTML/JS in the Code view to render a custom UI for this app."
     },
     "ERROR": {
       "REQUEST_NOT_FOUND": "Request not found: {{pathname}}",

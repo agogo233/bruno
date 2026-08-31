@@ -10,7 +10,7 @@ const CollectionVersionInfo = ({ name, version, folderCount = 0, requestCount = 
     <div className="version-info" data-testid="version-info">
       <div className="version-line">
         <span className="collection-name" data-testid="collection-name">{name}</span>
-        <span className="version-value" data-testid="version-value">{t('SIDEBAR.GENERATE_DOCS.VERSION_LABEL', { version: version || t('SIDEBAR.GENERATE_DOCS.NOT_SET') })}</span>
+        <span className={`version-value ${version ? '' : 'unset'}`} data-testid="version-value">{t('SIDEBAR.GENERATE_DOCS.VERSION_LABEL', { version: version || t('SIDEBAR.GENERATE_DOCS.NOT_SET') })}</span>
       </div>
       <p className="version-summary" data-testid="version-summary">
         <span>{folderCount} {folderLabel}</span>

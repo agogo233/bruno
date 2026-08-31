@@ -7,27 +7,40 @@ import StyledWrapper from './StyledWrapper';
 export default function XmlPreview({ data, defaultExpanded = true }) {
   const { t } = useTranslation();
 
-  // Parse XML string
-  const parsedData = useMemo(() => {
+  const parsedResult = useMemo(() => {
     if (typeof data !== 'string') {
-      return { error: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.INVALID_INPUT_XML') };
+      return {
+        error: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.INVALID_INPUT_XML'),
+        data: null
+      };
     }
 
     const parsed = parseXMLString(data);
+
     if (parsed === null) {
-      return { error: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.FAILED_PARSE_XML') };
+      return {
+        error: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.FAILED_PARSE_XML'),
+        data: null
+      };
     }
-    return parsed;
+
+    return {
+      error: null,
+      data: parsed
+    };
   }, [data]);
 
-  // Check for parsing error
-  if (parsedData && typeof parsedData === 'object' && parsedData.error) {
+  if (parsedResult.error) {
     return (
       <div className="px-2">
-        <ErrorBanner errors={[{ title: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.CANNOT_PREVIEW_XML'), message: parsedData.error }]} />
+        <ErrorBanner
+          errors={[{ title: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.CANNOT_PREVIEW_XML'), message: parsedResult.error }]}
+        />
       </div>
     );
   }
+
+  const parsedData = parsedResult.data;
 
   // Validate that data can be rendered as a tree
   const isValidTreeData = (data) => {
@@ -66,7 +79,7 @@ export default function XmlPreview({ data, defaultExpanded = true }) {
 
   return (
     <StyledWrapper>
-      <div className="xml-container">
+      <div className="xml-container" data-testid="xml-tree">
         <XmlNode
           node={rootNode}
           nodeName={rootNodeName}

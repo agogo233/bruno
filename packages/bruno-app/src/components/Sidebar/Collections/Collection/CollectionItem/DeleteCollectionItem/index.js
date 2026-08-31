@@ -4,7 +4,7 @@ import Modal from 'components/Modal';
 import { isItemAFolder } from 'utils/tabs';
 import { useDispatch } from 'react-redux';
 import { deleteItem, closeTabs } from 'providers/ReduxStore/slices/collections/actions';
-import { recursivelyGetAllItemUids } from 'utils/collections';
+import { recursivelyGetAllItemUids, getItemTypeLabel } from 'utils/collections';
 import StyledWrapper from './StyledWrapper';
 import toast from 'react-hot-toast';
 
@@ -12,6 +12,7 @@ const DeleteCollectionItem = ({ onClose, item, collectionUid }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const isFolder = isItemAFolder(item);
+  const itemTypeLabel = getItemTypeLabel(item);
   const onConfirm = () => {
     dispatch(deleteItem(item.uid, collectionUid)).then(() => {
       if (isFolder) {
@@ -42,7 +43,7 @@ const DeleteCollectionItem = ({ onClose, item, collectionUid }) => {
     <StyledWrapper>
       <Modal
         size="md"
-        title={isFolder ? t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE_FOLDER') : t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE_REQUEST')}
+        title={t('SIDEBAR.DELETE_COLLECTION_ITEM.TITLE', { type: t(`SIDEBAR.COMMON.${itemTypeLabel.toUpperCase()}`) })}
         confirmText={t('SIDEBAR.DELETE_COLLECTION_ITEM.DELETE')}
         confirmButtonColor="danger"
         handleConfirm={onConfirm}

@@ -21,7 +21,6 @@ import {
   endGrpcConnection
 } from 'utils/network/index';
 import GrpcurlModal from './GrpcurlModal';
-import { debounce } from 'lodash';
 import { getPropertyFromDraftOrRequest } from 'utils/collections';
 import useReflectionManagement from 'hooks/useReflectionManagement/index';
 import useProtoFileManagement from 'hooks/useProtoFileManagement/index';
@@ -57,10 +56,10 @@ const GrpcQueryUrl = ({ item, collection, handleRun }) => {
 
   const methodDropdownRef = useRef(null);
   const protoDropdownRef = useRef(null);
-  const haveFetchedMethodsRef = useRef(false);
+  const latestReflectionRequestIdRef = useRef(0);
 
   const protoFileManagement = useProtoFileManagement(collection, protoFilePath);
-  const reflectionManagement = useReflectionManagement(item, collection.uid);
+  const reflectionManagement = useReflectionManagement(item, collection);
 
   const onMethodSelect = ({ path, type }) => {
     if (isConnectionActive) {
@@ -91,37 +90,10 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
     dispatch(saveRequest(item.uid, collection.uid));
   };
 
-  const onUrlChange = (value) => {
-    if (!editorRef.current?.editor) return;
-    const editor = editorRef.current.editor;
-    const cursor = editor.getCursor();
-
-    const finalUrl = value?.trim() || value;
-
-    dispatch(
-      requestUrlChanged({
-        itemUid: item.uid,
-        collectionUid: collection.uid,
-        url: finalUrl
-      })
-    );
-
-    if (finalUrl !== value) {
-      setTimeout(() => {
-        if (editor) {
-          editor.setCursor(cursor);
-        }
-      }, 0);
-    }
-
-    if (!protoFilePath && value) {
-      setIsReflectionMode(true);
-      handleReflection(finalUrl);
-    }
-  };
-
   const handleReflection = async (url, isManualRefresh = false) => {
+    const requestId = ++latestReflectionRequestIdRef.current;
     const { methods, error, fromCache } = await reflectionManagement.loadMethodsFromReflection(url, isManualRefresh);
+    if (requestId !== latestReflectionRequestIdRef.current) return;
 
     if (error) {
       toast.error(t('REQUEST_PANE.GRPC_QUERY_URL.LOAD_METHODS_FAILED', { error: error.message || 'Unknown error' }));
@@ -160,6 +132,35 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
           });
         }
       }
+    }
+  };
+
+  const onUrlChange = (value) => {
+    if (!editorRef.current?.editor) return;
+    const editor = editorRef.current.editor;
+    const cursor = editor.getCursor();
+
+    const finalUrl = value?.trim() || value;
+
+    dispatch(
+      requestUrlChanged({
+        itemUid: item.uid,
+        collectionUid: collection.uid,
+        url: finalUrl
+      })
+    );
+
+    if (finalUrl !== value) {
+      setTimeout(() => {
+        if (editor) {
+          editor.setCursor(cursor);
+        }
+      }, 0);
+    }
+
+    if (!protoFilePath && value) {
+      setIsReflectionMode(true);
+      reflectionManagement.scheduleReflection(finalUrl, handleReflection);
     }
   };
 
@@ -280,14 +281,7 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
     }
   };
 
-  const debouncedOnUrlChange = debounce(onUrlChange, 1000);
-
   useEffect(() => {
-    if (haveFetchedMethodsRef.current) {
-      return;
-    }
-    haveFetchedMethodsRef.current = true;
-
     if (protoFilePath) {
       setIsReflectionMode(false);
       handleProtoFileLoad(protoFilePath);
@@ -296,7 +290,7 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
     if (!url) return;
     setIsReflectionMode(true);
     handleReflection(url);
-  }, []);
+  }, [collection.activeEnvironmentUid]);
 
   return (
     <StyledWrapper className="flex items-center relative" data-testid="grpc-query-url-container">
@@ -311,11 +305,12 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
           value={url}
           onSave={(finalValue) => onSave(finalValue)}
           theme={storedTheme}
-          onChange={(newValue) => debouncedOnUrlChange(newValue)}
+          onChange={onUrlChange}
           onRun={handleRun}
           collection={collection}
           highlightPathParams={true}
           item={item}
+          disableLinkAwareClick={true}
         />
 
       </div>

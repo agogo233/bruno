@@ -58,6 +58,7 @@ const BasicAuth = ({ collection }) => {
           onChange={(val) => handleUsernameChange(val)}
           collection={collection}
           isCompact
+          disableLinkAwareClick={true}
         />
       </div>
 
@@ -71,6 +72,7 @@ const BasicAuth = ({ collection }) => {
           collection={collection}
           isSecret={true}
           isCompact
+          disableLinkAwareClick={true}
         />
         {showWarning && <SensitiveFieldWarning fieldName="basic-password" warningMessage={warningMessage} />}
       </div>

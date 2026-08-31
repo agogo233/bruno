@@ -3,7 +3,20 @@ import { useTranslation } from 'react-i18next';
 import ReactJson from 'react-json-view';
 import ErrorBanner from 'ui/ErrorBanner';
 
-const JsonPreview = ({ data, displayedTheme }) => {
+const isHttpUrl = (value) => {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  try {
+    const parsedUrl = new URL(value.trim());
+    return ['http:', 'https:'].includes(parsedUrl.protocol);
+  } catch (e) {
+    return false;
+  }
+};
+
+const JsonPreview = ({ data, displayedTheme, onLinkClick }) => {
   const { t } = useTranslation();
   // Helper function to validate and parse JSON data
   const validateJsonData = (data) => {
@@ -43,6 +56,14 @@ const JsonPreview = ({ data, displayedTheme }) => {
     return <ErrorBanner errors={[{ title: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.CANNOT_PREVIEW_JSON'), message: t('RESPONSE_PANE.QUERY_RESULT_PREVIEW.NOT_RENDERABLE') }]} />;
   }
 
+  const handleSelect = (selection) => {
+    if (typeof onLinkClick !== 'function' || !isHttpUrl(selection?.value)) {
+      return;
+    }
+
+    onLinkClick(selection.value.trim());
+  };
+
   return (
     <ReactJson
       src={jsonData.data}
@@ -51,6 +72,7 @@ const JsonPreview = ({ data, displayedTheme }) => {
       displayDataTypes={false}
       displayObjectSize={true}
       enableClipboard={true}
+      onSelect={handleSelect}
       name={false}
       style={{
         backgroundColor: 'transparent',
