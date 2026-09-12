@@ -10,7 +10,7 @@ import EnvironmentVariablesTable from 'components/EnvironmentVariablesTable';
 import { sensitiveFields } from './constants';
 import { useTranslation } from 'react-i18next';
 
-const EnvironmentVariables = ({ environment, setIsModified, collection, searchQuery = '', variableType = 'variables' }) => {
+const EnvironmentVariables = ({ environment, setIsModified, collection, inheritedEnvironmentVariables, searchQuery = '', variableType = 'variables' }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -107,6 +107,7 @@ const EnvironmentVariables = ({ environment, setIsModified, collection, searchQu
     <EnvironmentVariablesTable
       key={environment?.uid}
       environment={environment}
+      inheritedEnvironmentVariables={inheritedEnvironmentVariables}
       collection={collection}
       onSave={handleSave}
       draft={hasDraftForThisEnv ? environmentsDraft : null}

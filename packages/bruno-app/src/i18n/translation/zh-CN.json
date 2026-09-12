@@ -6,6 +6,7 @@
     "GITHUB": "GitHub",
     "DISCORD": "Discord",
     "TWITTER": "Twitter",
+    "LINKEDIN": "LinkedIn",
     "CANCEL": "取消",
     "SAVE": "保存",
     "CONFIRM": "确认"
@@ -47,6 +48,16 @@
       "GENERATE_CODE": "生成代码",
       "EDIT_EXAMPLE": "编辑示例"
     }
+  },
+  "SUPPORT": {
+    "HELP": "帮助",
+    "COMMUNITY": "社区",
+    "DOCUMENTATION_DESCRIPTION": "指南、参考和示例",
+    "REPORT_ISSUES_DESCRIPTION": "提交 Bug 或功能请求",
+    "DISCORD_DESCRIPTION": "提问交流，与团队沟通",
+    "GITHUB_DESCRIPTION": "源码、发布和讨论",
+    "TWITTER_DESCRIPTION": "发布说明与公告",
+    "LINKEDIN_DESCRIPTION": "公司新闻与动态"
   },
   "WELCOME_MODAL": {
     "STEP_1_TITLE": "欢迎使用 Bruno",
@@ -1122,6 +1133,10 @@
       "PRE_REQUEST": "预请求脚本错误",
       "POST_RESPONSE": "后响应脚本错误",
       "TEST": "测试脚本错误",
+      "BEFORE_CALL_START": "调用开始前脚本错误",
+      "BEFORE_MESSAGE_SEND": "消息发送前脚本错误",
+      "AFTER_MESSAGE_RECEIVE": "消息接收后脚本错误",
+      "AFTER_CALL_END": "调用结束后脚本错误",
       "ERROR": "错误",
       "SHOW_STACK": "显示堆栈跟踪",
       "HIDE_STACK": "隐藏堆栈跟踪",

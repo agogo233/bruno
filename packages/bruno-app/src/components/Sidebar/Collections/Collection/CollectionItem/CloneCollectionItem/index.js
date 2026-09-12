@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import Modal from 'components/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { isItemAFolder } from 'utils/tabs';
+import { getItemTypeLabel } from 'utils/collections';
 import { cloneItem } from 'providers/ReduxStore/slices/collections/actions';
 import { IconArrowBackUp, IconEdit, IconCaretDown } from '@tabler/icons';
 import { sanitizeName, validateName, validateNameError } from 'utils/common/regex';
@@ -26,6 +27,7 @@ const CloneCollectionItem = ({ collectionUid, item, onClose }) => {
   const [isEditing, toggleEditing] = useState(false);
   const itemName = item?.name;
   const itemType = item?.type;
+  const itemTypeLabel = getItemTypeLabel(item);
   const [showFilesystemName, toggleShowFilesystemName] = useState(false);
 
   const dropdownTippyRef = useRef();
@@ -55,7 +57,7 @@ const CloneCollectionItem = ({ collectionUid, item, onClose }) => {
     onSubmit: (values) => {
       dispatch(cloneItem(values.name, values.filename, item.uid, collectionUid))
         .then(() => {
-          toast.success(t('SIDEBAR.CLONE_COLLECTION_ITEM.CLONED'));
+          toast.success(t('SIDEBAR.COLLECTION_ITEM_INFO.CLONED_TYPE', { type: itemTypeLabel }));
           onClose();
         })
         .catch((err) => {

@@ -117,6 +117,8 @@ const RequestTabPanel = () => {
       const globalEnvSecrets = getGlobalEnvironmentVariablesMasked({ globalEnvironments, activeGlobalEnvironmentUid });
       collection.globalEnvironmentVariables = globalEnvironmentVariables;
       collection.globalEnvSecrets = globalEnvSecrets;
+      collection.globalEnvironments = globalEnvironments;
+      collection.activeGlobalEnvironmentUid = activeGlobalEnvironmentUid;
     }
   });
 

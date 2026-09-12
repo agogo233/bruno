@@ -101,7 +101,6 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                 item={item}
                 isSecret={isSecret}
                 isCompact
-                disableLinkAwareClick={true}
               />
               {isSecret && showWarning && <SensitiveFieldWarning fieldName={key} warningMessage={warningMessage} />}
             </div>
@@ -164,7 +163,6 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
             collection={collection}
             item={item}
             isCompact
-            disableLinkAwareClick={true}
           />
         </div>
       </div>
@@ -200,7 +198,6 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                     onRun={handleRun}
                     collection={collection}
                     isCompact
-                    disableLinkAwareClick={true}
                   />
                 </div>
               </div>
@@ -217,7 +214,6 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                     onRun={handleRun}
                     collection={collection}
                     isCompact
-                    disableLinkAwareClick={true}
                   />
                 </div>
               </div>
@@ -243,7 +239,6 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
             collection={collection}
             item={item}
             isCompact
-            disableLinkAwareClick={true}
           />
         </div>
       </div>

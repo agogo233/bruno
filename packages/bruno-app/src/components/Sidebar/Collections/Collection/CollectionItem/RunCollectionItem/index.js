@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import { uuid } from 'utils/common';
 import Modal from 'components/Modal';
 import { useDispatch, useSelector } from 'react-redux';
+import useClearStoredRunnerExchanges from 'hooks/useClearStoredRunnerExchanges';
 import { addTab } from 'providers/ReduxStore/slices/tabs';
 import { runCollectionFolder } from 'providers/ReduxStore/slices/collections/actions';
 import { flattenItems } from 'utils/collections';
@@ -24,7 +25,9 @@ const RunCollectionItem = ({ collectionUid, item, onClose }) => {
   // tags for the collection run
   const tags = get(collection, 'runnerTags', { include: [], exclude: [] });
 
-  const onSubmit = (recursive) => {
+  const clearStoredRunnerExchanges = useClearStoredRunnerExchanges(collection.uid);
+
+  const onSubmit = async (recursive) => {
     dispatch(
       addTab({
         uid: uuid(),
@@ -33,6 +36,7 @@ const RunCollectionItem = ({ collectionUid, item, onClose }) => {
       })
     );
     if (!isCollectionRunInProgress) {
+      await clearStoredRunnerExchanges();
       dispatch(runCollectionFolder(collection.uid, item ? item.uid : null, recursive, delay ? Number(delay) : null, tags));
     }
     onClose();

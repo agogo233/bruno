@@ -52,7 +52,8 @@ const TestSection = ({
   results,
   isExpanded,
   onToggle,
-  type = 'test'
+  type = 'test',
+  section
 }) => {
   const { t } = useTranslation();
   const passedResults = results.filter((result) => result.status === 'pass');
@@ -64,6 +65,7 @@ const TestSection = ({
     <div className="mb-4">
       <div
         className="font-medium test-summary flex items-center cursor-pointer hover:bg-opacity-10 hover:bg-gray-500 rounded py-2"
+        data-testid={`test-summary-${section}`}
         onClick={onToggle}
       >
         <span className="dropdown-icon mr-2 flex items-center">
@@ -134,6 +136,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
         isExpanded={expandedSections.preRequest}
         onToggle={() => toggleSection('preRequest')}
         type="test"
+        section="preRequest"
       />
 
       <TestSection
@@ -142,6 +145,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
         isExpanded={expandedSections.postResponse}
         onToggle={() => toggleSection('postResponse')}
         type="test"
+        section="postResponse"
       />
 
       <TestSection
@@ -150,6 +154,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
         isExpanded={expandedSections.tests}
         onToggle={() => toggleSection('tests')}
         type="test"
+        section="tests"
       />
 
       <TestSection
@@ -158,6 +163,7 @@ const TestResults = ({ item, results, assertionResults, preRequestTestResults, p
         isExpanded={expandedSections.assertions}
         onToggle={() => toggleSection('assertions')}
         type="assertion"
+        section="assertions"
       />
     </StyledWrapper>
   );

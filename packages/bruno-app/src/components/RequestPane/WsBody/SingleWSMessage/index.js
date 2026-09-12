@@ -1,5 +1,6 @@
 import { IconTrash, IconSend, IconChevronRight, IconChevronDown } from '@tabler/icons';
 import { useTranslation } from 'react-i18next';
+import { resolveEnvironmentInheritance } from '@usebruno/common/utils';
 import CodeEditor from 'components/CodeEditor/index';
 import ToolHint from 'components/ToolHint/index';
 import { get } from 'lodash';
@@ -164,7 +165,10 @@ export const SingleWSMessage = ({
   const onSendMessage = useCallback(async () => {
     try {
       const col = findCollectionByUid(collections, collection.uid);
-      const environment = findEnvironmentInCollection(col, col?.activeEnvironmentUid);
+      const environment = resolveEnvironmentInheritance({
+        environments: col?.environments,
+        targetEnvironment: findEnvironmentInCollection(col, col?.activeEnvironmentUid)
+      });
 
       // Auto-connect if needed; while CONNECTING just queue — open flushes.
       await ensureWsConnection(item, col, environment, col?.runtimeVariables);

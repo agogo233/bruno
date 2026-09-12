@@ -75,7 +75,6 @@ const NTLMAuth = ({ collection }) => {
           onChange={(val) => handleUsernameChange(val)}
           collection={collection}
           isCompact
-          disableLinkAwareClick={true}
         />
       </div>
 
@@ -89,7 +88,6 @@ const NTLMAuth = ({ collection }) => {
           collection={collection}
           isSecret={true}
           isCompact
-          disableLinkAwareClick={true}
         />
         {showWarning && <SensitiveFieldWarning fieldName="ntlm-password" warningMessage={warningMessage} />}
       </div>
@@ -103,7 +101,6 @@ const NTLMAuth = ({ collection }) => {
           onChange={(val) => handleDomainChange(val)}
           collection={collection}
           isCompact
-          disableLinkAwareClick={true}
         />
       </div>
     </StyledWrapper>

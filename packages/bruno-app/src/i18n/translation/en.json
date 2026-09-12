@@ -6,6 +6,7 @@
     "GITHUB": "GitHub",
     "DISCORD": "Discord",
     "TWITTER": "Twitter",
+    "LINKEDIN": "LinkedIn",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "CONFIRM": "Confirm"
@@ -47,6 +48,16 @@
       "GENERATE_CODE": "Generate Code",
       "EDIT_EXAMPLE": "Edit Example"
     }
+  },
+  "SUPPORT": {
+    "HELP": "Help",
+    "COMMUNITY": "Community",
+    "DOCUMENTATION_DESCRIPTION": "Guides, references and examples",
+    "REPORT_ISSUES_DESCRIPTION": "File a bug or request a feature",
+    "DISCORD_DESCRIPTION": "Ask questions, talk to the team",
+    "GITHUB_DESCRIPTION": "Source, releases and discussions",
+    "TWITTER_DESCRIPTION": "Release notes and announcements",
+    "LINKEDIN_DESCRIPTION": "Company news and updates"
   },
   "WELCOME_MODAL": {
     "STEP_1_TITLE": "Welcome to Bruno",
@@ -1122,6 +1133,10 @@
       "PRE_REQUEST": "Pre-Request Script Error",
       "POST_RESPONSE": "Post-Response Script Error",
       "TEST": "Test Script Error",
+      "BEFORE_CALL_START": "Before Call Start Script Error",
+      "BEFORE_MESSAGE_SEND": "Before Message Send Script Error",
+      "AFTER_MESSAGE_RECEIVE": "After Message Receive Script Error",
+      "AFTER_CALL_END": "After Call End Script Error",
       "ERROR": "Error",
       "SHOW_STACK": "Show stack trace",
       "HIDE_STACK": "Hide stack trace",

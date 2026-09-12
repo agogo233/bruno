@@ -62,6 +62,7 @@ const CreateExampleModal = ({ isOpen, onClose, onSave, title, initialName = '', 
         confirmText={confirmText || defaultConfirmText}
         cancelText={t('COMMON.CANCEL')}
         isOpen={isOpen}
+        dataTestId="create-example-modal"
       >
         <div className="space-y-4">
           <div>

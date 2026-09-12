@@ -2,19 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactJson from 'react-json-view';
 import ErrorBanner from 'ui/ErrorBanner';
-
-const isHttpUrl = (value) => {
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  try {
-    const parsedUrl = new URL(value.trim());
-    return ['http:', 'https:'].includes(parsedUrl.protocol);
-  } catch (e) {
-    return false;
-  }
-};
+import { isHttpUrl } from 'utils/url';
 
 const JsonPreview = ({ data, displayedTheme, onLinkClick }) => {
   const { t } = useTranslation();

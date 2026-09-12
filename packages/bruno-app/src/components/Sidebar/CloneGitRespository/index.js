@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import {
   browseDirectory,
   cloneGitRepository,
+  fetchBranchesForRepositoryUrl,
   openMultipleCollections,
   scanForBrunoFiles
 } from 'providers/ReduxStore/slices/collections/actions';
@@ -14,16 +15,19 @@ import Modal from 'components/Modal';
 import SelectionFooter from 'components/SelectionFooter';
 import path, { getRelativePath } from 'utils/common/path';
 import Portal from 'components/Portal';
-import { IconRefresh, IconAlertCircle, IconBrandGit } from '@tabler/icons';
+import { IconRefresh, IconAlertCircle, IconBrandGit, IconChevronDown } from '@tabler/icons';
 import { uuid } from 'utils/common/index';
 import StyledWrapper from './StyledWrapper';
 import SelectionList from 'components/SelectionList';
 import Button from 'ui/Button';
+import Select from 'ui/Select';
 import { getRepoNameFromUrl } from 'utils/git';
 import GitNotFoundModal from 'components/Git/GitNotFoundModal/index';
 import SkippedPathsWarning from 'components/SkippedPathsWarning';
 import toast from 'react-hot-toast';
 import get from 'lodash/get';
+
+const EMPTY_BRANCH_LISTING = { branches: [], defaultBranch: '', loading: false, failed: false };
 
 const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null }) => {
   const [collectionPaths, setCollectionPaths] = useState([]);
@@ -32,6 +36,7 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
   const [processUid, setProcessUid] = useState(uuid());
   const [steps, setSteps] = useState([]);
   const [view, setView] = useState('form');
+  const [branchListing, setBranchListing] = useState(EMPTY_BRANCH_LISTING);
 
   const progressData = useSelector((state) => state.app.gitOperationProgress[processUid]);
   const { gitVersion } = useSelector((state) => state.app);
@@ -58,9 +63,23 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
     }
   }, [progressData]);
 
+  const loadBranches = async (url) => {
+    setBranchListing({ ...EMPTY_BRANCH_LISTING, loading: true });
+    try {
+      const { branches, defaultBranch } = await dispatch(fetchBranchesForRepositoryUrl(url));
+      setBranchListing({ branches, defaultBranch: defaultBranch || '', loading: false, failed: false });
+    } catch (error) {
+      console.error(error);
+      setBranchListing({ ...EMPTY_BRANCH_LISTING, failed: true });
+    }
+  };
+
   useEffect(() => {
     if (inputRef?.current) {
       inputRef.current.focus();
+    }
+    if (collectionRepositoryUrl) {
+      loadBranches(collectionRepositoryUrl);
     }
   }, []);
 
@@ -120,7 +139,8 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
     enableReinitialize: true,
     initialValues: {
       repositoryUrl: collectionRepositoryUrl || '',
-      collectionLocation: defaultLocation
+      collectionLocation: defaultLocation,
+      branch: ''
     },
     validationSchema: Yup.object({
       repositoryUrl: Yup.string().required(t('SIDEBAR.CLONE_GIT.URL_REQUIRED')),
@@ -130,12 +150,19 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
       try {
         setView('progress');
         cloneInProgress();
-        const { repositoryUrl, collectionLocation } = values;
+        const { repositoryUrl, collectionLocation, branch } = values;
 
         const repoName = getRepoNameFromUrl(repositoryUrl);
         const targetPath = path.join(collectionLocation, repoName);
 
-        await dispatch(cloneGitRepository({ url: values.repositoryUrl, path: targetPath, processUid }));
+        await dispatch(
+          cloneGitRepository({
+            url: repositoryUrl,
+            path: targetPath,
+            processUid,
+            branch: branch || branchListing.defaultBranch
+          })
+        );
 
         cloneFinished();
         dispatch(removeGitOperationProgress(processUid));
@@ -331,6 +358,26 @@ const CloneGitRepository = ({ onClose, onFinish, collectionRepositoryUrl = null 
                     {t('SIDEBAR.CLONE_GIT.BROWSE')}
                   </span>
                 </div>
+                <Select
+                  className="branch-select mt-5"
+                  label="Branch"
+                  data={branchListing.branches}
+                  value={formik.values.branch || branchListing.defaultBranch}
+                  onChange={(branch) => formik.setFieldValue('branch', branch || '')}
+                  searchable
+                  allowDeselect={false}
+                  loading={branchListing.loading}
+                  rightSection={branchListing.loading ? undefined : <IconChevronDown size={12} strokeWidth={2} />}
+                  disabled={!branchListing.branches.length}
+                  placeholder={branchListing.loading ? 'Loading branches...' : 'Repository default'}
+                  nothingFoundMessage="No branches match your search"
+                  data-testid="clone-git-repository-branch-select"
+                />
+                {branchListing.failed && (
+                  <div className="text-muted text-xs mt-1">
+                    Branches could not be listed for this repository. Cloning will use the default branch.
+                  </div>
+                )}
               </div>
             </form>
           )}

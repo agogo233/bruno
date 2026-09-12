@@ -206,7 +206,6 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                   collection={collection}
                   onSave={handleSave}
                   isCompact
-                  disableLinkAwareClick={true}
                 />
               </td>
               <td>

@@ -310,7 +310,6 @@ toast.success(t('REQUEST_PANE.GRPC_QUERY_URL.CONNECTION_CANCELLED'));
           collection={collection}
           highlightPathParams={true}
           item={item}
-          disableLinkAwareClick={true}
         />
 
       </div>

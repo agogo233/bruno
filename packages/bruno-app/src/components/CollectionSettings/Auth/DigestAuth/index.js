@@ -58,7 +58,6 @@ const DigestAuth = ({ collection }) => {
           onChange={(val) => handleUsernameChange(val)}
           collection={collection}
           isCompact
-          disableLinkAwareClick={true}
         />
       </div>
 
@@ -72,7 +71,6 @@ const DigestAuth = ({ collection }) => {
           collection={collection}
           isSecret={true}
           isCompact
-          disableLinkAwareClick={true}
         />
         {showWarning && <SensitiveFieldWarning fieldName="digest-password" warningMessage={warningMessage} />}
       </div>

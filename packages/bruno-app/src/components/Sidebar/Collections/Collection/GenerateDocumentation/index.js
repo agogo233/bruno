@@ -18,7 +18,7 @@ import { useApp } from 'providers/App';
 import useCollectionGitRemoteUrl from 'hooks/useCollectionGitRemoteUrl';
 import { transformCollectionToSaveToExportAsFile, findCollectionByUid, areItemsLoading, sortItemsBySidebarOrder, getCollectionItemCounts, getCollectionVersion, getUniqueTagsFromItems } from 'utils/collections/index';
 import { brunoToOpenCollection } from '@usebruno/converters';
-import { generateApiDocsHtml, getApiDocsFileName } from '@usebruno/common';
+import { generateApiDocsHtml, getApiDocsFileName, filterRequestItemsByTags } from '@usebruno/common';
 
 const FEATURES = [
   'SIDEBAR.GENERATE_DOCS.FEATURE_NO_SERVER',
@@ -53,11 +53,6 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
 
   const currentVersion = getCollectionVersion(collection);
 
-  const { folderCount, requestCount } = useMemo(
-    () => getCollectionItemCounts(collection?.items),
-    [collection?.items]
-  );
-
   const environments = useMemo(() => collection?.environments || [], [collection?.environments]);
 
   // Track *selected* environments, starting empty, so nothing is included by default.
@@ -91,7 +86,19 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
   const [filterByTags, setFilterByTags] = useState(false);
   const [docTags, setDocTags] = useState({ include: [], exclude: [] });
   const [includeGitLink, setIncludeGitLink] = useState(true);
+
+  const activeTags = useMemo(
+    () => (filterByTags ? docTags : { include: [], exclude: [] }),
+    [filterByTags, docTags]
+  );
+
+  const { folderCount, requestCount } = useMemo(
+    () => getCollectionItemCounts(filterRequestItemsByTags(collection?.items || [], activeTags.include, activeTags.exclude)),
+    [collection?.items, activeTags]
+  );
+
   const { gitCollectionUrl, isResolved: gitUrlLoaded } = useCollectionGitRemoteUrl(collection?.pathname);
+  const hasGitUrl = gitUrlLoaded && Boolean(gitCollectionUrl);
 
   const handleGenerate = useCallback(() => {
     try {
@@ -108,7 +115,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
       const htmlContent = generateApiDocsHtml(
         transformedCollection,
         {
-          tags: filterByTags ? docTags : { include: [], exclude: [] },
+          tags: activeTags,
           gitCollectionUrl: includeGitLink ? gitCollectionUrl : undefined,
           collectionVersion: currentVersion,
           exportedAt: new Date().toISOString(),
@@ -126,7 +133,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
       console.error('Error generating documentation:', error);
       toast.error(t('SIDEBAR.GENERATE_DOCS.FAILED'));
     }
-  }, [collection, version, onClose, currentVersion, selectedEnvUidsSet, filterByTags, docTags, includeGitLink, gitCollectionUrl]);
+  }, [collection, version, onClose, currentVersion, selectedEnvUidsSet, activeTags, includeGitLink, gitCollectionUrl]);
 
   if (!collection) {
     return <CollectionNotFound onClose={onClose} t={t} />;
@@ -194,6 +201,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
                   onTagsChange={setDocTags}
                   includeGitLink={includeGitLink}
                   onGitLinkToggle={() => setIncludeGitLink((prev) => !prev)}
+                  hasGitUrl={hasGitUrl}
                 />
               </div>
 

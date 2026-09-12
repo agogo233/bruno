@@ -105,7 +105,6 @@ const OAuth2PasswordCredentials = ({ save, item = {}, request, handleRun, update
                 item={item}
                 isSecret={isSecret}
                 isCompact
-                disableLinkAwareClick={true}
               />
               {isSecret && showWarning && <SensitiveFieldWarning fieldName={key} warningMessage={warningMessage} />}
             </div>
@@ -168,7 +167,6 @@ const OAuth2PasswordCredentials = ({ save, item = {}, request, handleRun, update
             collection={collection}
             item={item}
             isCompact
-            disableLinkAwareClick={true}
           />
         </div>
       </div>
@@ -204,7 +202,6 @@ const OAuth2PasswordCredentials = ({ save, item = {}, request, handleRun, update
                     onRun={handleRun}
                     collection={collection}
                     isCompact
-                    disableLinkAwareClick={true}
                   />
                 </div>
               </div>
@@ -221,7 +218,6 @@ const OAuth2PasswordCredentials = ({ save, item = {}, request, handleRun, update
                     onRun={handleRun}
                     collection={collection}
                     isCompact
-                    disableLinkAwareClick={true}
                   />
                 </div>
               </div>
@@ -247,7 +243,6 @@ const OAuth2PasswordCredentials = ({ save, item = {}, request, handleRun, update
             collection={collection}
             item={item}
             isCompact
-            disableLinkAwareClick={true}
           />
         </div>
       </div>
