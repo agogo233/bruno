@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { uuid } from 'utils/common';
@@ -11,8 +11,11 @@ import { flattenItems } from 'utils/collections';
 import StyledWrapper from './StyledWrapper';
 import { areItemsLoading } from 'utils/collections';
 import RunnerTags from 'components/RunnerResults/RunnerTags/index';
-import { getRequestItemsForCollectionRun } from 'utils/collections/index';
+import { getEffectiveTagsForItem, getRequestItemsForCollectionRun } from 'utils/collections/index';
 import Button from 'ui/Button';
+
+// stable reference, so an unset runnerTags doesn't invalidate the run counts on every render
+const NO_RUNNER_TAGS = { include: [], exclude: [] };
 
 const RunCollectionItem = ({ collectionUid, item, onClose }) => {
   const dispatch = useDispatch();
@@ -23,7 +26,7 @@ const RunCollectionItem = ({ collectionUid, item, onClose }) => {
   const isCollectionRunInProgress = collection?.runnerResult?.info?.status && (collection?.runnerResult?.info?.status !== 'ended');
 
   // tags for the collection run
-  const tags = get(collection, 'runnerTags', { include: [], exclude: [] });
+  const tags = get(collection, 'runnerTags', NO_RUNNER_TAGS);
 
   const clearStoredRunnerExchanges = useClearStoredRunnerExchanges(collection.uid);
 
@@ -56,26 +59,32 @@ const RunCollectionItem = ({ collectionUid, item, onClose }) => {
 
   const isFolderLoading = areItemsLoading(item);
 
-  const requestItemsForRecursiveFolderRun = getRequestItemsForCollectionRun({ recursive: true, tags, items: item ? item.items : collection.items });
-  const totalRequestItemsCountForRecursiveFolderRun = requestItemsForRecursiveFolderRun.length;
-  const shouldDisableRecursiveFolderRun = totalRequestItemsCountForRecursiveFolderRun <= 0;
+  const items = item ? item.items : collection.items;
 
-  const requestItemsForFolderRun = getRequestItemsForCollectionRun({ recursive: false, tags, items: item ? item.items : collection.items });
-  const totalRequestItemsCountForFolderRun = requestItemsForFolderRun.length;
-  const shouldDisableFolderRun = totalRequestItemsCountForFolderRun <= 0;
+  // two full tree walks, so they are held across the re-renders driven by the delay input
+  const requestCounts = useMemo(() => {
+    const inheritedTags = item ? getEffectiveTagsForItem(collection, item) : [];
+    return {
+      recursiveRun: getRequestItemsForCollectionRun({ recursive: true, tags, items, inheritedTags }).length,
+      folderRun: getRequestItemsForCollectionRun({ recursive: false, tags, items, inheritedTags }).length
+    };
+  }, [collection, item, items, tags]);
+
+  const shouldDisableRecursiveFolderRun = requestCounts.recursiveRun <= 0;
+  const shouldDisableFolderRun = requestCounts.folderRun <= 0;
 
   return (
     <StyledWrapper>
       <Modal size="md" title={t('SIDEBAR.RUN_COLLECTION.TITLE')} hideFooter={true} handleCancel={onClose}>
         <div>
-          <div className="mb-1">
+<div className="mb-1" data-testid="folder-run-count">
             <span className="font-medium">{t('SIDEBAR.RUN_COLLECTION.RUN')}</span>
-            <span className="ml-1 text-xs">({totalRequestItemsCountForFolderRun} {t('SIDEBAR.RUN_COLLECTION.REQUESTS')})</span>
+            <span className="ml-1 text-xs">({requestCounts.folderRun} {t('SIDEBAR.RUN_COLLECTION.REQUESTS')})</span>
           </div>
           <div className="mb-3 description">{t('SIDEBAR.RUN_COLLECTION.FOLDER_ONLY')}</div>
-          <div className="mb-1">
+          <div className="mb-1" data-testid="folder-recursive-run-count">
             <span className="font-medium">{t('SIDEBAR.RUN_COLLECTION.RECURSIVE_RUN')}</span>
-            <span className="ml-1 text-xs">({totalRequestItemsCountForRecursiveFolderRun} {t('SIDEBAR.RUN_COLLECTION.REQUESTS')})</span>
+            <span className="ml-1 text-xs">({requestCounts.recursiveRun} {t('SIDEBAR.RUN_COLLECTION.REQUESTS')})</span>
           </div>
           <div className={`description ${isFolderLoading ? 'mb-2' : 'mb-6'}`}>{t('SIDEBAR.RUN_COLLECTION.RECURSIVE_DESC')}</div>
           {isFolderLoading ? <div className="mb-8 warning">{t('SIDEBAR.RUN_COLLECTION.STILL_LOADING')}</div> : null}

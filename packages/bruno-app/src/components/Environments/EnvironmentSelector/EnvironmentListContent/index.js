@@ -137,7 +137,7 @@ const EnvironmentListContent = ({
           <h3>{t('ENVIRONMENTS.SELECTOR_LIST.READY')}</h3>
           <p>{description}</p>
           <div className="space-y-2">
-            <button onClick={onCreateClick} id="create-env">
+            <button onClick={onCreateClick} id="create-env" data-testid="create-env">
               <IconPlus size={16} strokeWidth={1.5} />
               {t('ENVIRONMENTS.SELECTOR_LIST.CREATE')}
             </button>

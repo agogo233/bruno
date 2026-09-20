@@ -41,7 +41,7 @@ const Tests = ({ collection, folder }) => {
 
   return (
     <StyledWrapper className="w-full flex flex-col h-full">
-      <div className="text-xs mb-4 text-muted">{t('FOLDER_SETTINGS.TESTS.DESCRIPTION')}</div>
+<div className="text-xs mb-4 text-muted">{t('FOLDER_SETTINGS.TESTS.DESCRIPTION')}</div>
       <div className="relative h-full">
         <CodeEditor
           ref={testsEditorRef}

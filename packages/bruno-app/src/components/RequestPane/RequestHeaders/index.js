@@ -222,7 +222,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
         uid: 'inherited-headers-section',
         rowType: ROW_TYPE.SECTION,
         section: ROW_TYPE.INHERITED,
-        label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
+label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
         count: allInheritedHeaders.length,
         expanded: isInheritedHeadersExpanded
       },
@@ -610,7 +610,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
                 : <IconEye size={16} strokeWidth={1.5} />}
               <span>
                 {showInheritedHeaders
-                  ? t('REQUEST_PANE.REQUEST_HEADERS.HIDE_INHERITED_HEADERS')
+? t('REQUEST_PANE.REQUEST_HEADERS.HIDE_INHERITED_HEADERS')
                   : t('REQUEST_PANE.REQUEST_HEADERS.SHOW_INHERITED_HEADERS', { count: allInheritedHeaders.length })}
               </span>
             </button>

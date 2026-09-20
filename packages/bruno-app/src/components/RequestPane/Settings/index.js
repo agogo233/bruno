@@ -117,7 +117,7 @@ const Settings = ({ item, collection }) => {
       <div className="text-xs mb-4 text-muted">{t('REQUEST_PANE.SETTINGS.CONFIG_HINT')}</div>
       <div className="bruno-form">
         <div className="mb-6">
-          <h3 className="text-xs font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1 mb-4">
+          <h3 className="text-xs font-medium flex items-center gap-1 mb-4">
             <IconTag size={16} />
 {t('REQUEST_PANE.SETTINGS.TAGS')}
           </h3>
