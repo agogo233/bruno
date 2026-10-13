@@ -16,10 +16,10 @@ const FileTab = ({
   handleSubmit,
   setErrorMessage
 }) => {
+  const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
   const { theme } = useTheme();
-  const { t } = useTranslation();
 
   const convertFileToObject = async (file) => {
     const text = await file.text();
@@ -172,6 +172,9 @@ const FileTab = ({
         const filePath = window.ipcRenderer.getFilePath(file);
         const rawContent = await file.text();
         await handleSubmit({ rawData: data, type, filePath, rawContent });
+      } else if (type === 'wsdl') {
+        const filePath = window.ipcRenderer.getFilePath(file);
+        await handleSubmit({ rawData: data, type, filePath });
       } else {
         await handleSubmit({ rawData: data, type });
       }

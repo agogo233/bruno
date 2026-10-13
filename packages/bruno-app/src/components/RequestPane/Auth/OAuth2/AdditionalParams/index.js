@@ -1,6 +1,5 @@
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import get from 'lodash/get';
 import { useTheme } from 'providers/Theme';
 import { IconPlus, IconTrash, IconAdjustmentsHorizontal } from '@tabler/icons';
@@ -9,8 +8,9 @@ import SingleLineEditor from 'components/SingleLineEditor/index';
 import MultiLineEditor from 'components/MultiLineEditor/index';
 import StyledWrapper from './StyledWrapper';
 import Table from 'components/Table/index';
+import { useTranslation } from 'react-i18next';
 
-const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSave }) => {
+const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSave, disabled }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { storedTheme } = useTheme();
@@ -103,7 +103,6 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
   };
 
   const handleAddNewAdditionalParam = () => {
-    // Prevent adding multiple empty rows
     if (hasEmptyRow()) {
       return;
     }
@@ -141,7 +140,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
   };
 
   // Add a class to the Add Parameter button if it's disabled
-  const addButtonDisabled = hasEmptyRow();
+  const addButtonDisabled = disabled || hasEmptyRow();
 
   // Define available tabs for each grant type
   const getAvailableTabs = (grantType) => {
@@ -178,15 +177,15 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
       </div>
 
       <div className="tabs flex w-full gap-2 my-2">
-        {availableTabs.includes('authorization') && renderTab('authorization', t('REQUEST_PANE.OAUTH2.AUTHORIZATION'))}
-        {availableTabs.includes('token') && renderTab('token', t('REQUEST_PANE.OAUTH2.TOKEN'))}
-        {availableTabs.includes('refresh') && renderTab('refresh', t('REQUEST_PANE.OAUTH2.REFRESH'))}
+        {availableTabs.includes('authorization') && renderTab('authorization', 'Authorization')}
+        {availableTabs.includes('token') && renderTab('token', 'Token')}
+        {availableTabs.includes('refresh') && renderTab('refresh', 'Refresh')}
       </div>
       <Table
         headers={[
-          { name: t('REQUEST_PANE.OAUTH2.KEY'), accessor: 'name', width: '30%' },
-          { name: t('REQUEST_PANE.OAUTH2.VALUE'), accessor: 'value', width: '30%' },
-          { name: t('REQUEST_PANE.OAUTH2.SEND_IN'), accessor: 'sendIn', width: '150px' },
+          { name: 'Key', accessor: 'name', width: '30%' },
+          { name: 'Value', accessor: 'value', width: '30%' },
+          { name: 'Send In', accessor: 'sendIn', width: '150px' },
           { name: '', accessor: '', width: '15%' }
         ]}
       >
@@ -205,6 +204,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                   })}
                   collection={collection}
                   onSave={handleSave}
+                  readOnly={disabled}
                   isCompact
                 />
               </td>
@@ -220,6 +220,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                   })}
                   collection={collection}
                   onSave={handleSave}
+                  readOnly={disabled}
                 />
               </td>
               <td>
@@ -235,6 +236,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                       });
                     }}
                     className="mousetrap bg-transparent"
+                    disabled={disabled}
                   >
                     {sendInOptionsMap[grantType || 'authorization_code'][activeTab].map((optionValue) => (
                       <option key={optionValue} value={optionValue}>
@@ -251,6 +253,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                     checked={param?.enabled ?? true}
                     tabIndex="-1"
                     className="mr-3 mousetrap"
+                    disabled={disabled}
                     onChange={(e) => {
                       handleUpdateAdditionalParam({
                         paramType: activeTab,
@@ -262,6 +265,7 @@ const AdditionalParams = ({ item = {}, request, updateAuth, collection, handleSa
                   />
                   <button
                     tabIndex="-1"
+                    disabled={disabled}
                     onClick={() => {
                       handleDeleteAdditionalParam({
                         paramType: activeTab,

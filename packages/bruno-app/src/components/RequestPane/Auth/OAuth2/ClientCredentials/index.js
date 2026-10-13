@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDetectSensitiveField } from 'hooks/useDetectSensitiveField';
 import get from 'lodash/get';
 import { useTheme } from 'providers/Theme';
@@ -13,8 +12,9 @@ import Oauth2TokenViewer from '../Oauth2TokenViewer/index';
 import Oauth2ActionButtons from '../Oauth2ActionButtons/index';
 import AdditionalParams from '../AdditionalParams/index';
 import SensitiveFieldWarning from 'components/SensitiveFieldWarning';
+import { useTranslation } from 'react-i18next';
 
-const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAuth, collection }) => {
+const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAuth, collection, disabled }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { storedTheme } = useTheme();
@@ -41,9 +41,14 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
   const refreshTokenUrlAvailable = refreshTokenUrl?.trim() !== '';
   const isAutoRefreshDisabled = !refreshTokenUrlAvailable;
 
-  const handleSave = () => { save(); };
+  const handleSave = () => {
+    save();
+  };
 
   const handleChange = (key, value) => {
+    if (disabled) {
+      return;
+    }
     dispatch(
       updateAuth({
         mode: 'oauth2',
@@ -83,13 +88,13 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
         </span>
       </div>
       {inputsConfig.map((input) => {
-        const { key, labelKey, isSecret } = input;
+        const { key, label, isSecret } = input;
         const value = oAuth[key] || '';
-        const { showWarning, warningMessage } = isSensitive(value);
+        const { showWarning, warningMessage } = isSensitive(value, item);
 
         return (
           <div className="flex items-center gap-4 w-full" key={`input-${key}`}>
-            <label className="block min-w-[140px]">{t(`REQUEST_PANE.OAUTH2.${labelKey}`)}</label>
+            <label className="block min-w-[140px]">{label}</label>
             <div className="single-line-editor-wrapper flex-1 flex items-center">
               <SingleLineEditor
                 value={value}
@@ -100,6 +105,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                 collection={collection}
                 item={item}
                 isSecret={isSecret}
+                readOnly={disabled}
                 isCompact
               />
               {isSecret && showWarning && <SensitiveFieldWarning fieldName={key} warningMessage={warningMessage} />}
@@ -112,8 +118,8 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
         <div className="inline-flex items-center cursor-pointer token-placement-selector">
           <MenuDropdown
             items={[
-              { id: 'body', label: t('REQUEST_PANE.OAUTH2.REQUEST_BODY'), onClick: () => handleChange('credentialsPlacement', 'body') },
-              { id: 'basic_auth_header', label: t('REQUEST_PANE.OAUTH2.BASIC_AUTH_HEADER'), onClick: () => handleChange('credentialsPlacement', 'basic_auth_header') }
+              { id: 'body', label: 'Request Body', onClick: () => handleChange('credentialsPlacement', 'body') },
+              { id: 'basic_auth_header', label: 'Basic Auth Header', onClick: () => handleChange('credentialsPlacement', 'basic_auth_header') }
             ]}
             selectedItemId={credentialsPlacement}
             placement="bottom-end"
@@ -138,8 +144,8 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
         <div className="inline-flex items-center cursor-pointer token-placement-selector">
           <MenuDropdown
             items={[
-              { id: 'access_token', label: t('REQUEST_PANE.OAUTH2.ACCESS_TOKEN'), onClick: () => handleChange('tokenSource', 'access_token') },
-              { id: 'id_token', label: t('REQUEST_PANE.OAUTH2.ID_TOKEN'), onClick: () => handleChange('tokenSource', 'id_token') }
+              { id: 'access_token', label: 'Access Token', onClick: () => handleChange('tokenSource', 'access_token') },
+              { id: 'id_token', label: 'ID Token', onClick: () => handleChange('tokenSource', 'id_token') }
             ]}
             selectedItemId={tokenSource}
             placement="bottom-end"
@@ -162,6 +168,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
             onRun={handleRun}
             collection={collection}
             item={item}
+            readOnly={disabled}
             isCompact
           />
         </div>
@@ -171,14 +178,14 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
         <div className="inline-flex items-center cursor-pointer token-placement-selector w-fit">
           <MenuDropdown
             items={[
-              { id: 'header', label: t('REQUEST_PANE.OAUTH2.HEADER'), onClick: () => handleChange('tokenPlacement', 'header') },
-              { id: 'url', label: t('REQUEST_PANE.OAUTH2.URL'), onClick: () => handleChange('tokenPlacement', 'url') }
+              { id: 'header', label: 'Header', onClick: () => handleChange('tokenPlacement', 'header') },
+              { id: 'url', label: 'URL', onClick: () => handleChange('tokenPlacement', 'url') }
             ]}
             selectedItemId={tokenPlacement}
             placement="bottom-end"
           >
             <div className="flex items-center justify-end token-placement-label select-none">
-              {tokenPlacement == 'url' ? t('REQUEST_PANE.OAUTH2.URL') : t('REQUEST_PANE.OAUTH2.HEADER')}
+              {tokenPlacement == 'url' ? 'URL' : 'Headers'}
               <IconCaretDown className="caret ml-1 mr-1" size={14} strokeWidth={2} />
             </div>
           </MenuDropdown>
@@ -197,6 +204,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                     onChange={(val) => handleChange('tokenHeaderPrefix', val)}
                     onRun={handleRun}
                     collection={collection}
+                    readOnly={disabled}
                     isCompact
                   />
                 </div>
@@ -213,6 +221,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
                     onChange={(val) => handleChange('tokenQueryKey', val)}
                     onRun={handleRun}
                     collection={collection}
+                    readOnly={disabled}
                     isCompact
                   />
                 </div>
@@ -238,6 +247,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
             onChange={(val) => handleChange('refreshTokenUrl', val)}
             collection={collection}
             item={item}
+            readOnly={disabled}
             isCompact
           />
         </div>
@@ -257,6 +267,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
           checked={Boolean(autoFetchToken)}
           onChange={(e) => handleChange('autoFetchToken', e.target.checked)}
           className="cursor-pointer ml-1"
+          disabled={disabled}
         />
         <label className="block min-w-[140px]">{t('REQUEST_PANE.OAUTH2.AUTO_FETCH_TOKEN')}</label>
         <div className="flex items-center gap-2">
@@ -276,7 +287,7 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
           checked={Boolean(autoRefreshToken)}
           onChange={(e) => handleChange('autoRefreshToken', e.target.checked)}
           className={`cursor-pointer ml-1 ${isAutoRefreshDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={isAutoRefreshDisabled}
+          disabled={isAutoRefreshDisabled || disabled}
         />
         <label className={`block min-w-[140px] ${isAutoRefreshDisabled ? 'text-gray-500' : ''}`}>{t('REQUEST_PANE.OAUTH2.AUTO_REFRESH_TOKEN')}</label>
         <div className="flex items-center gap-2">
@@ -294,8 +305,9 @@ const OAuth2ClientCredentials = ({ save, item = {}, request, handleRun, updateAu
         collection={collection}
         updateAuth={updateAuth}
         handleSave={handleSave}
+        disabled={disabled}
       />
-      <Oauth2ActionButtons item={item} request={request} collection={collection} url={accessTokenUrl} credentialsId={credentialsId} />
+      <Oauth2ActionButtons item={item} request={request} collection={collection} url={accessTokenUrl} credentialsId={credentialsId} disabled={disabled} />
 
     </StyledWrapper>
   );

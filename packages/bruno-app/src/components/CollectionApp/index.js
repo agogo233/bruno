@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { resolveEnvironmentInheritance } from '@usebruno/common/utils';
 import { sendNetworkRequest } from 'utils/network/index';
 import {
@@ -26,16 +25,17 @@ import CodeEditor from 'components/CodeEditor';
 import AIAssist from 'components/AIAssist';
 import { buildAiVariablesPayload, buildDocsContextFromCollection } from 'utils/ai';
 import StyledWrapper from './StyledWrapper';
+import AppWebviewPane from 'components/AppWebviewPane';
 import EmptyAppState from 'components/EmptyAppState';
 import { buildVariables } from '../AppView/buildVariables';
 import {
   SENTINEL,
-  wrapHtml,
-  toDataUrl,
   serializeTimeline,
   projectResponse,
-  useAppWebview
+  useAppWebview,
+  useAppDocumentUrl
 } from '../AppView/webview-bridge';
+import { useTranslation } from 'react-i18next';
 
 /*
  * Standalone collection-/folder-level app — a file (.bru/.yml) of type 'app'
@@ -187,13 +187,12 @@ const CollectionApp = ({ item, collection }) => {
   );
 
   const code = item.draft ? get(item, 'draft.app.code', '') : get(item, 'app.code', '');
+  const savedCode = get(item, 'app.code', '');
 
-  // Preview HTML is keyed on the *saved* code so typing doesn't reload the guest
-  // on every keystroke. The user toggles to Preview after saving to see updates.
-  const src = useMemo(
-    () => toDataUrl(wrapHtml(COLLECTION_CTX_BOOTSTRAP, code || '')),
-    [code]
-  );
+  // The document is keyed on the *saved* code so typing doesn't re-register it
+  // (an IPC round-trip) on every keystroke — `code` stays draft-aware for the
+  // editor. The user saves and toggles to Preview to see updates.
+  const { url: src, error: appDocumentError } = useAppDocumentUrl(`collection-app:${item.uid}`, COLLECTION_CTX_BOOTSTRAP, savedCode);
 
   const environment = useMemo(
     () =>
@@ -228,10 +227,10 @@ const CollectionApp = ({ item, collection }) => {
     async (pathname, options) => {
       const target = findItemInCollectionByPathname(collection, pathname);
       if (!target) {
-        throw new Error(t('COLLECTION_APP.ERROR.REQUEST_NOT_FOUND', { pathname }));
+        throw new Error(`Request not found: ${pathname}`);
       }
       if (!isItemARequest(target)) {
-        throw new Error(t('COLLECTION_APP.ERROR.ITEM_NOT_REQUEST', { pathname }));
+        throw new Error(`Item is not a request: ${pathname}`);
       }
 
       const requestUid = uuid();
@@ -395,15 +394,9 @@ const CollectionApp = ({ item, collection }) => {
             mode="htmlmixed"
           />
         </div>
-      ) : code && code.trim().length ? (
+      ) : savedCode && savedCode.trim().length ? (
         <div className="app-pane app-webview-container" data-testid="collection-app-preview">
-          <webview
-            ref={webviewRef}
-            src={src}
-            partition="persist:bruno-app-view"
-            webpreferences="disableDialogs=true, javascript=yes"
-            className="app-webview"
-          />
+          <AppWebviewPane src={src} error={appDocumentError} webviewRef={webviewRef} />
         </div>
       ) : (
         <div className="app-pane" data-testid="collection-app-preview">

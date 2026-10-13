@@ -31,7 +31,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTab, makeTabPermanent } from 'providers/ReduxStore/slices/tabs';
 import { setFocusedSidebarPath } from 'providers/ReduxStore/slices/app';
 import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
 import NewRequest from 'components/Sidebar/NewRequest';
 import NewFolder from 'components/Sidebar/NewFolder';
 import NewApp from 'components/Sidebar/NewApp';
@@ -45,7 +44,6 @@ import { isTabForItemActive } from 'src/selectors/tab';
 import RenameCollection from '../RenameCollection';
 import StyledWrapper from './StyledWrapper';
 import CloneCollection from '../CloneCollection';
-import { scrollToTheActiveTab } from 'utils/tabs';
 import ShareCollection from 'components/ShareCollection/index';
 import GenerateDocumentation from '../GenerateDocumentation';
 import { getRevealInFolderLabel } from 'utils/common/platform';
@@ -54,15 +52,17 @@ import ActionIcon from 'ui/ActionIcon';
 import MenuDropdown from 'ui/MenuDropdown';
 import { useSidebarAccordion } from 'components/Sidebar/SidebarAccordionContext';
 import useKeybinding from 'hooks/useKeybinding';
+import useKeybindingDisplayText from 'hooks/useKeybindingDisplayText';
 import { useBetaFeature, BETA_FEATURES } from 'utils/beta-features';
 import StatusBadge from 'ui/StatusBadge';
 import CreateMockServerModal from 'components/MockServer/CreateMockServerModal';
 import useSidebarSelectionClick from 'hooks/useSidebarSelectionClick';
 import { startBlockedDragTracking } from 'utils/dragBlockedCursor';
+import { useTranslation } from 'react-i18next';
 
 const CollectionRow = ({ collection, searchText, openBulkMenu, children, isCollectionMultiDragDisabled, multiDragCollections }) => {
-  const isMockServerEnabled = useBetaFeature(BETA_FEATURES.MOCK_SERVER);
   const { t } = useTranslation();
+  const isMockServerEnabled = useBetaFeature(BETA_FEATURES.MOCK_SERVER);
   const { dropdownContainerRef } = useSidebarAccordion();
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
@@ -152,8 +152,6 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
     // Check if the click came from the chevron icon
     const isChevronClick = event.target.closest('svg')?.classList.contains('chevron-icon');
 
-    setTimeout(scrollToTheActiveTab, 50);
-
     ensureCollectionIsMounted();
 
     if (collection.collapsed) {
@@ -241,6 +239,8 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       });
   };
 
+  const getKeybindingDisplayText = useKeybindingDisplayText();
+
   // Sidebar shortcuts — only active when this collection has keyboard focus
   useKeybinding('cloneItem', () => {
     setShowCloneCollectionModalOpen(true);
@@ -258,6 +258,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
   }, { enabled: isKeyboardFocused, deps: [isKeyboardFocused] });
 
   useKeybinding('newRequest', () => {
+    ensureCollectionIsMounted();
     setShowNewRequestModal(true);
     return false;
   }, { enabled: isKeyboardFocused, deps: [isKeyboardFocused] });
@@ -369,12 +370,6 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
   drag(drop(collectionRef));
   dragPreview(getEmptyImage(), { captureDraggingState: true });
 
-  if (searchText && searchText.length) {
-    if (!doesCollectionHaveItemsMatchingSearchText(collection, searchText)) {
-      return null;
-    }
-  }
-
   const collectionRowClassName = classnames(
     'flex py-1 collection-name items-center relative',
     {
@@ -392,6 +387,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       id: 'new-request',
       leftSection: IconFilePlus,
       label: t('SIDEBAR.COLLECTION.NEW_REQUEST'),
+      shortcut: getKeybindingDisplayText('newRequest'),
       onClick: () => {
         ensureCollectionIsMounted();
         setShowNewRequestModal(true);
@@ -429,6 +425,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       leftSection: IconCopy,
       label: t('SIDEBAR.COLLECTION.CLONE'),
       testId: 'clone-collection',
+      shortcut: getKeybindingDisplayText('cloneItem'),
       onClick: () => {
         setShowCloneCollectionModalOpen(true);
       }
@@ -445,6 +442,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
             id: 'paste',
             leftSection: IconClipboard,
             label: t('SIDEBAR.COLLECTION.PASTE'),
+            shortcut: getKeybindingDisplayText('pasteItem'),
             onClick: handlePasteItem
           }
         ]
@@ -453,6 +451,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       id: 'rename',
       leftSection: IconEdit,
       label: t('SIDEBAR.COLLECTION.RENAME'),
+      shortcut: getKeybindingDisplayText('renameItem'),
       onClick: () => {
         setShowRenameCollectionModal(true);
       }
@@ -490,8 +489,8 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
     ...(isMockServerEnabled ? [{
       id: 'create-mock-server',
       leftSection: IconServer,
-      label: t('SIDEBAR.COLLECTION.CREATE_MOCK'),
-      rightSection: <StatusBadge status="info" size="xs">{t('SIDEBAR.COLLECTION.BETA')}</StatusBadge>,
+      label: 'Create Mock server',
+      rightSection: <StatusBadge status="info" size="xs">Beta</StatusBadge>,
       onClick: openMockServerDashboard
     }] : []),
     {
@@ -508,6 +507,7 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       id: 'terminal',
       leftSection: IconTerminal2,
       label: t('SIDEBAR.COLLECTION.OPEN_TERMINAL'),
+      shortcut: getKeybindingDisplayText('openTerminal'),
       onClick: async () => {
         const collectionCwd = collection.pathname;
         await openDevtoolsAndSwitchToTerminal(dispatch, collectionCwd);
@@ -535,6 +535,12 @@ const CollectionRow = ({ collection, searchText, openBulkMenu, children, isColle
       }
     }
   ];
+
+  if (searchText && searchText.length) {
+    if (!doesCollectionHaveItemsMatchingSearchText(collection, searchText)) {
+      return null;
+    }
+  }
 
   return (
     <StyledWrapper className="flex flex-col">

@@ -103,7 +103,7 @@ const ManageWorkspace = () => {
           <div className="back-button" onClick={handleBack} data-testid="manage-workspace-back-btn">
             <IconArrowLeft size={18} strokeWidth={1.5} />
           </div>
-<span className="header-title" data-testid="manage-workspace-title">{t('MANAGE_WORKSPACE.TITLE')}</span>
+          <span className="header-title" data-testid="manage-workspace-title">{t('MANAGE_WORKSPACE.TITLE')}</span>
         </div>
         <Button
           size="sm"
@@ -126,7 +126,7 @@ const ManageWorkspace = () => {
             const isActive = workspace.uid === activeWorkspaceUid;
 
             return (
-              <div key={workspace.uid} className="workspace-item" data-testid={`workspace-item-${workspace.name}`}>
+              <div key={workspace.uid} className="workspace-item" data-testid={`workspace-item-${workspace.uid}`}>
                 <div className="workspace-info">
                   <div className="workspace-name-row">
                     <span className={`workspace-icon ${isDefault ? 'default' : 'regular'}`}>
@@ -136,7 +136,7 @@ const ManageWorkspace = () => {
                         <IconCategory size={14} strokeWidth={1.5} />
                       )}
                     </span>
-<span className="workspace-name" data-testid="workspace-row-name">{workspace.name}</span>
+                    <span className="workspace-name" data-testid="workspace-row-name">{workspace.name}</span>
                     {isDefault && <span className="default-badge" data-testid="workspace-default-badge">{t('MANAGE_WORKSPACE.DEFAULT')}</span>}
                   </div>
                   {workspace.pathname && (

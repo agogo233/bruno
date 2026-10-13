@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  IconAlertTriangle,
   IconChevronDown,
   IconChevronRight,
   IconExternalLink,
@@ -23,7 +22,6 @@ import { sendRequest, saveRequest } from 'providers/ReduxStore/slices/collection
 import { addTab, setFocusTableRow, updateTableColumnWidths } from 'providers/ReduxStore/slices/tabs';
 import { Tooltip } from 'react-tooltip';
 import SingleLineEditor from 'components/SingleLineEditor';
-import ToolHint from 'components/ToolHint';
 import EditableTable from 'components/EditableTable';
 import { createDescriptionColumn } from 'components/EditableTable/descriptionColumn';
 import StyledWrapper from './StyledWrapper';
@@ -34,9 +32,9 @@ import BulkEditor from '../../BulkEditor';
 import { headerNameRegex, headerValueRegex } from 'utils/common/regex';
 import { usePersistedState } from 'hooks/usePersistedState';
 import { useTrackScroll } from 'hooks/useTrackScroll';
-import { useTranslation } from 'react-i18next';
 import { version as appVersion } from '../../../../package.json';
 import { filterUnclaimedHeaders, getInheritedHeaders } from './getInheritedHeaders';
+import { useTranslation } from 'react-i18next';
 
 const headerAutoCompleteList = StandardHTTPHeaders.map((e) => e.header);
 
@@ -69,7 +67,6 @@ const HeaderHint = ({ id, text, className, place = 'top', testId, tooltipTestId,
         content={text}
         place={place}
         positionStrategy="fixed"
-        delayShow={500}
         opacity={1}
         style={HEADER_HINT_STYLE}
         render={tooltipTestId ? ({ content }) => <span data-testid={tooltipTestId}>{content}</span> : undefined}
@@ -83,20 +80,12 @@ const getDefaultHeaderValue = (header, requestUrl) => {
     return getBrunoRuntimeUserAgent(appVersion);
   }
 
-  if (header.name === 'Host') {
-    try {
-      return new URL(requestUrl).host || header.previewValue;
-    } catch {
-      return header.previewValue;
-    }
-  }
-
   return header.previewValue || '';
 };
 
 const RequestHeaders = ({ item, collection, addHeaderText }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { storedTheme } = useTheme();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
@@ -193,13 +182,6 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
     };
   }), [inheritedHeaders, omittedHeaderNames, request?.url, requestHeaderNames]);
 
-  const enabledDefaultHeaderNames = useMemo(
-    () => new Set(defaultHeaders
-      .filter((header) => header.enabled !== false)
-      .map((header) => header.name.toLowerCase())),
-    [defaultHeaders]
-  );
-
   const allInheritedHeaders = useMemo(
     () => [...inheritedHeaders, ...defaultHeaders],
     [defaultHeaders, inheritedHeaders]
@@ -222,7 +204,7 @@ const RequestHeaders = ({ item, collection, addHeaderText }) => {
         uid: 'inherited-headers-section',
         rowType: ROW_TYPE.SECTION,
         section: ROW_TYPE.INHERITED,
-label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
+        label: 'Inherited & Runtime Headers',
         count: allInheritedHeaders.length,
         expanded: isInheritedHeadersExpanded
       },
@@ -243,8 +225,7 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
     isInheritedHeadersExpanded,
     isHttpRequest,
     isRequestHeadersExpanded,
-    showInheritedHeaders,
-    t
+    showInheritedHeaders
   ]);
 
   const updateOmitHeaders = useCallback((headerName, enabled) => {
@@ -325,7 +306,7 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
       }
     }
     return null;
-  }, [t]);
+  }, []);
 
   const toggleBulkEditMode = () => {
     setIsBulkEditMode(!isBulkEditMode);
@@ -413,20 +394,24 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
       <HeaderHint
         id={`default-header-info-hint-${row.uid}`}
         text={row.omittable
-          ? t('REQUEST_PANE.REQUEST_HEADERS.AUTO_ADDED_AT_RUNTIME')
-          : t('REQUEST_PANE.REQUEST_HEADERS.REQUIRED_BY_HTTP')}
+          ? 'Automatically added at runtime'
+          : 'Automatically added at runtime. Required by HTTP, cannot be omitted'}
         className="default-header-info"
         testId={`default-header-info-${row.name.toLowerCase()}`}
         tooltipTestId={`default-header-info-tooltip-${row.name.toLowerCase()}`}
         place="top-end"
       >
-        <IconInfoCircle
-          size={16}
-          strokeWidth={1.5}
-        />
+        <button
+          type="button"
+          aria-label={row.omittable
+            ? 'Automatically added at runtime'
+            : 'Automatically added at runtime. Required by HTTP, cannot be omitted'}
+        >
+          <IconInfoCircle size={18} strokeWidth={1.5} aria-hidden="true" />
+        </button>
       </HeaderHint>
     );
-  }, [t, navigateToHeaderSource]);
+  }, [navigateToHeaderSource]);
 
   const rowConfig = useMemo(() => ({
     isEditable: isRequestRow,
@@ -464,7 +449,7 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
       placeholder: t('REQUEST_PANE.REQUEST_HEADERS.NAME'),
       width: '20%',
       render: ({ row, value, onChange }) => {
-        if (row.rowType === ROW_TYPE.INHERITED) {
+        if (row.rowType === ROW_TYPE.INHERITED || row.rowType === ROW_TYPE.DEFAULT) {
           return (
             <div className="header-name-cell">
               {renderInheritedValue(value)}
@@ -472,67 +457,43 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
           );
         }
 
-        if (row.rowType === ROW_TYPE.DEFAULT) {
-          return <span className="default-header-value">{value}</span>;
-        }
-
         return (
-          <div className="header-name-cell">
-            <SingleLineEditor
-              value={value || ''}
-              theme={storedTheme}
-              onSave={onSave}
-              onChange={(newValue) => onChange(newValue.replace(/[\r\n]/g, ''))}
-              autocomplete={headerAutoCompleteList}
-              onRun={handleRun}
-              collection={collection}
-              item={item}
-              placeholder={!value ? t('REQUEST_PANE.REQUEST_HEADERS.NAME') : ''}
-            />
-            {row.enabled !== false
-              && row.name
-              && enabledDefaultHeaderNames.has(row.name.toLowerCase()) && (
-              <ToolHint
-                text={t('REQUEST_PANE.REQUEST_HEADERS.OVERRIDES_DEFAULT_HEADER')}
-                toolhintId={`request-header-conflict-${row.uid}`}
-                className="header-conflict-icon"
-                dataTestId={`request-header-conflict-${row.name.toLowerCase()}`}
-                tooltipTestId={`request-header-conflict-tooltip-${row.name.toLowerCase()}`}
-                place="bottom-start"
-                positionStrategy="fixed"
-                tooltipStyle={{ opacity: 1 }}
-              >
-                <IconAlertTriangle size={16} strokeWidth={1.5} />
-              </ToolHint>
-            )}
-          </div>
+          <SingleLineEditor
+            value={value || ''}
+            theme={storedTheme}
+            onSave={onSave}
+            onChange={(newValue) => onChange(newValue.replace(/[\r\n]/g, ''))}
+            autocomplete={headerAutoCompleteList}
+            onRun={handleRun}
+            collection={collection}
+            item={item}
+            placeholder={!value ? 'Name' : ''}
+          />
         );
       }
     },
     {
       key: 'value',
-      name: t('REQUEST_PANE.REQUEST_HEADERS.VALUE'),
-      placeholder: t('REQUEST_PANE.REQUEST_HEADERS.VALUE'),
+      name: 'Value',
+      placeholder: 'Value',
       render: ({ row, value, onChange }) => {
-        if (row.rowType === ROW_TYPE.INHERITED) {
+        if (row.rowType === ROW_TYPE.INHERITED || row.rowType === ROW_TYPE.DEFAULT) {
           return renderInheritedValue(value);
         }
 
-        return row.rowType === ROW_TYPE.DEFAULT
-          ? <span className="default-header-value">{value}</span>
-          : (
-              <SingleLineEditor
-                value={value || ''}
-                theme={storedTheme}
-                onSave={onSave}
-                onChange={onChange}
-                onRun={handleRun}
-                autocomplete={MimeTypes}
-                collection={collection}
-                item={item}
-                placeholder={!value ? t('REQUEST_PANE.REQUEST_HEADERS.VALUE') : ''}
-              />
-            );
+        return (
+          <SingleLineEditor
+            value={value || ''}
+            theme={storedTheme}
+            onSave={onSave}
+            onChange={onChange}
+            onRun={handleRun}
+            autocomplete={MimeTypes}
+            collection={collection}
+            item={item}
+            placeholder={!value ? t('REQUEST_PANE.REQUEST_HEADERS.VALUE') : ''}
+          />
+        );
       }
     },
     {
@@ -610,8 +571,8 @@ label: t('REQUEST_PANE.REQUEST_HEADERS.INHERITED_HEADERS'),
                 : <IconEye size={16} strokeWidth={1.5} />}
               <span>
                 {showInheritedHeaders
-? t('REQUEST_PANE.REQUEST_HEADERS.HIDE_INHERITED_HEADERS')
-                  : t('REQUEST_PANE.REQUEST_HEADERS.SHOW_INHERITED_HEADERS', { count: allInheritedHeaders.length })}
+                  ? 'Hide Additional Headers'
+                  : `Show Additional Headers (${allInheritedHeaders.length})`}
               </span>
             </button>
           )}

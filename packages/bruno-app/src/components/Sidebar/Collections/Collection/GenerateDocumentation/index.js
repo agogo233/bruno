@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import * as FileSaver from 'file-saver';
@@ -19,6 +18,7 @@ import useCollectionGitRemoteUrl from 'hooks/useCollectionGitRemoteUrl';
 import { transformCollectionToSaveToExportAsFile, findCollectionByUid, areItemsLoading, sortItemsBySidebarOrder, getCollectionItemCounts, getCollectionVersion, getUniqueTagsFromItems } from 'utils/collections/index';
 import { brunoToOpenCollection } from '@usebruno/converters';
 import { generateApiDocsHtml, getApiDocsFileName, filterRequestItemsByTags } from '@usebruno/common';
+import { useTranslation } from 'react-i18next';
 
 const FEATURES = [
   'SIDEBAR.GENERATE_DOCS.FEATURE_NO_SERVER',
@@ -145,9 +145,9 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
     <Portal>
       <Modal
         size="md"
-        title={t('SIDEBAR.GENERATE_DOCS.TITLE')}
-        confirmText={isLoading ? t('SIDEBAR.GENERATE_DOCS.LOADING') : t('SIDEBAR.GENERATE_DOCS.GENERATE')}
-        cancelText={t('SIDEBAR.GENERATE_DOCS.CANCEL')}
+        title="Generate Documentation"
+        confirmText={isLoading ? 'Loading...' : 'Generate'}
+        cancelText="Cancel"
         handleConfirm={isLoading ? undefined : handleGenerate}
         handleCancel={onClose}
         confirmDisabled={isLoading || (includeGitLink && !gitUrlLoaded)}
@@ -184,7 +184,7 @@ const GenerateDocumentation = ({ onClose, collectionUid }) => {
                     <div className="card-divider" />
                     <div className="env-section">
                       <EnvironmentSelectionList
-                        title={t('SIDEBAR.GENERATE_DOCS.ENVIRONMENTS')}
+                        title="Environments To Include"
                         environments={environments}
                         selectedUids={selectedEnvUids}
                         onToggle={toggleEnv}

@@ -15,6 +15,7 @@ import TestResults from './TestResults';
 import TestResultsLabel from './TestResultsLabel';
 import ScriptError from './ScriptError';
 import ScriptErrorIcon from './ScriptErrorIcon';
+import UnresolvedVariablesInfo from './UnresolvedVariablesInfo';
 import StyledWrapper from './StyledWrapper';
 import ResponsePaneActions from './ResponsePaneActions';
 import QueryResultTypeSelector from './QueryResult/QueryResultTypeSelector/index';
@@ -30,12 +31,12 @@ import ResponsiveTabs from 'ui/ResponsiveTabs';
 const RIGHT_CONTENT_EXPANDED_WIDTH = 135;
 
 const ResponsePane = ({ item, collection }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
   const isLoading = ['queued', 'sending'].includes(item.requestState);
-  const [showScriptErrorCard, setShowScriptErrorCard] = useState(false);
+  const [showErrorCards, setShowErrorCards] = useState(false);
   const rightContentRef = useRef(null);
 
   const response = item.response || {};
@@ -89,7 +90,7 @@ const ResponsePane = ({ item, collection }) => {
 
   useEffect(() => {
     if (item?.preRequestScriptErrorMessage || item?.postResponseScriptErrorMessage || item?.testScriptErrorMessage) {
-      setShowScriptErrorCard(true);
+      setShowErrorCards(true);
     }
   }, [item?.preRequestScriptErrorMessage, item?.postResponseScriptErrorMessage, item?.testScriptErrorMessage]);
 
@@ -235,10 +236,10 @@ const ResponsePane = ({ item, collection }) => {
 
   const rightContent = !isLoading ? (
     <div ref={rightContentRef} className="flex justify-end items-center right-side-container gap-3">
-      {hasScriptError && !showScriptErrorCard && (
+      {hasScriptError && !showErrorCards && (
         <ScriptErrorIcon
           itemUid={item.uid}
-          onClick={() => setShowScriptErrorCard(true)}
+          onClick={() => setShowErrorCards(true)}
         />
       )}
       {focusedTab?.responsePaneTab === 'response' && item?.response && !(item.response?.stream ?? false) ? (
@@ -299,12 +300,13 @@ const ResponsePane = ({ item, collection }) => {
           rightContentExpandedWidth={RIGHT_CONTENT_EXPANDED_WIDTH}
         />
       </div>
-      <section className={`response-pane-content ${hasScriptError && showScriptErrorCard ? 'has-script-error' : ''}`}>
+      <section className={`response-pane-content ${hasScriptError && showErrorCards ? 'has-script-error' : ''}`}>
         {isLoading ? <Overlay item={item} collection={collection} /> : null}
-        {hasScriptError && showScriptErrorCard && (
+        {!isLoading && <UnresolvedVariablesInfo item={item} collection={collection} />}
+        {hasScriptError && showErrorCards && (
           <ScriptError
             item={item}
-            onClose={() => setShowScriptErrorCard(false)}
+            onClose={() => setShowErrorCards(false)}
             collection={collection}
           />
         )}

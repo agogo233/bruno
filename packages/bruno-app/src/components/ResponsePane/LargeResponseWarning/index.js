@@ -1,19 +1,21 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { IconDownload, IconCopy, IconEye, IconAlertTriangle } from '@tabler/icons';
 import toast from 'react-hot-toast';
 import get from 'lodash/get';
 import StyledWrapper from './StyledWrapper';
 import { formatSize } from 'utils/common/index';
 import Button from 'ui/Button/index';
+import { MAX_RENDERABLE_RESPONSE_BYTES } from 'utils/common/constants';
+import { useTranslation } from 'react-i18next';
 
 const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
   const { t } = useTranslation();
   const { ipcRenderer } = window;
   const response = item.response || {};
+  const isDownloadOnly = responseSize > MAX_RENDERABLE_RESPONSE_BYTES;
 
   const downloadResponseToFile = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       ipcRenderer
         .invoke('renderer:save-response-to-file', response, item.requestSent.url, item.pathname)
         .then((result) => {
@@ -23,8 +25,8 @@ const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
           resolve();
         })
         .catch((err) => {
-          toast.error(get(err, 'error.message') || t('RESPONSE_PANE.SOMETHING_WRONG'));
-          reject(err);
+          toast.error(get(err, 'error.message') || 'Something went wrong!');
+          resolve();
         });
     });
   };
@@ -56,9 +58,17 @@ const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
             {t('RESPONSE_PANE.LARGE_RESPONSE.WARNING_TITLE')}
           </div>
           <div className="warning-description">
-            {t('RESPONSE_PANE.LARGE_RESPONSE.HANDLING_OVER', { size: formatSize(10 * 1024 * 1024) })}
+            Handling responses over <span className="size-highlight supported-size">{formatSize(10 * 1024 * 1024)}</span> could degrade performance.
             <br />
-            {t('RESPONSE_PANE.LARGE_RESPONSE.CURRENT_SIZE', { size: formatSize(responseSize) })}
+            Size of current response: <span className="size-highlight current-size">{formatSize(responseSize)}</span>
+            {isDownloadOnly ? (
+              <>
+                <br />
+                <span data-testid="large-response-download-only">
+                  Responses over <span className="size-highlight">{formatSize(MAX_RENDERABLE_RESPONSE_BYTES)}</span> can only be downloaded.
+                </span>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
@@ -67,6 +77,8 @@ const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
           icon={<IconEye size={18} strokeWidth={1.5} />}
           iconPosition="left"
           onClick={onRevealResponse}
+          disabled={isDownloadOnly}
+          data-testid="large-response-view"
           title={t('RESPONSE_PANE.LARGE_RESPONSE.SHOW_RESPONSE_CONTENT')}
           color="secondary"
           size="sm"
@@ -77,8 +89,9 @@ const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
           icon={<IconDownload size={18} strokeWidth={1.5} />}
           iconPosition="left"
           onClick={downloadResponseToFile}
-          disabled={!response.dataBuffer}
-          title={t('RESPONSE_PANE.DOWNLOAD.SAVE_TO_FILE')}
+          disabled={!response.dataBuffer && !response.storedRequestUid}
+          data-testid="large-response-download"
+          title="Download response to file"
           color="secondary"
           size="sm"
         >
@@ -88,7 +101,8 @@ const LargeResponseWarning = ({ item, responseSize, onRevealResponse }) => {
           icon={<IconCopy size={18} strokeWidth={1.5} />}
           iconPosition="left"
           onClick={copyResponse}
-          disabled={!response.data}
+          disabled={isDownloadOnly || !response.data}
+          data-testid="large-response-copy"
           title={t('RESPONSE_PANE.COPY.TO_CLIPBOARD')}
           color="secondary"
           size="sm"

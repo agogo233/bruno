@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import range from 'lodash/range';
 import classnames from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
@@ -38,7 +37,7 @@ import DeleteCollectionItems from '../DeleteCollectionItems';
 import IgnoreCollectionItem from '../IgnoreCollectionItem';
 import RunCollectionItem from '../RunCollectionItem';
 import GenerateCodeItem from '../GenerateCodeItem';
-import { isItemARequest, isItemAFolder, scrollToTheActiveTab } from 'utils/tabs';
+import { isItemARequest, isItemAFolder } from 'utils/tabs';
 import { doesRequestMatchSearchText, doesFolderHaveItemsMatchSearchText } from 'utils/collections/search';
 import { getDefaultRequestPaneTab, getItemTypeLabel } from 'utils/collections';
 import toast from 'react-hot-toast';
@@ -68,9 +67,11 @@ import ActionIcon from 'ui/ActionIcon';
 import MenuDropdown from 'ui/MenuDropdown';
 import { useSidebarAccordion } from 'components/Sidebar/SidebarAccordionContext';
 import useKeybinding from 'hooks/useKeybinding';
+import useKeybindingDisplayText from 'hooks/useKeybindingDisplayText';
 import useSidebarSelectionClick from 'hooks/useSidebarSelectionClick';
 import { startBlockedDragTracking } from 'utils/dragBlockedCursor';
 import { clearSidebarSelection } from 'providers/ReduxStore/slices/collections/index';
+import { useTranslation } from 'react-i18next';
 
 const CollectionItemRow = ({
   item,
@@ -143,6 +144,8 @@ const CollectionItemRow = ({
 
   // Check if request has examples (only for HTTP requests)
   const hasExamples = isItemARequest(item) && item.type === 'http-request' && item.examples && item.examples.length > 0;
+
+  const getKeybindingDisplayText = useKeybindingDisplayText();
 
   // Sidebar shortcuts — only active when this sidebar item has keyboard focus
   useKeybinding('cloneItem', () => {
@@ -327,8 +330,6 @@ const CollectionItemRow = ({
   const handleClick = (event) => {
     if (handleSelectionClick(event)) return;
     if (event && event.detail != 1) return;
-    // scroll to the active tab
-    setTimeout(scrollToTheActiveTab, 50);
     const isRequest = isItemARequest(item);
     const isApp = item.type === 'app';
     if (isRequest || isApp) {
@@ -423,6 +424,7 @@ const CollectionItemRow = ({
           id: 'new-request',
           leftSection: IconFilePlus,
           label: t('SIDEBAR.COLLECTION_ITEM.NEW_REQUEST'),
+          shortcut: getKeybindingDisplayText('newRequest'),
           onClick: () => setNewRequestModalOpen(true)
         },
         {
@@ -451,6 +453,7 @@ const CollectionItemRow = ({
         id: 'clone',
         leftSection: IconCopy,
         label: t('SIDEBAR.COLLECTION_ITEM.CLONE'),
+        shortcut: getKeybindingDisplayText('cloneItem'),
         onClick: handleCloneItem
       });
     }
@@ -459,6 +462,7 @@ const CollectionItemRow = ({
       id: 'copy',
       leftSection: IconCopy,
       label: t('SIDEBAR.COLLECTION_ITEM.COPY'),
+      shortcut: getKeybindingDisplayText('copyItem'),
       onClick: handleCopyItem
     });
 
@@ -467,6 +471,7 @@ const CollectionItemRow = ({
         id: 'paste',
         leftSection: IconClipboard,
         label: t('SIDEBAR.COLLECTION_ITEM.PASTE'),
+        shortcut: getKeybindingDisplayText('pasteItem'),
         onClick: handlePasteItem
       });
     }
@@ -476,6 +481,7 @@ const CollectionItemRow = ({
         id: 'rename',
         leftSection: IconEdit,
         label: t('SIDEBAR.COLLECTION_ITEM.RENAME'),
+        shortcut: getKeybindingDisplayText('renameItem'),
         onClick: () => setRenameItemModalOpen(true)
       }
     );
@@ -547,6 +553,7 @@ const CollectionItemRow = ({
           id: 'open-terminal',
           leftSection: IconTerminal2,
           label: t('SIDEBAR.COLLECTION_ITEM.OPEN_TERMINAL'),
+          shortcut: getKeybindingDisplayText('openTerminal'),
           onClick: async () => {
             const folderCwd = item.pathname || collectionPathname;
             await openDevtoolsAndSwitchToTerminal(dispatch, folderCwd);
@@ -569,18 +576,6 @@ const CollectionItemRow = ({
   const className = classnames('flex flex-col w-full', {
     'is-sidebar-dragging': isSidebarDragging
   });
-
-  if (searchText && searchText.length) {
-    if (isItemARequest(item)) {
-      if (!doesRequestMatchSearchText(item, searchText)) {
-        return null;
-      }
-    } else {
-      if (!doesFolderHaveItemsMatchSearchText(item, searchText)) {
-        return null;
-      }
-    }
-  }
 
   const handleDoubleClick = (event) => {
     dispatch(makeTabPermanent({ uid: tabUidForItem || item.uid }));
@@ -668,7 +663,7 @@ const CollectionItemRow = ({
 
   const handleCopyItem = () => {
     dispatch(copyRequest(item));
-    toast.success(t('SIDEBAR.COLLECTION_ITEM.COPIED_TYPE', { type: t(`SIDEBAR.COMMON.${getItemTypeLabel(item).toUpperCase()}`) }));
+    toast.success(`${getItemTypeLabel(item)} copied`);
   };
 
   // One-click clone: display name becomes "<source> copy"; the filesystem name
@@ -676,8 +671,8 @@ const CollectionItemRow = ({
   const handleCloneItem = () => {
     if (!isCloneable) return;
     dispatch(cloneItem(`${item.name} copy`, sanitizeName(`${item.name} copy`), item.uid, collectionUid))
-      .then(() => toast.success(t('SIDEBAR.COLLECTION_ITEM.CLONED_TYPE', { type: isFolder ? t('SIDEBAR.COMMON.FOLDER') : t('SIDEBAR.COMMON.REQUEST') })))
-      .catch((err) => toast.error(formatIpcError(err) || t('SIDEBAR.COLLECTION_ITEM.CLONE_ERROR_TYPE', { type: isFolder ? t('SIDEBAR.COMMON.FOLDER') : t('SIDEBAR.COMMON.REQUEST') })));
+      .then(() => toast.success(`${getItemTypeLabel(item)} cloned!`))
+      .catch((err) => toast.error(formatIpcError(err) || `An error occurred while cloning the ${getItemTypeLabel(item).toLowerCase()}`));
   };
 
   const handlePasteItem = () => {
@@ -707,6 +702,18 @@ const CollectionItemRow = ({
     setIsKeyboardFocused(false);
     dispatch(setFocusedSidebarPath(null));
   };
+
+  if (searchText && searchText.length) {
+    if (isItemARequest(item)) {
+      if (!doesRequestMatchSearchText(item, searchText)) {
+        return null;
+      }
+    } else {
+      if (!doesFolderHaveItemsMatchSearchText(item, searchText)) {
+        return null;
+      }
+    }
+  }
 
   return (
     <StyledWrapper className={className}>
@@ -810,11 +817,6 @@ const CollectionItemRow = ({
               <span className="item-name" title={item.name}>
                 {item.name}
               </span>
-            {hasExamples && (
-              <sup className="ml-1 example-count-badge" title={t('SIDEBAR.COLLECTION_ITEM.EXAMPLE_COUNT', { count: item.examples.length })} data-testid="example-count-badge">
-                {item.examples.length}
-              </sup>
-            )}
             </div>
           </div>
           {!isDragging && !isMultiSelected && (

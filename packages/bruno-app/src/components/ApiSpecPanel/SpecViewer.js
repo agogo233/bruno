@@ -13,23 +13,23 @@ import { SPEC_PREVIEW_ERRORS } from './constants';
 
 const PREVIEW_TIMEOUT_MS = 15000;
 
-  const getPreviewParseError = (content) => {
-    if (!content || typeof content !== 'string') return null;
-    let parsed;
+const getPreviewParseError = (content) => {
+  if (!content || typeof content !== 'string') return null;
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
     try {
-      parsed = JSON.parse(content);
+      parsed = jsyaml.load(content);
     } catch {
-      try {
-        parsed = jsyaml.load(content);
-      } catch {
-        return SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON();
-      }
+      return SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON();
     }
-    if (!isOpenApiSpec(parsed)) {
-      return SPEC_PREVIEW_ERRORS.INVALID_OPENAPI();
-    }
-    return null;
-  };
+  }
+  if (!isOpenApiSpec(parsed)) {
+    return SPEC_PREVIEW_ERRORS.INVALID_OPENAPI();
+  }
+  return null;
+};
 
 const MIN_LEFT_PANE_WIDTH = 300;
 const MIN_RIGHT_PANE_WIDTH = 450;
@@ -46,17 +46,27 @@ const MIN_RIGHT_PANE_WIDTH = 450;
  *  - onSave                (fn)      Called with current editor content on save (editable mode only)
  *  - leftPaneWidth         (number|null) Persisted left pane width in px; null = use 50/50 default
  *  - onLeftPaneWidthChange (fn)      Persist the new width (called on mouseup / double-click / resize-clamp)
+ *  - draftContent          (string|null) Unsaved content owned by the caller, so the caller can read
+ *                          whether there are unsaved edits (tab indicator, save shortcut, close
+ *                          confirmation). Falls back to `content` when there is no draft.
+ *  - onDraftChange         (fn)      Receives every edit. Required unless `readOnly`, because the
+ *                          editor holds no content of its own.
  */
-const SpecViewer = ({ content, resolvedSpec, readOnly, onSave, leftPaneWidth, onLeftPaneWidthChange }) => {
-  const { displayedTheme, theme } = useTheme();
+const SpecViewer = ({
+  content,
+  resolvedSpec,
+  readOnly,
+  onSave,
+  leftPaneWidth,
+  onLeftPaneWidthChange,
+  draftContent,
+  onDraftChange
+}) => {
   const { t } = useTranslation();
+  const { displayedTheme, theme } = useTheme();
   const preferences = useSelector((state) => state.app.preferences);
 
-  const [editorContent, setEditorContent] = useState(content);
-
-  useEffect(() => {
-    setEditorContent(content);
-  }, [content]);
+  const editorContent = draftContent ?? content;
 
   const hasChanges = !readOnly && editorContent !== content;
 
@@ -106,8 +116,6 @@ const SpecViewer = ({ content, resolvedSpec, readOnly, onSave, leftPaneWidth, on
   }, [content]);
 
   const handleSwaggerComplete = useCallback(() => {
-    // Double rAF: wait for one full paint cycle so Swagger is actually on screen
-    // before hiding the loader — avoids a flash of unrendered content.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         clearTimeout(previewTimeoutRef.current);
@@ -129,8 +137,7 @@ const SpecViewer = ({ content, resolvedSpec, readOnly, onSave, leftPaneWidth, on
           theme={displayedTheme}
           value={readOnly ? content : editorContent}
           readOnly={readOnly ? 'nocursor' : false}
-          onEdit={readOnly ? undefined : (val) => setEditorContent(val)}
-          onSave={readOnly ? undefined : handleSave}
+          onEdit={readOnly ? undefined : onDraftChange}
           mode="yaml"
           font={get(preferences, 'font.codeFont', 'default')}
         />

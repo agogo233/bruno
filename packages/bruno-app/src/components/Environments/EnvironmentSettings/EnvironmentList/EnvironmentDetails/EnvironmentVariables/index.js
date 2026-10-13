@@ -1,13 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-import { get } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { saveEnvironment } from 'providers/ReduxStore/slices/collections/actions';
 import { setEnvironmentsDraft, clearEnvironmentsDraft } from 'providers/ReduxStore/slices/collections';
-import { flattenItems, isItemARequest } from 'utils/collections';
 import SensitiveFieldWarning from 'components/SensitiveFieldWarning';
 import EnvironmentVariablesTable from 'components/EnvironmentVariablesTable';
-import { sensitiveFields } from './constants';
+import { ENVIRONMENT_USAGE_WARNING, findUsedEnvironmentVariableUids } from 'utils/sensitive-fields';
 import { useTranslation } from 'react-i18next';
 
 const EnvironmentVariables = ({ environment, setIsModified, collection, inheritedEnvironmentVariables, searchQuery = '', variableType = 'variables' }) => {
@@ -17,55 +15,18 @@ const EnvironmentVariables = ({ environment, setIsModified, collection, inherite
   const environmentsDraft = collection?.environmentsDraft;
   const hasDraftForThisEnv = environmentsDraft?.environmentUid === environment.uid;
 
-  const collectionItems = collection?.items;
-  const collectionRoot = collection?.root;
-  const environmentVariables = environment?.variables;
+  const liveEnvironment = useMemo(() => (
+    hasDraftForThisEnv ? { ...environment, variables: environmentsDraft.variables } : environment
+  ), [environment, environmentsDraft, hasDraftForThisEnv]);
 
-  const nonSecretSensitiveVarUsageMap = useMemo(() => {
-    const result = {};
-    if (!environmentVariables) {
-      return result;
-    }
-    const nonSecretVars = environmentVariables.filter((v) => v.enabled && !v.secret && v.name);
-    if (!nonSecretVars.length) {
-      return result;
-    }
-    const varNames = new Set(nonSecretVars.map((v) => v.name));
+  const usedVariableUids = useMemo(
+    () => findUsedEnvironmentVariableUids(collection, liveEnvironment),
+    [collection, liveEnvironment]
+  );
 
-    const checkSensitiveField = (obj, fieldPath) => {
-      const value = get(obj, fieldPath);
-      if (typeof value === 'string') {
-        varNames.forEach((varName) => {
-          if (new RegExp(`\\{\\{\\s*${varName}\\s*\\}\\}`).test(value)) {
-            result[varName] = true;
-          }
-        });
-      }
-    };
-
-    const getObjectToProcess = (item) => {
-      if (isItemARequest(item)) {
-        return item.draft || item;
-      }
-      return item.root;
-    };
-
-    const collectionObj = collectionRoot;
-    sensitiveFields.forEach((fieldPath) => {
-      checkSensitiveField(collectionObj, fieldPath);
-    });
-
-    const items = flattenItems(collectionItems || []);
-    items.forEach((item) => {
-      const objToProcess = getObjectToProcess(item);
-      sensitiveFields.forEach((fieldPath) => {
-        checkSensitiveField(objToProcess, fieldPath);
-      });
-    });
-    return result;
-  }, [collectionItems, collectionRoot, environmentVariables]);
-
-  const hasSensitiveUsage = useCallback((name) => !!nonSecretSensitiveVarUsageMap[name], [nonSecretSensitiveVarUsageMap]);
+  const hasSensitiveUsage = useCallback((variable) => (
+    !!variable?.uid && usedVariableUids.has(variable.uid)
+  ), [usedVariableUids]);
 
   const handleSave = useCallback(
     (variables) => {
@@ -91,9 +52,9 @@ const EnvironmentVariables = ({ environment, setIsModified, collection, inherite
     dispatch(clearEnvironmentsDraft({ collectionUid: collection.uid }));
   }, [dispatch, collection.uid]);
 
-  const renderExtraValueContent = useCallback(
+  const renderSensitiveWarning = useCallback(
     (variable) => {
-      if (!variable.secret && hasSensitiveUsage(variable.name)) {
+      if (!variable.secret && hasSensitiveUsage(variable)) {
         return (
           <SensitiveFieldWarning
             fieldName={variable.name}
@@ -117,7 +78,7 @@ const EnvironmentVariables = ({ environment, setIsModified, collection, inherite
       onDraftChange={handleDraftChange}
       onDraftClear={handleDraftClear}
       setIsModified={setIsModified}
-      renderExtraValueContent={renderExtraValueContent}
+      renderSensitiveWarning={renderSensitiveWarning}
       searchQuery={searchQuery}
       variableType={variableType}
     />

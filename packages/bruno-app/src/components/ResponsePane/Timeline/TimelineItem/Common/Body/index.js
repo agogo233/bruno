@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons';
 import QueryResponse from 'components/ResponsePane/QueryResponse/index';
+import { useTranslation } from 'react-i18next';
 
-const BodyBlock = ({ collection, data, dataBuffer, headers, error, item, type }) => {
+const BodyBlock = ({ collection, data, dataBuffer, headers, error, item, type, isLoaded }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
-  const hasBody = !!(data || dataBuffer);
+  const hasBody = Boolean(data || dataBuffer) || isLoaded;
 
   return (
     <div className="tl-block">

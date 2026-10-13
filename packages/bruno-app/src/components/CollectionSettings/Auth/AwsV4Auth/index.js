@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import SensitiveFieldWarning from 'components/SensitiveFieldWarning';
 import { useDetectSensitiveField } from 'hooks/useDetectSensitiveField';
 import get from 'lodash/get';
@@ -9,15 +8,17 @@ import SingleLineEditor from 'components/SingleLineEditor';
 import { updateCollectionAuth } from 'providers/ReduxStore/slices/collections';
 import { saveCollectionSettings } from 'providers/ReduxStore/slices/collections/actions';
 import StyledWrapper from './StyledWrapper';
+import { useTranslation } from 'react-i18next';
 
 const AwsV4Auth = ({ collection }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { storedTheme } = useTheme();
 
   const awsv4Auth = collection.draft?.root ? get(collection, 'draft.root.request.auth.awsv4', {}) : get(collection, 'root.request.auth.awsv4', {});
   const { isSensitive } = useDetectSensitiveField(collection);
   const { showWarning, warningMessage } = isSensitive(awsv4Auth?.secretAccessKey);
+  const sessionTokenSensitive = isSensitive(awsv4Auth?.sessionToken);
 
   const handleSave = () => dispatch(saveCollectionSettings(collection.uid));
 
@@ -152,15 +153,19 @@ const AwsV4Auth = ({ collection }) => {
       </div>
 
       <label className="block mb-1">{t('COLLECTION_SETTINGS.AUTH_AWSV4.SESSION_TOKEN')}</label>
-      <div className="single-line-editor-wrapper mb-3">
+      <div className="single-line-editor-wrapper mb-3 flex items-center">
         <SingleLineEditor
           value={awsv4Auth.sessionToken || ''}
           theme={storedTheme}
           onSave={handleSave}
           onChange={(val) => handleSessionTokenChange(val)}
           collection={collection}
+          isSecret={true}
           isCompact
         />
+        {sessionTokenSensitive.showWarning && (
+          <SensitiveFieldWarning fieldName="awsv4-session-token" warningMessage={sessionTokenSensitive.warningMessage} />
+        )}
       </div>
 
       <label className="block mb-1">{t('COLLECTION_SETTINGS.AUTH_AWSV4.SERVICE')}</label>

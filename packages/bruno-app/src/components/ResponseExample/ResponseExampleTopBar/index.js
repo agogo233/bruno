@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import IconEdit from 'components/Icons/IconEdit';
-import { IconCode, IconDeviceFloppy } from '@tabler/icons';
+import { IconCode, IconDeviceFloppy, IconPlayerPlay } from '@tabler/icons';
 import StyledWrapper from './StyledWrapper';
 import { useTheme } from 'providers/Theme';
 import TruncatedText from 'components/TruncatedText';
@@ -18,10 +18,12 @@ const ResponseExampleTopBar = ({
   onEditToggle,
   onSave,
   onCancel,
-  onGenerateCode
+  onGenerateCode,
+  onTryExample,
+  isTryPending
 }) => {
-  const { theme } = useTheme();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const dispatch = useDispatch();
 
   const example = useMemo(() => {
@@ -187,7 +189,7 @@ const ResponseExampleTopBar = ({
               size="sm"
               icon={<IconCode size={16} color={theme.examples.buttonIconColor} />}
               onClick={handleGenerateCode}
-                title={t('RESPONSE_EXAMPLE.TOP_BAR.GENERATE_CODE')}
+              title={t('RESPONSE_EXAMPLE.TOP_BAR.GENERATE_CODE')}
               data-testid="response-example-generate-code-btn"
             />
             <Button
@@ -195,9 +197,21 @@ const ResponseExampleTopBar = ({
               size="sm"
               icon={<IconEdit size={16} color={theme.examples.buttonIconColor} />}
               onClick={onEditToggle}
-                data-testid="response-example-edit-btn"
-              >
-                {t('RESPONSE_EXAMPLE.TOP_BAR.EDIT_EXAMPLE')}
+              data-testid="response-example-edit-btn"
+            >
+              {t('RESPONSE_EXAMPLE.TOP_BAR.EDIT_EXAMPLE')}
+            </Button>
+            <Button
+              color="primary"
+              variant="filled"
+              size="sm"
+              icon={<IconPlayerPlay size={16} />}
+              onClick={onTryExample}
+              loading={isTryPending}
+              title="Open this example as a new request and send it"
+              data-testid="response-example-try-btn"
+            >
+              Try
             </Button>
           </div>
         </div>

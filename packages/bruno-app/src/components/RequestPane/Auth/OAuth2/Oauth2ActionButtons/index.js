@@ -1,5 +1,4 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { cloneDeep, find, get } from 'lodash';
@@ -11,8 +10,9 @@ import { updateResponsePaneTab } from 'providers/ReduxStore/slices/tabs';
 import { getAllVariables } from 'utils/collections/index';
 import { formatIpcError } from 'utils/common/error';
 import Button from 'ui/Button';
+import { useTranslation } from 'react-i18next';
 
-const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, credentialsId }) => {
+const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, credentialsId, disabled }) => {
   const { t } = useTranslation();
   const { uid: collectionUid } = collection;
 
@@ -164,7 +164,7 @@ const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, c
         size="sm"
         color="secondary"
         onClick={handleFetchOauth2Credentials}
-        disabled={fetchingToken || refreshingToken}
+        disabled={disabled || fetchingToken || refreshingToken}
         loading={fetchingToken}
       >
         {t('REQUEST_PANE.OAUTH2.GET_ACCESS_TOKEN')}
@@ -175,7 +175,7 @@ const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, c
               size="sm"
               color="secondary"
               onClick={handleRefreshAccessToken}
-              disabled={fetchingToken || refreshingToken}
+              disabled={disabled || fetchingToken || refreshingToken}
               loading={refreshingToken}
             >
               {t('REQUEST_PANE.OAUTH2.REFRESH_TOKEN')}
@@ -188,6 +188,7 @@ const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, c
               size="sm"
               color="secondary"
               onClick={handleCancelAuthorization}
+              disabled={disabled}
               icon={<IconX size={16} />}
               iconPosition="left"
             >
@@ -199,6 +200,7 @@ const Oauth2ActionButtons = ({ item, request, collection, url: accessTokenUrl, c
         color="secondary"
         variant="ghost"
         onClick={handleClearCache}
+        disabled={disabled}
       >
         {t('REQUEST_PANE.OAUTH2.CLEAR_CACHE')}
       </Button>

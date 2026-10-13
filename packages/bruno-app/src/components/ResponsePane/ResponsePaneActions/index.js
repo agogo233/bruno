@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { IconDots, IconDownload, IconEraser, IconBookmark, IconCopy, IconLayoutColumns, IconLayoutRows } from '@tabler/icons';
 import MenuDropdown from 'ui/MenuDropdown';
@@ -8,7 +7,9 @@ import ResponseBookmark from '../ResponseBookmark';
 import ResponseClear from '../ResponseClear';
 import ResponseLayoutToggle, { useResponseLayoutToggle } from '../ResponseLayoutToggle';
 import ResponseCopy from '../ResponseCopy/index';
+import useKeybindingDisplayText from 'hooks/useKeybindingDisplayText';
 import StyledWrapper from './StyledWrapper';
+import { useTranslation } from 'react-i18next';
 
 const StyledMenuIcon = styled.button`
   display: flex;
@@ -26,24 +27,22 @@ const StyledMenuIcon = styled.button`
   }
 `;
 
-const MenuIcon = forwardRef((props, ref) => {
-  const { t } = useTranslation();
-  return (
-    <StyledMenuIcon
-      ref={ref}
-      title={t('RESPONSE_PANE.ACTIONS.MORE_ACTIONS')}
-      {...props}
-    >
-      <IconDots size={16} strokeWidth={1.5} />
-    </StyledMenuIcon>
-  );
-});
+const MenuIcon = forwardRef((props, ref) => (
+  <StyledMenuIcon
+    ref={ref}
+    title="More actions"
+    {...props}
+  >
+    <IconDots size={16} strokeWidth={1.5} />
+  </StyledMenuIcon>
+));
 
 MenuIcon.displayName = 'MenuIcon';
 
 const ResponsePaneActions = ({ item, collection, responseSize, selectedFormat, selectedTab, data, dataBuffer }) => {
   const { t } = useTranslation();
   const { orientation } = useResponseLayoutToggle();
+  const getKeybindingDisplayText = useKeybindingDisplayText();
 
   // Refs to access child component imperative handles (click, isDisabled)
   const bookmarkButtonRef = useRef(null);
@@ -87,6 +86,7 @@ const ResponsePaneActions = ({ item, collection, responseSize, selectedFormat, s
     {
       id: 'change-layout',
       label: t('RESPONSE_PANE.ACTIONS.CHANGE_LAYOUT'),
+      shortcut: getKeybindingDisplayText('changeLayout'),
       leftSection: orientation === 'vertical' ? IconLayoutColumns : IconLayoutRows,
       get disabled() {
         return layoutToggleButtonRef.current?.isDisabled ?? false;
@@ -135,6 +135,7 @@ const ResponsePaneActions = ({ item, collection, responseSize, selectedFormat, s
     {
       id: 'change-layout',
       label: t('RESPONSE_PANE.ACTIONS.CHANGE_LAYOUT'),
+      shortcut: getKeybindingDisplayText('changeLayout'),
       leftSection: orientation === 'vertical' ? IconLayoutColumns : IconLayoutRows,
       get disabled() {
         return layoutToggleButtonRef.current?.isDisabled ?? false;

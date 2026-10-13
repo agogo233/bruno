@@ -8,6 +8,7 @@ import useIpcEvents from './useIpcEvents';
 import StyledWrapper from './StyledWrapper';
 import useChangelogOnUpdate from './useChangelogOnUpdate';
 import { version } from '../../../package.json';
+import { checkpoint, startBenchmarkFlush, stopBenchmarkFlush, flushEvents } from 'utils/benchmark';
 
 export const AppContext = React.createContext();
 
@@ -21,6 +22,22 @@ export const AppProvider = (props) => {
     dispatch(hydrateSidebarState());
     // v3.5.0 v4 migration tab state; feature was removed from main.
     localStorage.removeItem('v4-migration');
+  }, []);
+
+  useEffect(() => {
+    if (!__BRUNO_BENCHMARK__) {
+      return undefined;
+    }
+
+    startBenchmarkFlush();
+    checkpoint('renderer-ready', { version });
+
+    return () => {
+      stopBenchmarkFlush();
+      flushEvents().catch((err) => {
+        console.error('[benchmark] Final renderer flush failed:', err);
+      });
+    };
   }, []);
 
   useEffect(() => {

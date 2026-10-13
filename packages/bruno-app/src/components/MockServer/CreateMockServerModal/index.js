@@ -9,7 +9,7 @@ import Portal from 'components/Portal';
 import Modal from 'components/Modal';
 import Button from 'ui/Button';
 import { normalizePath } from 'utils/common/path';
-import { areItemsLoading, isScratchCollection } from 'utils/collections';
+import { areItemsLoading, getWorkspaceCollections } from 'utils/collections';
 import { matchLoadedApiSpecs } from 'components/Sidebar/ApiSpecs/matchLoadedApiSpecs';
 import { mountCollection } from 'providers/ReduxStore/slices/collections/actions';
 import {
@@ -167,8 +167,8 @@ const CreateMockServerModal = ({
   defaultCollectionUid = null,
   defaultSourceType = 'collection'
 }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const inputRef = useRef();
   const [showAdvancedPort, setShowAdvancedPort] = useState(Boolean(editingInstance));
   // Kept in state so enableReinitialize cannot wipe a suggested free port back to 4000
@@ -184,21 +184,9 @@ const CreateMockServerModal = ({
   const activeWorkspace = workspaces.find((workspace) => workspace.uid === activeWorkspaceUid);
   const isEditing = Boolean(editingInstance);
 
-  const workspaceCollections = useMemo(() => {
-    if (!activeWorkspace) {
-      return [];
-    }
-
-    return collections.filter((collection) => {
-      if (isScratchCollection(collection, workspaces)) {
-        return false;
-      }
-
-      return activeWorkspace.collections?.some(
-        (workspaceCollection) => normalizePath(workspaceCollection.path) === normalizePath(collection.pathname)
-      );
-    });
-  }, [activeWorkspace, collections, workspaces]);
+  const workspaceCollections = useMemo(() => (
+    getWorkspaceCollections({ collections, workspaces, activeWorkspace })
+  ), [activeWorkspace, collections, workspaces]);
 
   const workspaceApiSpecs = useMemo(() => {
     if (!activeWorkspace) {

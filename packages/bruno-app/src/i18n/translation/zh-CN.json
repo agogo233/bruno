@@ -714,7 +714,8 @@
       "FILE_NAME": "文件名",
       "FILE_NAME_HINT": "在文件系统上",
       "TYPE_NAME": "{{type}}名称",
-      "FS_FOLDER_NAME_DESC": "文件系统中该文件夹的名称。"
+      "FS_FOLDER_NAME_DESC": "文件系统中该文件夹的名称。",
+      "CLONED_TYPE": "{{type}} 克隆成功"
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "重命名文件夹",
@@ -1145,10 +1146,16 @@
       "COLLECTION": "集合",
       "REQUEST": "请求",
       "OPEN_FILE": "打开 {{file}}",
-      "CLOSE_ERROR": "关闭错误"
+      "CLOSE_ERROR": "关闭错误",
+      "COPY_SCRIPT_ERROR": "复制脚本错误",
+      "COPIED": "已复制",
+      "COLLAPSE_SCRIPT_ERROR": "收起脚本错误",
+      "EXPAND_SCRIPT_ERROR": "展开脚本错误",
+      "COLLAPSE": "收起",
+      "EXPAND": "展开"
     },
     "SCRIPT_ERROR_ICON": {
-      "TOOLTIP": "脚本执行出错"
+      "TOOLTIP": "显示错误"
     },
     "CLEAR_TIMELINE": "清除时间线",
     "OVERLAY": {
@@ -2982,7 +2989,7 @@
       "NO_APP_TITLE": "暂无应用",
       "NO_APP_HINT": "切换到代码并编写一些 HTML/JS",
       "TITLE_PREFIX": "应用 - ",
-      "NO_APP_ADD_CODE_HINT": "在 Code 视图中添加 HTML/JS 以渲染此应用的自定义 UI。"
+      "NO_APP_ADD_CODE_HINT": "在 Code 视图中添加 HTML/JS 并保存，以渲染此应用的自定义 UI。"
     },
     "ERROR": {
       "REQUEST_NOT_FOUND": "未找到请求：{{pathname}}",

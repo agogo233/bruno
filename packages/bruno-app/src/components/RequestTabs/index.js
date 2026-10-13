@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { IconChevronRight, IconChevronLeft } from '@tabler/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { focusTab, reorderTabs } from 'providers/ReduxStore/slices/tabs';
+import { revealTabInSidebar } from 'providers/ReduxStore/slices/collections/actions';
 import NewRequest from 'components/Sidebar/NewRequest';
 import CollectionHeader from './CollectionHeader';
 import RequestTab from './RequestTab';
@@ -15,8 +16,8 @@ import CreateTransientRequest from 'components/CreateTransientRequest';
 import ActionIcon from 'ui/ActionIcon/index';
 
 const RequestTabs = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const tabsRef = useRef();
   const scrollContainerRef = useRef();
   const collectionTabsRef = useRef();
@@ -72,6 +73,13 @@ const RequestTabs = () => {
     return () => resizeObserver.disconnect();
   }, [activeTabUid, activeTab, collectionRequestTabs.length, screenWidth, leftSidebarWidth, sidebarCollapsed]);
 
+  useEffect(() => {
+    const activeTabElement = tabsRef.current?.querySelector('.request-tab.active');
+    if (typeof activeTabElement?.scrollIntoView !== 'function') return;
+
+    activeTabElement.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  }, [activeTabUid]);
+
   const getTabClassname = (tab, index) => {
     return classnames('request-tab select-none', {
       'active': tab.uid === activeTabUid,
@@ -86,6 +94,7 @@ const RequestTabs = () => {
         uid: tab.uid
       })
     );
+    dispatch(revealTabInSidebar(tab.uid));
   };
 
   if (!activeTabUid) {

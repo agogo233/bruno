@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -14,12 +13,12 @@ import { multiLineMsg } from 'utils/common/index';
 import { formatIpcError } from 'utils/common/error';
 import { sanitizeName, validateName, validateNameError } from 'utils/common/regex';
 import get from 'lodash/get';
+import { useTranslation } from 'react-i18next';
 
 const CreateWorkspace = ({ onClose }) => {
   const { t } = useTranslation();
   const inputRef = useRef();
   const dispatch = useDispatch();
-  const workspaces = useSelector((state) => state.workspaces.workspaces);
   const preferences = useSelector((state) => state.app.preferences);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -36,24 +35,18 @@ const CreateWorkspace = ({ onClose }) => {
     validationSchema: Yup.object({
       workspaceName: Yup.string()
         .trim()
-        .min(1, t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.NAME_CANNOT_BE_EMPTY'))
-        .max(255, t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.NAME_MAX_LENGTH'))
-        .required(t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.NAME_REQUIRED'))
-        .test('unique-name', t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.NAME_ALREADY_EXISTS'), function (value) {
-          if (!value) return true;
-
-          return !workspaces.some((w) =>
-            !w.isCreating && w.name && w.name.toLowerCase() === value.toLowerCase());
-        }),
+        .min(1, 'Workspace name can\'t be empty')
+        .max(255, 'Must be 255 characters or less')
+        .required('Workspace name is required'),
       workspaceFolderName: Yup.string()
-        .min(1, t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.FOLDER_MIN_LENGTH'))
-        .max(255, t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.FOLDER_MAX_LENGTH'))
+        .min(1, 'Must be at least 1 character')
+        .max(255, 'Must be 255 characters or less')
         .test('is-valid-folder-name', function (value) {
           const isValid = validateName(value);
           return isValid ? true : this.createError({ message: validateNameError(value) });
         })
-        .required(t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.FOLDER_REQUIRED')),
-      workspaceLocation: Yup.string().min(1, t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.LOCATION_REQUIRED')).required(t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.LOCATION_REQUIRED'))
+        .required('Folder name is required'),
+      workspaceLocation: Yup.string().min(1, 'Location is required').required('Location is required')
     }),
     onSubmit: async (values) => {
       if (isSubmitting) return;
@@ -94,9 +87,9 @@ const CreateWorkspace = ({ onClose }) => {
   return (
     <Modal
       size="md"
-      title={t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.TITLE')}
-      description={t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.DESCRIPTION')}
-      confirmText={isSubmitting ? t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.CREATING') : t('WORKSPACE_SIDEBAR.CREATE_WORKSPACE.CREATE_WORKSPACE')}
+      title="Create Workspace"
+      description="Give your new workspace a name and choose its type to get started."
+      confirmText={isSubmitting ? 'Creating...' : 'Create Workspace'}
       handleConfirm={formik.handleSubmit}
       handleCancel={onClose}
       style="new"

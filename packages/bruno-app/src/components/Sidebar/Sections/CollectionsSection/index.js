@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,6 +39,8 @@ import Collections from 'components/Sidebar/Collections';
 import SidebarSection from 'components/Sidebar/SidebarSection';
 import { openDevtoolsAndSwitchToTerminal } from 'utils/terminal';
 import useKeybinding from 'hooks/useKeybinding';
+import useKeybindingDisplayText from 'hooks/useKeybindingDisplayText';
+import { useTranslation } from 'react-i18next';
 
 const CollectionsSection = () => {
   const { t } = useTranslation();
@@ -69,6 +70,7 @@ const CollectionsSection = () => {
     setImportCollectionModalOpen(true);
     return false;
   });
+  const getKeybindingDisplayText = useKeybindingDisplayText();
 
   // Default to true (don't show modal) so that:
   // 1. Existing users who upgrade (no hasSeenWelcomeModal in their prefs) don't see it
@@ -86,7 +88,7 @@ const CollectionsSection = () => {
       }
     };
     dispatch(savePreferences(updatedPreferences)).catch(() => {
-      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
+      toast.error('Failed to save preferences');
     });
   };
 
@@ -192,13 +194,13 @@ const CollectionsSection = () => {
   const handleStartRequest = () => {
     const scratchCollectionUid = activeWorkspace?.scratchCollectionUid;
     if (!scratchCollectionUid) {
-      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
+      toast.error('Unable to create request');
       return;
     }
 
     const scratchCollection = collections.find((c) => c.uid === scratchCollectionUid);
     if (!scratchCollection) {
-      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
+      toast.error('Unable to create request');
       return;
     }
 
@@ -214,7 +216,7 @@ const CollectionsSection = () => {
         }
       }
     });
-    const requestName = `${t('SIDEBAR.SECTIONS.UNTITLED')} ${maxNumber + 1}`;
+    const requestName = `Untitled ${maxNumber + 1}`;
     const filename = sanitizeName(requestName);
 
     dispatch(
@@ -229,7 +231,7 @@ const CollectionsSection = () => {
         isTransient: true
       })
     ).catch((err) => {
-      toast.error(t('SIDEBAR.COMMON.ERROR_OCCURRED'));
+      toast.error('An error occurred while creating the request');
     });
   };
 
@@ -260,6 +262,7 @@ const CollectionsSection = () => {
       id: 'import',
       leftSection: IconDownload,
       label: t('SIDEBAR.SECTIONS.IMPORT_COLLECTION'),
+      shortcut: getKeybindingDisplayText('importCollection'),
       onClick: () => {
         setImportCollectionModalOpen(true);
       }

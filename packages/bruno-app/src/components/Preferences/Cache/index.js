@@ -1,39 +1,27 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { savePreferences, clearHttpHttpsAgentCache } from 'providers/ReduxStore/slices/app';
 import toast from 'react-hot-toast';
 import get from 'lodash/get';
 import { IconEraser } from '@tabler/icons';
+import useFileCache from 'hooks/useFileCache';
 import { useTheme } from 'providers/Theme';
 import ToggleSwitch from 'components/ToggleSwitch';
 import ActionIcon from 'ui/ActionIcon';
 import StyledWrapper from './StyledWrapper';
 import { formatSize } from 'utils/common';
+import { useTranslation } from 'react-i18next';
 
 const Cache = () => {
   const { t } = useTranslation();
   const preferences = useSelector((state) => state.app.preferences);
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { ipcRenderer } = window;
 
   const fileCacheEnabled = get(preferences, 'cache.file.enabled', false);
   const sslSessionEnabled = get(preferences, 'cache.sslSession.enabled', false);
 
-  const [fileCacheSize, setFileCacheSize] = useState(null);
-
-  const refreshFileCacheSize = useCallback(() => {
-    if (!ipcRenderer) return;
-    ipcRenderer
-      .invoke('renderer:get-file-cache-size')
-      .then((size) => setFileCacheSize(size))
-      .catch(() => setFileCacheSize(null));
-  }, [ipcRenderer]);
-
-  useEffect(() => {
-    refreshFileCacheSize();
-  }, [refreshFileCacheSize, fileCacheEnabled]);
+  const { size: fileCacheSize, clear: clearFileCache } = useFileCache();
 
   const persist = (next) => {
     dispatch(savePreferences({ ...preferences, cache: next })).catch(() => {
@@ -59,21 +47,19 @@ const Cache = () => {
     }
   };
 
-  const handleClearFileCache = () => {
-    if (!ipcRenderer) return;
-    ipcRenderer
-      .invoke('renderer:clear-file-cache')
-      .then((size) => {
-        setFileCacheSize(size);
-        toast.success(t('CACHE.FILE_CACHE_CLEARED'));
-      })
-      .catch(() => toast.error(t('CACHE.FAILED_CLEAR_FILE')));
+  const handleClearFileCache = async () => {
+    try {
+      await clearFileCache();
+      toast.success(t('CACHE.FILE_CACHE_CLEARED'));
+    } catch (error) {
+      toast.error(t('CACHE.FAILED_CLEAR_FILE'));
+    }
   };
 
   const handleClearSslSession = () => {
     dispatch(clearHttpHttpsAgentCache())
-      .then(() => toast.success(t('CACHE.SSL_CACHE_CLEARED')))
-      .catch(() => toast.error(t('CACHE.FAILED_CLEAR_SSL')));
+      .then(() => toast.success('SSL session cache cleared'))
+      .catch(() => toast.error('Failed to clear SSL session cache'));
   };
 
   return (
@@ -83,8 +69,8 @@ const Cache = () => {
       <div className="cache-item">
         <div className="cache-item-header">
           <div className="cache-item-title-group">
-            <span className="cache-item-title">{t('CACHE.FILE_CACHE')}</span>
-            <span className="beta-badge">{t('CACHE.BETA')}</span>
+            <span className="cache-item-title">File cache</span>
+            <span className="beta-badge">Beta</span>
           </div>
           <ToggleSwitch
             data-testid="cache.file.enabled"
@@ -97,7 +83,8 @@ const Cache = () => {
         <div className="cache-item-body">
           <div className="cache-item-body-text">
             <p className="cache-item-description">
-              {t('CACHE.FILE_CACHE_DESC')}
+              Loads your workspace faster by caching opened collections. Bruno refreshes the cache when your collection
+              changes. Clearing it won't affect your original files.
             </p>
             <p className="cache-item-size">
               {t('CACHE.CACHE_SIZE')} <strong>{fileCacheSize == null ? '—' : formatSize(fileCacheSize)}</strong>
@@ -130,7 +117,8 @@ const Cache = () => {
         <div className="cache-item-body">
           <div className="cache-item-body-text">
             <p className="cache-item-description">
-              {t('CACHE.SSL_CACHE_DESC')}
+              Reuses TLS sessions and connections across requests for faster handshakes. Disable to create a fresh
+              connection for every request.
             </p>
           </div>
           <ActionIcon

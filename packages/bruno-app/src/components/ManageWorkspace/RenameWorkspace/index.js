@@ -1,17 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import Portal from 'components/Portal/index';
 import Modal from 'components/Modal/index';
 import toast from 'react-hot-toast';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { renameWorkspaceAction } from 'providers/ReduxStore/slices/workspaces/actions';
+import { useTranslation } from 'react-i18next';
 
 const RenameWorkspace = ({ onClose, workspace }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { workspaces } = useSelector((state) => state.workspaces);
   const inputRef = useRef();
 
   const formik = useFormik({
@@ -21,22 +20,18 @@ const RenameWorkspace = ({ onClose, workspace }) => {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .min(1, t('MANAGE_WORKSPACE.MIN_LENGTH'))
-        .max(255, t('MANAGE_WORKSPACE.MAX_LENGTH'))
-        .required(t('MANAGE_WORKSPACE.NAME_REQUIRED'))
-        .test('unique-name', t('MANAGE_WORKSPACE.NAME_EXISTS'), function (value) {
-          if (!value) return true;
-          return !workspaces.some((w) =>
-            w.uid !== workspace.uid && w.name && w.name.toLowerCase() === value.toLowerCase()
-          );
-        })
+        .trim()
+        .min(1, 'must be at least 1 character')
+        .max(255, 'must be 255 characters or less')
+        .required('name is required')
     }),
     onSubmit: (values) => {
-      if (values.name === workspace.name) {
+      const name = values.name.trim();
+      if (name === workspace.name) {
         onClose();
         return;
       }
-      dispatch(renameWorkspaceAction(workspace.uid, values.name))
+      dispatch(renameWorkspaceAction(workspace.uid, name))
         .then(() => {
           onClose();
         })
@@ -61,8 +56,8 @@ const RenameWorkspace = ({ onClose, workspace }) => {
     <Portal>
       <Modal
         size="md"
-        title={t('MANAGE_WORKSPACE.RENAME_TITLE')}
-        confirmText={t('MANAGE_WORKSPACE.RENAME')}
+        title="Rename Workspace"
+        confirmText="Rename"
         handleConfirm={onSubmit}
         handleCancel={onClose}
         dataTestId="rename-workspace-modal"

@@ -498,7 +498,8 @@
       "FILE_NAME": "File Name",
       "FILE_NAME_HINT": "on filesystem",
       "TYPE_NAME": "{{type}} Name",
-      "FS_FOLDER_NAME_DESC": "The name of the folder on your filesystem."
+      "FS_FOLDER_NAME_DESC": "The name of the folder on your filesystem.",
+      "CLONED_TYPE": "{{type}} cloned successfully"
     },
     "RENAME_COLLECTION_ITEM": {
       "RENAME_FOLDER": "Rename Folder",
@@ -1145,10 +1146,16 @@
       "COLLECTION": "Collection",
       "REQUEST": "Request",
       "OPEN_FILE": "Open {{file}}",
-      "CLOSE_ERROR": "Close error"
+      "CLOSE_ERROR": "Close error",
+      "COPY_SCRIPT_ERROR": "Copy script error",
+      "COPIED": "Copied",
+      "COLLAPSE_SCRIPT_ERROR": "Collapse script error",
+      "EXPAND_SCRIPT_ERROR": "Expand script error",
+      "COLLAPSE": "Collapse",
+      "EXPAND": "Expand"
     },
     "SCRIPT_ERROR_ICON": {
-      "TOOLTIP": "Script execution error occurred"
+      "TOOLTIP": "Show errors"
     },
     "CLEAR_TIMELINE": "Clear Timeline",
     "OVERLAY": {
@@ -2982,7 +2989,7 @@
       "NO_APP_TITLE": "No app yet",
       "NO_APP_HINT": "Switch to Code and write some HTML/JS",
       "TITLE_PREFIX": "App - ",
-      "NO_APP_ADD_CODE_HINT": "Add HTML/JS in the Code view to render a custom UI for this app."
+      "NO_APP_ADD_CODE_HINT": "Add HTML/JS in the Code view and save to render a custom UI for this app."
     },
     "ERROR": {
       "REQUEST_NOT_FOUND": "Request not found: {{pathname}}",

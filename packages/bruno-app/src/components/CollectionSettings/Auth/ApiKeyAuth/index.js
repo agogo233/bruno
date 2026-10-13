@@ -1,24 +1,28 @@
 import React, { useRef, forwardRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import get from 'lodash/get';
 import { IconCaretDown } from '@tabler/icons';
 import Dropdown from 'components/Dropdown';
 import { useTheme } from 'providers/Theme';
 import SingleLineEditor from 'components/SingleLineEditor';
+import SensitiveFieldWarning from 'components/SensitiveFieldWarning';
+import { useDetectSensitiveField } from 'hooks/useDetectSensitiveField';
 import { updateCollectionAuth } from 'providers/ReduxStore/slices/collections';
 import { saveCollectionSettings } from 'providers/ReduxStore/slices/collections/actions';
 import StyledWrapper from './StyledWrapper';
 import { humanizeRequestAPIKeyPlacement } from 'utils/collections';
+import { useTranslation } from 'react-i18next';
 
 const ApiKeyAuth = ({ collection }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { storedTheme } = useTheme();
   const dropdownTippyRef = useRef();
   const onDropdownCreate = (ref) => (dropdownTippyRef.current = ref);
 
   const apikeyAuth = collection.draft?.root ? get(collection, 'draft.root.request.auth.apikey', {}) : get(collection, 'root.request.auth.apikey', {});
+  const { isSensitive } = useDetectSensitiveField(collection);
+  const apiKeyValueSensitive = isSensitive(apikeyAuth.value);
 
   const handleSave = () => dispatch(saveCollectionSettings(collection.uid));
 
@@ -72,15 +76,19 @@ const ApiKeyAuth = ({ collection }) => {
       </div>
 
       <label className="block mb-1">{t('COLLECTION_SETTINGS.AUTH_APIKEY.VALUE')}</label>
-      <div className="single-line-editor-wrapper mb-3">
+      <div className="single-line-editor-wrapper mb-3 flex items-center">
         <SingleLineEditor
           value={apikeyAuth.value || ''}
           theme={storedTheme}
           onSave={handleSave}
           onChange={(val) => handleAuthChange('value', val)}
           collection={collection}
+          isSecret={true}
           isCompact
         />
+        {apiKeyValueSensitive.showWarning && (
+          <SensitiveFieldWarning fieldName="apikey-value" warningMessage={apiKeyValueSensitive.warningMessage} />
+        )}
       </div>
 
       <label className="block mb-1">{t('COLLECTION_SETTINGS.AUTH_APIKEY.ADD_TO')}</label>
@@ -92,18 +100,18 @@ const ApiKeyAuth = ({ collection }) => {
               dropdownTippyRef.current.hide();
               handleAuthChange('placement', 'header');
             }}
-            >
-              {t('COLLECTION_SETTINGS.AUTH_APIKEY.HEADER')}
-            </div>
-            <div
-              className="dropdown-item"
-              onClick={() => {
-                dropdownTippyRef.current.hide();
-                handleAuthChange('placement', 'queryparams');
-              }}
-            >
-              {t('COLLECTION_SETTINGS.AUTH_APIKEY.QUERY_PARAMS')}
-            </div>
+          >
+            Header
+          </div>
+          <div
+            className="dropdown-item"
+            onClick={() => {
+              dropdownTippyRef.current.hide();
+              handleAuthChange('placement', 'queryparams');
+            }}
+          >
+            Query Params
+          </div>
         </Dropdown>
       </div>
     </StyledWrapper>

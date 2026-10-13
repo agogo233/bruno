@@ -45,6 +45,7 @@ import EnvironmentSettings from 'components/Environments/EnvironmentSettings';
 import GlobalEnvironmentSettings from 'components/Environments/GlobalEnvironmentSettings';
 import OpenAPISyncTab from 'components/OpenAPISyncTab';
 import OpenAPISpecTab from 'components/OpenAPISpecTab';
+import ApiSpecTab from 'components/ApiSpecTab';
 import MockServerDashboard from 'components/MockServer/MockServerDashboard';
 import MockResponse from 'components/MockServer/MockResponse';
 import ChangelogTab from 'components/ChangelogTab';
@@ -69,8 +70,8 @@ const RESPONSE_EXPAND_MIN_HEIGHT = 300;
 const aiAutoCollapsedTabs = new Set();
 
 const RequestTabPanel = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const tabs = useSelector((state) => state.tabs.tabs);
   const activeTabUid = useSelector((state) => state.tabs.activeTabUid);
   const focusedTab = find(tabs, (t) => t.uid === activeTabUid);
@@ -587,6 +588,10 @@ const RequestTabPanel = () => {
 
   if (focusedTab.type === 'openapi-spec') {
     return <OpenAPISpecTab collection={collection} tabUid={focusedTab.uid} />;
+  }
+
+  if (focusedTab.type === 'api-spec') {
+    return <ApiSpecTab tabUid={focusedTab.uid} />;
   }
 
   if (!item || !item.uid) {
