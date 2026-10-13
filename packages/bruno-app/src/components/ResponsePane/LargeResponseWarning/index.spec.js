@@ -2,6 +2,8 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
+import i18n from 'i18n';
+import en from 'i18n/translation/en.json';
 import themes from 'themes/index';
 import toast from 'react-hot-toast';
 import LargeResponseWarning from './index';
@@ -33,6 +35,10 @@ const button = (name) => screen.getByTestId(`large-response-${name}`);
 
 describe('LargeResponseWarning', () => {
   let invoke;
+
+  beforeAll(async () => {
+    await i18n.changeLanguage('en');
+  });
 
   beforeEach(() => {
     invoke = jest.fn().mockResolvedValue({ success: true });
@@ -67,7 +73,7 @@ describe('LargeResponseWarning', () => {
 
     fireEvent.click(button('download'));
 
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Response downloaded to file'));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith(en.RESPONSE_PANE.DOWNLOAD.DOWNLOADED));
     expect(invoke).toHaveBeenCalledWith(
       'renderer:save-response-to-file',
       storedItem.response,

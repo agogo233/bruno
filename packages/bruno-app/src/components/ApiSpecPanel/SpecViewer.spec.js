@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import 'i18n';
 
 const theme = {
   bg: '#fff',
@@ -133,14 +134,14 @@ describe('SpecViewer', () => {
       render(<SpecViewer content={'a: b:\n  - ['} onSave={jest.fn()} onDraftChange={jest.fn()} />);
 
       expect(screen.queryByTestId('swagger')).toBeNull();
-      expect(screen.getByText(SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON)).toBeInTheDocument();
+      expect(screen.getByText(SPEC_PREVIEW_ERRORS.INVALID_YAML_JSON())).toBeInTheDocument();
     });
 
     it('explains itself when the file parses but is not an OpenAPI document', () => {
       render(<SpecViewer content={'name: not-a-spec\n'} onSave={jest.fn()} onDraftChange={jest.fn()} />);
 
       expect(screen.queryByTestId('swagger')).toBeNull();
-      expect(screen.getByText(SPEC_PREVIEW_ERRORS.INVALID_OPENAPI)).toBeInTheDocument();
+      expect(screen.getByText(SPEC_PREVIEW_ERRORS.INVALID_OPENAPI())).toBeInTheDocument();
     });
   });
 });
